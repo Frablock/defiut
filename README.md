@@ -56,21 +56,11 @@ Environment composition:
 ```
 
 ## Installation
-
-1. Create a `./.env` from the `./.env.dist` file. Adapt it according to your symfony application
-
-    ```bash
-    cp .env.dist .env
-    ```
-
-2. Set up database connection
   
-    Take care about DATABASE_URL parameter in `./app/.env`
-  
-3. Build and run Docker containers
+1. Build and run Docker containers
    
-    Make sure that 80 port is not in use or change Nginx port in `./docker/config/nginx/hosts/default.conf` and also in docker-compose files
-   
+    Make sure that 80 port is not in use.
+   Execute that command in root folder
     ```bash
     docker-compose up --build -d
     ```
@@ -86,15 +76,9 @@ Environment composition:
     
     > If you don't need [docker-sync](http://docker-sync.io/) delete `docker-compose-dev.yml` `docker-sync.yml` and `Makefile` from the project root
 
-4. Install vendors
-    
-    ```bash
-    cd ./app
-    composer install
-    npm install
-    ```
-    
-## Usage
+2. Should be OK ! I hope because i lost 4 hours of my life doing it 👍
+
+## How to run your containers
 
 * Run your containers 
   > `docker-compose up -d` or  `make start_dev`
