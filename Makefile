@@ -1,11 +1,12 @@
 OS := $(shell uname)
 
 
-start_dev:
+start:
 ifeq ($(OS),Darwin)
 	docker volume create --name=app-sync
 	docker-compose -f docker-compose-dev.yml up -d
 	docker-sync start
+
 else
 	docker-compose up -d
 endif
@@ -17,3 +18,7 @@ ifeq ($(OS),Darwin)
 else
 	docker-compose stop
 endif
+
+start_dev:
+	docker-compose build
+	docker-compose up
