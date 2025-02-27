@@ -24,9 +24,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # install prestissimo and shell autocompletion
 USER docker
-RUN composer global require hirak/prestissimo && \
-    composer global require bamarni/symfony-console-autocomplete && \
-    rm -rf $HOME\.composer
+#RUN composer global require hirak/prestissimo && \
+    #composer global require bamarni/symfony-console-autocomplete && \
+    #rm -rf $HOME\.composer
 USER root
 
 # install node.js
