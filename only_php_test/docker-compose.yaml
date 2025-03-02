@@ -1,0 +1,16 @@
+
+services:
+    php:
+    build: .
+    ports:
+      - "8000:80"
+    env_file: .env
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
