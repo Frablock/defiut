@@ -3,66 +3,44 @@
 // src/Entity/User.php
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Collections\ArrayCollection;
+use Doctrine\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="utilisateur")
- */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'utilisateur')]
 class User
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $nom;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $prenom;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $mail;
 
-    /**
-     * @ORM\Column(type="string", length=255, name="mot_de_passe")
-     */
+    #[ORM\Column(name: 'mot_de_passe', type: 'string', length: 255)]
     private $motDePasse;
 
-    /**
-     * @ORM\Column(type="integer", options={"default": 0})
-     */
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private $scoreTotal = 0;
 
-    /**
-     * @ORM\Column(type="datetime", options={"default": "CURRENT_TIMESTAMP"})
-     */
+    #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $creationDate;
 
-    /**
-     * @ORM\Column(type="datetime", options={"default": "CURRENT_TIMESTAMP"})
-     */
+    #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $lastCo;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Defi::class, mappedBy="user")
-     */
+    #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'user')]
     private $defis;
 
-    /**
-     * @ORM\OneToMany(targetEntity=RecentDefi::class, mappedBy="user")
-     */
+    #[ORM\OneToMany(targetEntity: RecentDefi::class, mappedBy: 'user')]
     private $recentDefis;
 
     public function __construct()
