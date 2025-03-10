@@ -8,3 +8,7 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+/app/vendor
+/app/var
+/logs
+/app/node_modules
