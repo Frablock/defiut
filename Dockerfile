@@ -83,6 +83,7 @@ RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 RUN composer require symfony/maker-bundle --dev
+RUN composer require symfony/security-bundle
 
 # copy sources
 COPY --link . ./
