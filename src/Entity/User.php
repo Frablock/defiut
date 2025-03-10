@@ -8,7 +8,7 @@ use Doctrine\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]//(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'utilisateur')]
+#[ORM\Table(name: 'Utilisateur')]
 class User
 {
     #[ORM\Id]
@@ -37,16 +37,22 @@ class User
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $lastCo;
 
+    /**
     #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'user')]
     private $defis;
 
     #[ORM\OneToMany(targetEntity: RecentDefi::class, mappedBy: 'user')]
     private $recentDefis;
+    **/
 
     public function __construct()
     {
-        $this->defis = new ArrayCollection();
-        $this->recentDefis = new ArrayCollection();
+        //$this->defis = new ArrayCollection();
+        //$this->recentDefis = new ArrayCollection();
+    }
+    public function __toString()
+    {
+        return $this->nom." ".$this->prenom;
     }
 
     // Getters et setters
