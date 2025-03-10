@@ -1,5 +1,3 @@
-Version avec table de liaisons (non-CSV)
-```sql
 -- Tables principales
 CREATE TABLE Utilisateur (
     id INTEGER AUTO_INCREMENT,
@@ -125,4 +123,4 @@ CREATE TABLE Defi_Utilisateur_Recents (
         REFERENCES Defi(id) 
         ON DELETE CASCADE,
     INDEX idx_date_acces (date_acces)
-);```
+);
