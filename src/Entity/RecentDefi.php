@@ -1,0 +1,27 @@
+<?php
+
+// src/Entity/RecentDefi.php
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: 'App\Repository\RecentDefiRepository')]
+#[ORM\Table(name: 'defi_utilisateur_recents')]
+#[ORM\Index(name: 'idx_date_acces', columns: ['date_acces'])]
+class RecentDefi
+{
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'recentDefis')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private User $user;
+
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Defi::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private Defi $defi;
+
+    #[ORM\Column(name: 'date_acces', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTimeInterface $dateAcces;
+
+    // Getters/setters...
+}
