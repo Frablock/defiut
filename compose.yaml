@@ -56,6 +56,12 @@ services:
       MYSQL_DATABASE: ${MYSQL_DB:-app}
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+###> doctrine/doctrine-bundle ###
+
+###< doctrine/doctrine-bundle ###
 
 volumes:
   caddy_data:
@@ -64,3 +70,7 @@ volumes:
 
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
+
+###> doctrine/doctrine-bundle ###
+  database_data:
+###< doctrine/doctrine-bundle ###
