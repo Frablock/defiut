@@ -82,6 +82,8 @@ COPY --link composer.* symfony.* ./
 RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
+RUN composer require symfony/maker-bundle --dev
+
 # copy sources
 COPY --link . ./
 RUN rm -Rf frankenphp/
