@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import { Button, Container } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createRoot } from 'react-dom/client';
+import AppNavbar from './utils/AppNavbar';
 
-class AppNavbar extends Component {
+class App extends Component {
     render() {
     return (
             <AppNavbar>
@@ -26,4 +27,4 @@ if (domContainer) {
     console.log('WARNING : div ROOT non trouvé !')
 }
 
-export default Navbar;
+export default App;
