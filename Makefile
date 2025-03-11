@@ -1,6 +1,7 @@
 OS := $(shell uname)
 
 
+
 start:
 ifeq ($(OS),Darwin)
 	docker volume create --name=app-sync
@@ -29,3 +30,5 @@ restart_dev:
 	docker-compose build --no-cache
 	docker-compose up
 
+compile:
+	docker-compose exec npm npm run dev
