@@ -1,26 +1,33 @@
-import React, { Component } from 'react';
-import { Navbar, NavbarBrand } from 'reactstrap';
+import React from 'react';
+import { Button, Navbar, NavbarBrand } from 'reactstrap';
+import DarkModeSwitch from './darkModeSwitch';
 
-class AppNavbar extends Component {
+function AppNavbar(props) {
     
-    
-    
-    render() {
-    return (
-        <Navbar fixed={"top"} style={{backgroundColor: '#a899e7'}}>
-            <NavbarBrand href="/">
-                <img
-                    alt="Defuit"
-                    src="à cahnger"
-                    style={{
-                    height: 40,
-                    width: 40
-                    }}
-                />
-            </NavbarBrand>
-        </Navbar>
-        );
-    }
+ return (
+   <Navbar fixed={"top"} style={{height: "7vh", backgroundColor:"#a899e7", boxShadow:"0 10px 10px 0 rgb(0, 0, 0, 0.2)"}} container={true}>
+     <NavbarBrand>
+       <img
+         alt="Defuit"
+         src={"/files/images/"+(props.isDarkMode?"lightLogoDefiut":"darkLogoDefiut.png")}
+         style={{
+           position:"absolute",
+           height: "min(calc(75%),calc(6vw))",
+           transform: "translateY(-50%)",
+         }}
+       />
+     </NavbarBrand>
+     <div>
+        <DarkModeSwitch/>
+        <Button size={"sm"} color={"secondary"} style={{borderRadius:"25px"}}>
+          Boutton 2
+        </Button>
+        <Button size={"sm"} color={"secondary"} style={{borderRadius:"25px"}}>
+          Boutton 3
+        </Button>
+     </div>
+   </Navbar>
+ );
 }
 
 export default AppNavbar;

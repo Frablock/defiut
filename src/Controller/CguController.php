@@ -8,7 +8,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CguController extends AbstractController
 {
-    #[Route('/cgu', name: 'app_cgu')]
+    /** 
+     * pas besoin
+    #[Route('/api/cgu', name: 'app_cgu')]
     public function index(): JsonResponse
     {
         return $this->json([
@@ -16,4 +18,5 @@ final class CguController extends AbstractController
             'path' => 'src/Controller/CguController.php',
         ]);
     }
+    */
 }

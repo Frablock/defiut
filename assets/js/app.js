@@ -1,21 +1,21 @@
-import '../styles/app.css';
-import React, { Component } from 'react';
-import { Button, Container } from 'reactstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import RoutesDispatcher from './RoutesDispatcher';
+import { BrowserRouter } from 'react-router-dom';
 import AppNavbar from './utils/AppNavbar';
 
-class App extends Component {
-    render() {
+function App(props) {
+    const [isLogedIn, setLogedIn] = useState(false);
+    const [isDarkMode, setDarkMode] = useState(false)
+    
     return (
-            <AppNavbar>
-                <Container>
-                    <h1>Welcome to My React App inside Symfony!</h1>
-                    <Button color="primary">Click Me</Button>
-                </Container>
-            </AppNavbar>
-        );
-    }
+        <>
+            <AppNavbar {...isLogedIn} />
+            <BrowserRouter>
+                <RoutesDispatcher isLogedIn={isLogedIn} />
+            </BrowserRouter>
+        </>
+    );
 }
 
 // Mount the component to the DOM
@@ -23,7 +23,7 @@ const domContainer = document.getElementById('root');
 if (domContainer) {
     const root = createRoot(domContainer);
     root.render(<App />);
-}else{
+} else {
     console.log('WARNING : div ROOT non trouvé !')
 }
 

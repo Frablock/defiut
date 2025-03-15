@@ -10,7 +10,9 @@ use App\Entity\User;
 class UserController extends AbstractController
 {
 
-    #[Route('/users', name: 'user_list')]
+    /** 
+     * pas utile pour l'instant
+    #[Route('/api/users', name: 'user_list')]
     public function show(EntityManagerInterface $entityManager): Response
     {
         $users = $entityManager->getRepository(User::class)->findAll();
@@ -19,4 +21,5 @@ class UserController extends AbstractController
             '<html><body>'.implode(";",$users).'</body></html>'
         );
     }
+    */
 }

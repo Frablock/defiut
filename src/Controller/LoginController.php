@@ -8,11 +8,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class LoginController extends AbstractController
 {
-    #[Route('/', name: 'app')]
-    public function app()
-    {
+    /**
+     * example of route for api
+    #[Route(path:"/api/sendLogin", name:"send_login")]
+    function sendLogin(Response $request){
 
-        return $this->render('base.html.twig');
-        //return new JsonResponse('',200);
     }
+     */
 }

@@ -31,4 +31,4 @@ restart_dev:
 	docker-compose up
 
 compile:
-	docker-compose exec npm npm run dev
+	docker-compose exec npm npm run watch
