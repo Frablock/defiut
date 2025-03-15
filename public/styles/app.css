@@ -8,14 +8,14 @@ body {
 
   .sun-moon {
     position: relative;
-    width: 100px;
-    height: 56px;
+    width: 40px;
+    height: 40px;
     padding: 5px;
     border-radius: 45px;
     border: 3px solid #1a237e;
     background-color: #3f51b5;
     overflow: hidden;
-    transition: all 1s cubic-bezier(0.6, -0.28, 0.735, 0.045);     
+    transition: all 0.7s cubic-bezier(0.6, -0.28, 0.735, 0.045);     
 }
 
 .circle {
@@ -25,23 +25,23 @@ body {
 }
 
 .small {
-    width: 30px;
-    height: 30px;
+    width: 22px;
+    height: 22px;
     background: #3f51b5;
-    left: 20px;
+    left: 17px;
     top: 3px;
-    transition: all 1s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+    transition: all 0.7s cubic-bezier(0.6, -0.28, 0.735, 0.045);
 }
 
 .large {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background: #fff;
     border: 3px solid #fff;
     top: 50%;
     transform: translateY(-50%);
     left: 7px;
-    transition: all 1s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+    transition: all 0.7s cubic-bezier(0.6, -0.28, 0.735, 0.045);
 }
 
 .sun-moon input {

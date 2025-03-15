@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function DarkModeSwitch() {
+function DarkModeSwitch(props) {
     const [isChecked, setIsChecked] = useState(false);
     const switchBoxRef = useRef(null);
 
@@ -8,13 +8,15 @@ function DarkModeSwitch() {
         const checked = e.target.checked;
         setIsChecked(checked);
 
-        // Apply "move" class based on checkbox state
         if (switchBoxRef.current) {
             if (checked) {
+                props.setDarkMode(true)
                 switchBoxRef.current.classList.add("move");
             } else {
+                props.setDarkMode(false)
                 switchBoxRef.current.classList.remove("move");
             }
+            
         }
     };
 

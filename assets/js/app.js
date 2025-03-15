@@ -10,9 +10,9 @@ function App(props) {
     
     return (
         <>
-            <AppNavbar {...isLogedIn} />
+            <AppNavbar isLogedIn={isLogedIn} isDarkMode={isDarkMode} setDarkMode={setDarkMode}/>
             <BrowserRouter>
-                <RoutesDispatcher isLogedIn={isLogedIn} />
+                <RoutesDispatcher isLogedIn={isLogedIn} isDarkMode={isDarkMode} />
             </BrowserRouter>
         </>
     );
