@@ -87,6 +87,7 @@ RUN set -eux; \
 
 RUN composer require symfony/maker-bundle --dev
 RUN composer require symfony/security-bundle
+RUN composer require symfony/webpack-encore-bundle
 
 # copy sources
 COPY --link . ./
@@ -100,4 +101,3 @@ RUN set -eux; \
 	chmod +x bin/console; sync;
 
 RUN npm run dev
-RUN composer require symfony/webpack-encore-bundle
