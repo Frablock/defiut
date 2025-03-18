@@ -100,3 +100,4 @@ RUN set -eux; \
 	chmod +x bin/console; sync;
 
 RUN npm run dev
+RUN composer require symfony/webpack-encore-bundle
