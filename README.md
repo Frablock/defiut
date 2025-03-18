@@ -19,5 +19,5 @@ Félicitations, vous venez de démarer l'application, il ne vous reste plus qu'�
 
 ## Accès à l'application
 Pour accéder à l'application, il vous suffit d'utiliser un navigateur et de vous rendre sur :
-[https://localhost:80](https://localhost:80) pour accéder à l'application
-[https://localhost:8080](https://localhost:8080) pour accéder à PHPMySQL
+[http://localhost:80](http://localhost:80) pour accéder à l'application
+[http://localhost:8080](http://localhost:8080) pour accéder à PHPMySQL
