@@ -35,3 +35,4 @@ compile:
 
 clear:
 	rm -r ./vendor ./node_modules ./var ./public/build
+clean_start_dev: clear start_dev
