@@ -6,11 +6,14 @@ function Browser() {
     const [lastId, setLastId] = useState(0);
     const [posts, setPosts] = useState([]);
 
+
     useEffect(() => {
         loadMore(lastId);
+    }, []);
+    useEffect(() => {
 
         const handleScroll = () => {
-            if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.scrollHeight - 500 * 3) {
+            if (document.documentElement.scrollTop >= document.documentElement.scrollHeight - 100 *6) {
                 loadMore(lastId);
             }
         };
