@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: 'App\Repository\DefiRepository')]
-#[ORM\Table(name: 'defi')]
+#[ORM\Table(name: 'Defi')]
 #[ORM\UniqueConstraint(name: 'un_defi_cle', fields: ['cle'])]
 class Defi
 {
@@ -15,15 +15,18 @@ class Defi
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Groups(['defi:read'])]
     #[ORM\Column(type: 'string', length: 255)]
     private string $nom;
 
+    #[Groups(['defi:read'])]
     #[ORM\Column(type: 'text')]
     private string $description;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $cle;
 
+    #[Groups(['defi:read'])]
     #[ORM\Column(type: 'integer')]
     private int $pointsRecompense;
 

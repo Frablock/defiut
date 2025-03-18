@@ -6,7 +6,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: 'App\Repository\RecentDefiRepository')]
-#[ORM\Table(name: 'defi_utilisateur_recents')]
+#[ORM\Table(name: 'Defi_Utilisateur_Recents')]
 #[ORM\Index(name: 'idx_date_acces', columns: ['date_acces'])]
 class RecentDefi
 {

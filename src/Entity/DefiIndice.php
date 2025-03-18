@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: 'App\Repository\DefiIndiceRepository')]
-#[ORM\Table(name: 'defi_indice')]
+#[ORM\Table(name: 'Defi_Indice')]
 #[ORM\UniqueConstraint(name: 'un_defi_indice_ordre', columns: ['defi_id', 'ordre'])]
 class DefiIndice
 {
