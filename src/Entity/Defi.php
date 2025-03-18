@@ -42,6 +42,7 @@ class Defi
     #[Assert\Range(min: 1, max: 5)]
     private ?int $difficulte = null;
 
+    #[Groups(['defi-read'])]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'defis')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
@@ -94,6 +95,11 @@ class Defi
     public function getDifficulte(): ?int
     {
         return $this->difficulte;
+    }
+
+    public function getUser(): ?string
+    {
+        return $this->user->getPrenom()." ".$this->user->getNom();
     }
 
     public function getTags(): array#Collection
