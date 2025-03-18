@@ -2,12 +2,16 @@
 // src/Entity/Defi.php
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 #[ORM\Entity(repositoryClass: 'App\Repository\DefiRepository')]
 #[ORM\Table(name: 'Defi')]
-#[ORM\UniqueConstraint(name: 'un_defi_cle', fields: ['cle'])]
+#[ORM\UniqueConstraint(name: 'id', fields: ['id'])]
 class Defi
 {
     #[ORM\Id]
@@ -15,18 +19,18 @@ class Defi
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[Groups(['defi:read'])]
+    #[Groups(['defi-read'])]
     #[ORM\Column(type: 'string', length: 255)]
     private string $nom;
 
-    #[Groups(['defi:read'])]
+    #[Groups(['defi-read'])]
     #[ORM\Column(type: 'text')]
     private string $description;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $cle;
 
-    #[Groups(['defi:read'])]
+    #[Groups(['defi-read'])]
     #[ORM\Column(type: 'integer')]
     private int $pointsRecompense;
 
@@ -42,7 +46,7 @@ class Defi
     private User $user;
 
     #[ORM\ManyToMany(targetEntity: Tag::class)]
-    #[ORM\JoinTable(name: 'defi_tag')]
+    #[ORM\JoinTable(name: 'Defi_Tag')]
     private Collection $tags;
 
     #[ORM\OneToMany(mappedBy: 'defi', targetEntity: DefiIndice::class, orphanRemoval: true)]
@@ -63,5 +67,47 @@ class Defi
         $this->recentDefis = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->nom." ".$this->description;
+    }
+
+
     // Getters/setters...
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getPointsRecompense(): ?int
+    {
+        return $this->pointsRecompense;
+    }
+
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addDefi($this);
+        }
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeDefi($this);
+        }
+        return $this;
+    }
 }

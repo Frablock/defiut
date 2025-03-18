@@ -16,6 +16,23 @@ class DefiRepository extends ServiceEntityRepository
         parent::__construct($registry, Defi::class);
     }
 
+    public function findNextDefis(int $startId, int $limit): array
+    {
+        return $this->createQueryBuilder('d')
+        ->andWhere('d.id >= :id')
+        ->setParameter('id', $startId)
+        ->orderBy('d.id', 'ASC')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function findAll(): array
+    {
+        return $this->findBy(array(), array('nom' => 'ASC'));
+    }
+
+
     //    /**
     //     * @return Defi[] Returns an array of Defi objects
     //     */

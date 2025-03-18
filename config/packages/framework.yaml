@@ -7,6 +7,10 @@ framework:
 
     #esi: true
     #fragments: true
+    serializer:
+        circular_reference_handler: 'App\Serializer\CircularReferenceHandler'
+        default_context:
+            enable_max_depth: true
 
 when@test:
     framework:
