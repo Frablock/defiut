@@ -32,3 +32,6 @@ restart_dev:
 
 compile:
 	docker-compose exec npm npm run watch
+
+clear:
+	rm -r ./vendor ./node_modules ./var ./public/build
