@@ -37,6 +37,7 @@ class Defi
     #[ORM\Column(type: 'string', length: 255)]
     private string $categorie;
 
+    #[Groups(['defi-read'])]
     #[ORM\Column(type: 'integer', nullable: true)]
     #[Assert\Range(min: 1, max: 5)]
     private ?int $difficulte = null;
@@ -45,6 +46,7 @@ class Defi
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
+    #[Groups(['defi-read'])]
     #[ORM\ManyToMany(targetEntity: Tag::class)]
     #[ORM\JoinTable(name: 'Defi_Tag')]
     private Collection $tags;
@@ -89,9 +91,22 @@ class Defi
         return $this->pointsRecompense;
     }
 
-    public function getTags(): Collection
+    public function getDifficulte(): ?int
     {
-        return $this->tags;
+        return $this->difficulte;
+    }
+
+    public function getTags(): array#Collection
+    {
+        //return $this->tags;
+        $tagsArray = $this->tags->toArray();
+
+        // Use array_map to transform the array
+        $tagNames = array_map(function($tag) {
+            return $tag->getNom();
+        }, $tagsArray);
+
+        return $tagNames;
     }
 
     public function addTag(Tag $tag): self
@@ -110,4 +125,5 @@ class Defi
         }
         return $this;
     }
+        
 }

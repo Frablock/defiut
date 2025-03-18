@@ -15,6 +15,7 @@ class Tag
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Groups(['defi-read'])]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $nom;
 
