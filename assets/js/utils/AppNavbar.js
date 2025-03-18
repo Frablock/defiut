@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Button, Collapse, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap';
-import DarkModeSwitch from './darkModeSwitch';
+import DarkModeSwitch from './DarkModeSwitch';
 
 function AppNavbar(props) {
  return (
