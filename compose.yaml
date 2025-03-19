@@ -3,6 +3,10 @@ services:
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
     environment:
+      PHP_MEMORY_LIMIT: 512M
+      PHP_MAX_EXECUTION_TIME: 60
+      PHP_OPCACHE_ENABLE: 1
+      PHP_OPCACHE_MEMORY_CONSUMPTION: 256
       SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -18,6 +22,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - ./php-custom.ini:/usr/local/etc/php/conf.d/php-custom.ini
     ports:
       # HTTP
       - target: 80
