@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import DefiBox from './DefiBox';
 
-function Browser() {
+function Browser(props) {
     const [loading, setLoading] = useState(false);
     const [lastId, setLastId] = useState(0);
     const [posts, setPosts] = useState([]);
@@ -10,6 +11,7 @@ function Browser() {
     useEffect(() => {
         loadMore(lastId);
     }, []);
+
     useEffect(() => {
 
         const handleScroll = () => {
@@ -26,7 +28,7 @@ function Browser() {
         setLoading(true);
         try {
             const response = await axios.get(`api/defis?id=${lastId}`);
-            setPosts([...posts, ...response.data]);
+            setPosts([...response.data]);
             setLastId(lastId + 6+1);
         } catch (error) {
             alert('Le serveur ne répond pas...');
@@ -40,14 +42,7 @@ function Browser() {
             <h1>Browser</h1>
             <div id="post-data">
                 {posts.map((post, index) => (
-                    <div key={index} className="post">
-                        <h2>{post.nom}</h2>
-                        <p>{post.description}</p>
-                        <p>Reward Points: {post.pointsRecompense}</p>
-                        <p>Difficulty: {post.difficulte}</p>
-                        <p>User: {post.user}</p>
-                        <p>Tags: {post.tags.join(', ')}</p>
-                    </div>
+                    <DefiBox {...props} data={post}/>
                 ))}
             </div>
             {loading && <div className="ajax-load">Chargement...</div>}

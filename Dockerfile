@@ -88,6 +88,7 @@ RUN set -eux; \
 RUN composer require symfony/maker-bundle --dev
 RUN composer require symfony/security-bundle
 RUN composer require symfony/webpack-encore-bundle
+RUN composer require symfony/serializer-pack
 
 # copy sources
 COPY --link . ./
