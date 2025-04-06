@@ -6,12 +6,14 @@ namespace App\Entity;
 use Doctrine\Collections\ArrayCollection;
 use Doctrine\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
 #[ORM\Entity]//(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'Utilisateur')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
     #[ORM\Column(type: 'json')]
@@ -42,6 +44,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $lastCo;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
 
     /**
     #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'user')]
@@ -254,11 +259,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
-    /**
-     * @return string the hashed password for this user
-     */
-    public function getPassword(): string
+
+    public function isVerified(): bool
     {
-        return $this->password;
+        return $this->isVerified;
     }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+    
 }
