@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity]//(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'Utilisateur')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['mail'], message: 'Il y a déjà un compte avec ce mail')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
     #[ORM\Column(type: 'json')]
@@ -270,6 +270,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isVerified = $isVerified;
 
         return $this;
+    }
+
+    // Add the getter method
+    public function getEmail(): string
+    {
+        return $this->mail;
+    }
+
+    // Optional setter if needed
+    public function setEmail(string $email): void
+    {
+        $this->mail = $mail;
     }
     
 }
