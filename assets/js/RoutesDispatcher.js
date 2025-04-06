@@ -17,6 +17,10 @@ function RoutesDispatcher(props) {
           element={<Login {...props}/>}
         />
         <Route 
+          path="/register"
+          element={<Login {...props}/>}
+        />
+        <Route 
           path="/app"
           element={<Browser {...props}/>}
         />

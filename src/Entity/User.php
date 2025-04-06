@@ -16,8 +16,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[UniqueEntity(fields: ['mail'], message: 'Il y a déjà un compte avec ce mail')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
-    #[ORM\Column(type: 'json')]
-    private $roles = [];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -45,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private $lastCo;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'boolean', nullable: false)]
     private bool $isVerified = false;
 
     /**
@@ -65,6 +63,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->nom." ".$this->prenom;
     }
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
 
     // Getters et setters
     public function getId(): ?int
