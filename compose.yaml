@@ -2,6 +2,11 @@ services:
   php:
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
+    entrypoint: ["/entrypoint.sh"]
+    command: ["php-fpm"]
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       PHP_MEMORY_LIMIT: 512M
       PHP_MAX_EXECUTION_TIME: 60
@@ -23,6 +28,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./php-custom.ini:/usr/local/etc/php/conf.d/php-custom.ini
+      - ./dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql
     ports:
       # HTTP
       - target: 80
