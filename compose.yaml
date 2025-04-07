@@ -29,6 +29,7 @@ services:
       - caddy_config:/config
       - ./php-custom.ini:/usr/local/etc/php/conf.d/php-custom.ini
       - ./dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql
+      - ./:/var/www/html:cache
     ports:
       # HTTP
       - target: 80

@@ -24,6 +24,9 @@ class DefiApiController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
+        $startTime = microtime(true);
+        // ... your existing code
+
         // Récupération du paramètre GET et validation
         $startId = max(1, (int)$request->query->get('id', 1));
 
@@ -34,8 +37,19 @@ class DefiApiController extends AbstractController
         $data = $this->serializer->serialize($defis, 'json', [
             'groups' => ['defi-read']
         ]);
-/**/
 
+        //
+        $beforeRepo = microtime(true);
+        $defis = $this->defiRepository->findNextDefis($startId, 6);
+        $afterRepo = microtime(true);
+        $beforeSerial = microtime(true);
+        $data = $this->serializer->serialize($defis, 'json', ['groups' => ['defi-read']]);
+        $endTime = microtime(true);
+
+        // Log timings
+        error_log("Total time: " . ($endTime - $startTime) . "s");
+        error_log("Repository time: " . ($afterRepo - $beforeRepo) . "s");
+        error_log("Serializer time: " . ($endTime - $beforeSerial) . "s");
         return new JsonResponse($data, json: true);
     }
 }

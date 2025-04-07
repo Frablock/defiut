@@ -21,6 +21,7 @@ endif
 start_dev:
 	docker-compose build --no-cache
 	docker-compose up
+	docker update --cpuset-cpus="0-5
 stop_dev:
 	docker-compose down
 restart_dev:
