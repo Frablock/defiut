@@ -18,10 +18,11 @@ ifeq ($(OS),Darwin)
 else
 	docker-compose stop
 endif
+soft_start_dev:
+	docker-compose up
 start_dev:
 	docker-compose build --no-cache
 	docker-compose up
-	docker update --cpuset-cpus="0-5
 stop_dev:
 	docker-compose down
 restart_dev:

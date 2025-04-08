@@ -30,6 +30,8 @@ services:
       - ./php-custom.ini:/usr/local/etc/php/conf.d/php-custom.ini
       - ./dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql
       - ./:/var/www/html:cache
+      - ./localhost+2-key.pem:/etc/ssl/private/localhost-key.pem
+      - ./localhost+2.pem:/etc/ssl/certs/localhost.pem
     ports:
       # HTTP
       - target: 80

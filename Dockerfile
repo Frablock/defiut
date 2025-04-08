@@ -48,6 +48,7 @@ COPY --link frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --link frankenphp/Caddyfile /etc/caddy/Caddyfile
 COPY entrypoint.sh /entrypoint.sh
+COPY Caddyfile /etc/caddy/Caddyfile
 RUN chmod +x /entrypoint.sh
 
 
@@ -103,5 +104,3 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
-
-RUN npm run dev
