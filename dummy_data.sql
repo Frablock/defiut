@@ -70,7 +70,8 @@ VALUES (1, 'Git'),
     (6, 'Optimisation'),
     (7, 'Mathématiques'),
     (8, 'SQL'),
-    (9, 'Injection');
+    (9, 'Injection'),
+    (10, 'Stéganographie');
 INSERT INTO Indice (id, contenu)
 VALUES (
         1,
@@ -105,12 +106,18 @@ tableau ! A toi de jouer maintenant !'
         7,
         'Les apostrophes et les commentaires SQL fonctionnent de la même manière dans
 SQLite, peu importe le langage de programmation utilisé.'
+    ),
+    (
+        8,
+        'Nos experts suggèrent d\'utiliser des outils spécialisés en
+stéganographie pour cette tâche.'
     );
 INSERT INTO Fichier (id, nom)
 VALUES (1, './defis_assets/ctf-git-lost-commit.zip'),
     (2, './defis_assets/Hydre_de_lerne.zip'),
     (3, './defis_assets/HydreDemon.zip'),
-    (4, './defis_assets/Le_Pilote_fantome.zip');
+    (4, './defis_assets/Le_Pilote_fantome.zip'),
+    (5, './defis_assets/Le message invisible.zip');
 INSERT INTO Defi (
         id,
         nom,
@@ -220,6 +227,23 @@ connexion réussie en tant qu\'administrateur. Bonne chance.',
         'Web',
         2,
         6
+    ),
+    (
+        7,
+        'Le message invisible',
+        'L\'Agence a intercepté cette image qui semble provenir d\'un groupe suspicieux. Nos
+analystes pensent qu\'elle contient un message caché, mais leurs méthodes
+d\'analyse habituelles n\'ont rien révélé.
+Ta mission est de:
+1. Examiner l\'image fournie en utilisant des techniques d\'analyse avancées
+2. Trouver et extraire le message caché
+3. Nous communiquer le flag qu\'elle contient
+Cette mission est prioritaire.',
+        'DEF_IUT{ST3G0_1S_FUN}',
+        250,
+        'Stégonographie',
+        2,
+        6
     );
 INSERT INTO Defi_Tag (defi_id, tag_id)
 VALUES (1, 1),
@@ -232,7 +256,8 @@ VALUES (1, 1),
     (5, 6),
     (5, 7),
     (6, 8),
-    (6, 9);
+    (6, 9),
+    (7, 10);
 INSERT INTO Defi_Indice (defi_id, indice_id, ordre)
 VALUES (1, 1, 1),
     (1, 2, 2),
@@ -240,12 +265,14 @@ VALUES (1, 1, 1),
     (2, 4, 2),
     (3, 5, 1),
     (5, 6, 1),
-    (6, 7, 1);
+    (6, 7, 1),
+    (7, 8, 1);
 INSERT INTO Defi_Fichier (defi_id, fichier_id)
 VALUES (1, 1),
     (2, 2),
     (3, 3),
-    (4, 4);
+    (4, 4),
+    (7, 5);
 INSERT INTO Defi_Utilisateur_Recents (user_id, defi_id)
 VALUES (1, 1),
     (1, 2),
