@@ -27,7 +27,7 @@ function Browser(props) {
     const loadMore = async (lastId) => {
         setLoading(true);
         try {
-            const response = await axios.get(`api/defis?id=${lastId}`);
+            const response = await axios.get(`api/defis?start_id=${lastId}`);
             setPosts([...response.data]);
             setLastId(lastId + 6+1);
         } catch (error) {

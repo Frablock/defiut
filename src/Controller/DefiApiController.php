@@ -28,10 +28,10 @@ class DefiApiController extends AbstractController
         // ... your existing code
 
         // Récupération du paramètre GET et validation
-        $startId = max(1, (int)$request->query->get('id', 1));
+        $startId = max(1, (int)$request->query->get('start_id', 1));
 
         // Récupération des défis avec pagination par ID
-        $defis = $this->defiRepository->findNextDefis($startId, 6);
+        $defis = $this->defiRepository->findNextDefis($startId, 10);
 
         // Sérialisation avec contexte de groupe pour les relations
         $data = $this->serializer->serialize($defis, 'json', [
@@ -40,7 +40,7 @@ class DefiApiController extends AbstractController
 
         //
         $beforeRepo = microtime(true);
-        $defis = $this->defiRepository->findNextDefis($startId, 6);
+        $defis = $this->defiRepository->findNextDefis($startId, 10);
         $afterRepo = microtime(true);
         $beforeSerial = microtime(true);
         $data = $this->serializer->serialize($defis, 'json', ['groups' => ['defi-read']]);
@@ -50,6 +50,19 @@ class DefiApiController extends AbstractController
         error_log("Total time: " . ($endTime - $startTime) . "s");
         error_log("Repository time: " . ($afterRepo - $beforeRepo) . "s");
         error_log("Serializer time: " . ($endTime - $beforeSerial) . "s");
+        return new JsonResponse($data, json: true);
+    }
+
+    #[Route('/{id}', name: 'get', methods: ['GET'])]
+    public function get(int $id): JsonResponse
+    {
+        $defi = $this->defiRepository->find($id);
+
+        if (!$defi) {
+            return new JsonResponse(['error' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
         return new JsonResponse($data, json: true);
     }
 }
