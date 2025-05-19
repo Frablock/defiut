@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 
 
 #[Route('/api/defis', name: 'api_defi_')]
@@ -17,8 +20,7 @@ class DefiApiController extends AbstractController
     public function __construct(
         private readonly DefiRepository $defiRepository,
         private readonly SerializerInterface $serializer
-    ) {
-    }
+    ) {}
 
 
     #[Route('', name: 'list', methods: ['GET'])]
@@ -64,5 +66,46 @@ class DefiApiController extends AbstractController
 
         $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
         return new JsonResponse($data, json: true);
+    }
+
+    #[Route('/{id}/{key}', name: 'try_key', methods: ['GET'])]
+    public function try_key(int $id, string $key): JsonResponse
+    {
+        // Retrieve the Defi by ID
+        $defi = $this->defiRepository->find($id);
+        if (!$defi) {
+            return new JsonResponse(['error' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Get the current user
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return new JsonResponse(['error' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        // Check if the user has already completed this Defi
+        if ($user->getDefis()->contains($defi)) {
+            return new JsonResponse(['error' => 'Defi is already done'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Verify the provided key
+        if ($defi->getKey() === $key) {
+            // Increment the user's score
+            $user->setScoreTotal($user->getScoreTotal() + $defi->getScore());
+
+            // Add the Defi to the user's collection
+            $user->addDefi($defi);
+
+            // Persist changes to the database
+            $this->entityManager->flush();
+
+            // Serialize and return success response
+            $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
+            return new JsonResponse($data, JsonResponse::HTTP_OK, [], true);
+        }
+
+        // Delay response to prevent brute force attacks
+        sleep(2);
+        return new JsonResponse(['error' => 'Incorrect key'], JsonResponse::HTTP_UNAUTHORIZED);
     }
 }
