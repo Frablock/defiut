@@ -64,15 +64,11 @@ services:
 
   npm:
     image: node
-    build:
-      context: .
-      dockerfile: Dockerfile.React
     volumes:
       - ./symfony/public/build:/app/dist
       - ./react:/app
-      - /app/node_modules
     working_dir: /app
-    command: sh -c "npm run dev -- --host"
+    command: sh -c "npm install && npm run dev -- --host"
     ports:
     - "5173:5173"
     stdin_open: true
