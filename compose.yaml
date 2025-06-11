@@ -1,17 +1,9 @@
+# compose.yml
 services:
   php:
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
-    entrypoint: ["/entrypoint.sh"]
-    command: ["php-fpm"]
-    build:
-      context: .
-      dockerfile: Dockerfile
     environment:
-      PHP_MEMORY_LIMIT: 512M
-      PHP_MAX_EXECUTION_TIME: 60
-      PHP_OPCACHE_ENABLE: 1
-      PHP_OPCACHE_MEMORY_CONSUMPTION: 256
       SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -27,11 +19,6 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-      - ./php-custom.ini:/usr/local/etc/php/conf.d/php-custom.ini
-      - ./dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql
-      - ./:/var/www/html:cache
-      - ./localhost+2-key.pem:/etc/ssl/private/localhost-key.pem
-      - ./localhost+2.pem:/etc/ssl/certs/localhost.pem
     ports:
       # HTTP
       - target: 80
@@ -47,52 +34,51 @@ services:
         protocol: udp
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: unless-stopped
+    image: phpmyadmin
     environment:
       PMA_HOST: database
-      PMA_USER: ${MYSQL_USER:-app}
-      PMA_PASSWORD: ${MYSQL_PASSWORD:-!ChangeMe!}
+      MYSQL_ROOT_PASSWORD: "${MYSQL_PASSWORD:-root}"
     ports:
       - "8080:80"
     depends_on:
       - database
 
   database:
-    image: mysql:8.0
-    restart: unless-stopped
+    image: mysql:${MYSQL_VERSION:-8}
     environment:
-      MYSQL_USER: ${MYSQL_USER:-app}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-app}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-!ChangeMe!}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${MYSQL_DB:-app}
+      MYSQL_USER: ${MYSQL_USER:-app}
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./defiut.sql:/docker-entrypoint-initdb.d/defiut.sql:ro
-    ports:
-      - "3306:3306"
+      - ./database:/var/lib/mysql:rw
 
 ###> doctrine/doctrine-bundle ###
 
 ###< doctrine/doctrine-bundle ###
 
   npm:
-    image: node:22
+    image: node
+    build:
+      context: .
+      dockerfile: Dockerfile.React
     volumes:
-      - ./:/app
+      - ./symfony/public/build:/app/dist
+      - ./react:/app
+      - /app/node_modules
     working_dir: /app
-    command: sh -c "npm install && npm run dev -- --watch & sleep infinity"
+    command: sh -c "npm run dev -- --host"
     ports:
-      - "8081:8081"  # For webpack-dev-server if needed
+    - "5173:5173"
+    stdin_open: true
+    tty: true
+      
 
 volumes:
   caddy_data:
   caddy_config:
-  mysql_data:
-
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
-
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
