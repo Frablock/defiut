@@ -8,6 +8,8 @@ CREATE TABLE Utilisateur (
     score_total INTEGER DEFAULT 0,
     creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_co DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_verified INTEGER DEFAULT 0,
+    roles VARCHAR(255) NOT NULL,
     
     CONSTRAINT pk_utilisateur PRIMARY KEY (id),
     CONSTRAINT un_utilisateur_mail UNIQUE (mail)
