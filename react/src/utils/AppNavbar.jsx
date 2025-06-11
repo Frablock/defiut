@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import { Button, Collapse, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap';
 import DarkModeSwitch from './DarkModeSwitch';
+import CustomButton from './CustomButton';
 
 function AppNavbar(props) {
  return (
   <>
 <Navbar
-  className="w-100"
+  className="w-100 shadow"
   style={{
     backgroundColor: props.isDarkMode ? "#535353" : "#a899e7",
-    boxShadow: "0 10px 10px 0 rgb(0, 0, 0, 0.2)", 
     top: 0, 
     left: 0,
     transition: "background-color 0.8s ease, opacity 0.8s"
@@ -46,12 +46,22 @@ function AppNavbar(props) {
         isDarkMode={props.isDarkMode}
         height={"40px"}
         />
-      <Button size="sm" style={{backgroundColor:"#535353", height: "40px", borderRadius: "20px"}}>
-        boutton 1 coucou
-      </Button>
-      <Button size="sm" style={{backgroundColor:"#535353", height: "40px", borderRadius: "20px"}}>
-        boutton 1 coucou
-      </Button>
+      <CustomButton
+        isDarkMode={props.isDarkMode}
+        darkColor={"#a899e7"}
+        lightColor={"#535353"}
+        onClick={() => {console.log("test")}}
+      >
+        Boutton 1
+      </CustomButton>
+      <CustomButton 
+        isDarkMode={props.isDarkMode}
+        darkColor={"#a899e7"}
+        lightColor={"#535353"}
+        onClick={() => {console.log("test")}}
+      >
+        Boutton 2
+      </CustomButton>
     </NavbarText>
   </Navbar>
 </>

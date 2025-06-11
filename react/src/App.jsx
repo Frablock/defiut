@@ -9,7 +9,9 @@ export default function App(props) {
     const [isDarkMode, setDarkMode] = useState(false)
     
     return (
-        <div className='d-flex flex-column h-100'>
+        <div className='d-flex flex-column h-100' 
+            style={{backgroundColor: isDarkMode ? "#434343" : "#e0e0e0", transition: "all 0.8s"}}
+        >
             <AppNavbar isLogedIn={isLogedIn} isDarkMode={isDarkMode} setDarkMode={setDarkMode}/>
             <BrowserRouter>
                 <RoutesDispatcher isLogedIn={isLogedIn} isDarkMode={isDarkMode} />

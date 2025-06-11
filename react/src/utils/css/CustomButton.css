@@ -1,0 +1,15 @@
+.custom-button:hover {
+    filter: brightness(0.90);
+}
+
+.custom-button {
+    height: 40px; 
+    filter: brightness(1);
+    border-radius: 20px !important; 
+    border: none !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.custom-button:active {
+    filter: brightness(0.80);
+}

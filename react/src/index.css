@@ -5,8 +5,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #e0e0e0;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -32,8 +30,8 @@ body {
     height: 56px;
     padding: 5px;
     border-radius: 45px;
-    border: 3px solid #1a237e;
-    background-color: #3f51b5;
+    border: 3px solid #a899e7;
+    background-color: #d3d3d3;
     overflow: hidden;
     transition: all 0.7s ;     
 }
@@ -47,7 +45,7 @@ body {
 .small {
     width: 24px;
     height: 24px;
-    background: #3f51b5;
+    background: #d3d3d3;
     left: 16px;
     top: 3px;
     transition: all 0.7s ;
@@ -56,8 +54,8 @@ body {
 .large {
     width: 30px;
     height: 30px;
-    background: #fff;
-    border: 3px solid #fff;
+    background: #a899e7;
+    border: 3px solid #a899e7;
     top: 50%;
     transform: translateY(-50%);
     left: 7px;
@@ -77,18 +75,18 @@ body {
 }
 
 .move {
-    background-color: #fff;
-    border-color: #f3909a;
+    background-color: #d3d3d3;
+    border-color: #777777;
 }
 
 .move .large {
     left: 50px;
-    background: yellow;
-    border-color: orange;
+    background: rgb(255, 255, 66);
+    border-color: rgb(131, 131, 131);
 }
 
 .move .small {
     left: 60px;
     top: 50px;
-    background-color: #fff;
+    background-color: #d3d3d3;
 }
