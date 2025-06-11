@@ -12,7 +12,7 @@ function Login(props) {
    
    return (
        <>
-           <h1>login page</h1><br></br>
+           <h1>login pafge</h1><br></br>
            <Button onClick={handleOnClickLogin}>go aller à Browse Page</Button>
        </>
    );

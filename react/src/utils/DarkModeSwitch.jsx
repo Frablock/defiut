@@ -1,31 +1,25 @@
 import React, { useState, useRef } from "react";
 
 function DarkModeSwitch(props) {
-    const [isChecked, setIsChecked] = useState(false);
     const switchBoxRef = useRef(null);
-
+    
     const handleToggle = (e) => {
-        const checked = e.target.checked;
-        setIsChecked(checked);
-
-        if (switchBoxRef.current) {
-            if (checked) {
-                props.setDarkMode(true)
-                switchBoxRef.current.classList.add("move");
-            } else {
-                props.setDarkMode(false)
-                switchBoxRef.current.classList.remove("move");
-            }
-            
+        if (props.isDarkMode) {
+            //to move to the sun 
+            switchBoxRef.current.classList.add("move");
+        } else {
+            //to move to the moon
+            switchBoxRef.current.classList.remove("move");
         }
+        props.setDarkMode(() => !props.isDarkMode)
     };
 
     return (
-        <div className="sun-moon" ref={switchBoxRef}>
+        <div className="sun-moon move" ref={switchBoxRef} style={{height:props.height}}>
             <input 
                 type="checkbox" 
-                checked={isChecked} 
-                onChange={handleToggle} 
+                checked={props.darkMode} 
+                onClick={handleToggle}
             />
             <span className="circle large" />
             <span className="circle small" />

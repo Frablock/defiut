@@ -9,11 +9,11 @@ export default function App(props) {
     const [isDarkMode, setDarkMode] = useState(false)
     
     return (
-        <>
+        <div className='d-flex flex-column h-100'>
             <AppNavbar isLogedIn={isLogedIn} isDarkMode={isDarkMode} setDarkMode={setDarkMode}/>
             <BrowserRouter>
                 <RoutesDispatcher isLogedIn={isLogedIn} isDarkMode={isDarkMode} />
             </BrowserRouter>
-        </>
+        </div>
     );
 }

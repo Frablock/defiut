@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import ErrorPage from './errorPage/Error';
 import Login from './login/Login';
 import Browser from './app/Browser';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function RoutesDispatcher(props) {
   return (
@@ -10,7 +11,11 @@ function RoutesDispatcher(props) {
       <Routes>
         <Route 
           path="/"
-          element={props.isLoggedIn ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} 
+          element={
+            props.isLoggedIn ? 
+              <Navigate to="/app" replace /> : 
+              <Navigate to="/login" replace />
+        } 
         />
         <Route 
           path="/login"
