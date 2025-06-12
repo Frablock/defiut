@@ -113,11 +113,11 @@ SQLite, peu importe le langage de programmation utilisé.'
 stéganographie pour cette tâche.'
     );
 INSERT INTO Fichier (id, nom)
-VALUES (1, './defis_assets/ctf-git-lost-commit.zip'),
-    (2, './defis_assets/Hydre_de_lerne.zip'),
-    (3, './defis_assets/HydreDemon.zip'),
-    (4, './defis_assets/Le_Pilote_fantome.zip'),
-    (5, './defis_assets/Le message invisible.zip');
+VALUES (1, 'ctf-git-lost-commit.zip'),
+    (2, 'Hydre_de_lerne.zip'),
+    (3, 'HydreDemon.zip'),
+    (4, 'Le_Pilote_fantome.zip'),
+    (5, 'Le_message_invisible.zip');
 INSERT INTO Defi (
         id,
         nom,

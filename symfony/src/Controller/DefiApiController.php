@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Defi;
 use App\Entity\User;
+use App\Entity\DefiFichier;
 use App\Repository\DefiRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
