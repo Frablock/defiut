@@ -29,7 +29,6 @@ class DefiApiController extends AbstractController
     public function list(Request $request): JsonResponse
     {
         $startTime = microtime(true);
-        // ... your existing code
 
         // Récupération du paramètre GET et validation
         $startId = max(1, (int)$request->query->get('start_id', 1));
@@ -70,9 +69,14 @@ class DefiApiController extends AbstractController
         return new JsonResponse($data, json: true);
     }
 
-    #[Route('/{id}/{key}', name: 'try_key', methods: ['GET'])]
-    public function try_key(int $id, string $key): JsonResponse
+    #[Route('/try_key', name: 'try_key', methods: ['POST'])]
+    public function try_key(Request $request): JsonResponse
     {
+
+        // Retrieve parameters from the request body (JSON or form data)
+        $id = $request->request->get('id') ?? json_decode($request->getContent(), true)['id'] ?? null;
+        $key = $request->request->get('key') ?? json_decode($request->getContent(), true)['key'] ?? null;
+
         // Retrieve the Defi by ID
         $defi = $this->defiRepository->find($id);
         if (!$defi) {
@@ -99,7 +103,7 @@ class DefiApiController extends AbstractController
             $user->addDefi($defi);
 
             // Persist changes to the database
-            $this->entityManager->flush();
+            //$this->entityManager->flush();
 
             // Serialize and return success response
             $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
