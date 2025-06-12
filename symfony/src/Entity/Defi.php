@@ -55,8 +55,9 @@ class Defi
     #[ORM\OneToMany(mappedBy: 'defi', targetEntity: DefiIndice::class, orphanRemoval: true)]
     private Collection $defiIndices;
 
+    #[Groups(['defi-read'])]
     #[ORM\ManyToMany(targetEntity: Fichier::class)]
-    #[ORM\JoinTable(name: 'defi_fichier')]
+    #[ORM\JoinTable(name: 'Defi_Fichier')]
     private Collection $fichiers;
 
     #[ORM\OneToMany(mappedBy: 'defi', targetEntity: RecentDefi::class)]
@@ -100,6 +101,11 @@ class Defi
     public function getUser(): ?string
     {
         return $this->user->getPrenom()." ".$this->user->getNom();
+    }
+
+    public function getFichiers(): ?Collection
+    {
+        return $this->fichiers;
     }
 
     public function getTags(): array#Collection

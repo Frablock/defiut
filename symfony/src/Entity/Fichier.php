@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 #[ORM\Entity(repositoryClass: 'App\Repository\FichierRepository')]
 #[ORM\Table(name: 'Fichier')]
 class Fichier
@@ -14,6 +16,7 @@ class Fichier
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['defi-read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
