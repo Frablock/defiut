@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use App\Repository\FichierRepository;
 use App\Entity\Fichier;
 
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
+use OpenApi\Attributes as OA;
 
 final class FileDownloaderController extends AbstractController
 {
@@ -18,7 +21,22 @@ final class FileDownloaderController extends AbstractController
     public function __construct(
         private readonly FichierRepository $fichierRepository,
     ) {}
-    #[Route('/api/file/{id}', name: 'download_file')]
+    #[Route('/api/file/{id}', name: 'download_file', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Streamed file content (binary)',
+        content: new OA\MediaType(
+            mediaType: 'application/octet-stream',
+            schema: new OA\Schema(type: 'string', format: 'binary')
+        )
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'File ID',
+        required: true,
+        schema: new OA\Schema(type: 'integer')
+    )]
     public function downloadFile(int $id): StreamedResponse
     {
         // Retrieve the file entity by ID
