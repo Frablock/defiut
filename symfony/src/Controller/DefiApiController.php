@@ -56,18 +56,7 @@ class DefiApiController extends AbstractController
         return new JsonResponse($data, json: true);
     }
 
-    #[Route('/{id}', name: 'get', methods: ['GET'])]
-    public function get(int $id): JsonResponse
-    {
-        $defi = $this->defiRepository->find($id);
-
-        if (!$defi) {
-            return new JsonResponse(['error' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
-        }
-
-        $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
-        return new JsonResponse($data, json: true);
-    }
+    
 
     #[Route('/try_key', name: 'try_key', methods: ['POST'])]
     public function try_key(Request $request): JsonResponse
@@ -113,5 +102,32 @@ class DefiApiController extends AbstractController
         // Delay response to prevent brute force attacks
         sleep(2);
         return new JsonResponse(['error' => 'Incorrect key'], JsonResponse::HTTP_UNAUTHORIZED);
+    }
+
+    #[Route('/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
+    public function getLeftMenuCategories(Request $request): JsonResponse
+    {
+        $categories = array(
+            ["title"=>"Nos défis",      "img" => "liens de l'image (si tu fait cette tâche, envois un message dans le groupe pour savoir comment on fait pour mettre l'image ici)"], 
+            ["title"=>"Alorithmique",   "img" => "liens de l'image"],
+            ["title"=>"Reverse",        "img" => "liens de l'image"],
+            ["title"=>"Web",            "img" => "liens de l'image"],
+            ["title"=>"Reverse",        "img" => "liens de l'image"],
+        ); // Asset de test
+        return new JsonResponse(['categories' => $categories], JsonResponse::HTTP_OK);
+    }
+
+    //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
+    #[Route('/{id}', name: 'get', methods: ['GET'])]
+    public function get(int $id): JsonResponse
+    {
+        $defi = $this->defiRepository->find($id);
+
+        if (!$defi) {
+            return new JsonResponse(['error' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
+        return new JsonResponse($data, json: true);
     }
 }

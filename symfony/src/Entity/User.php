@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use Doctrine\Collections\ArrayCollection;
 use Doctrine\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -66,6 +67,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $lastTryDate = null;
 
 
     // Getters et setters
@@ -285,5 +289,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->mail = $mail;
     }
-    
+
+    public function getLastTryDate(): ?\DateTimeInterface
+    {
+        return $this->lastTryDate;
+    }
+
+    public function setLastTryDate(?\DateTimeInterface $lastTryDate): static
+    {
+        $this->lastTryDate = $lastTryDate;
+
+        return $this;
+    }
 }

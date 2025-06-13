@@ -2,16 +2,18 @@ import React, {useState} from 'react';
 import { Button, Collapse, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap';
 import DarkModeSwitch from './DarkModeSwitch';
 import CustomButton from './CustomButton';
+import { useNavigate } from "react-router-dom";
+
 
 function AppNavbar(props) {
+  const navigate = useNavigate();
+
  return (
   <>
 <Navbar
   className="w-100 shadow"
   style={{
     backgroundColor: props.isDarkMode ? "#535353" : "#a899e7",
-    top: 0, 
-    left: 0,
     transition: "background-color 0.8s ease, opacity 0.8s"
   }}
 >
@@ -50,17 +52,18 @@ function AppNavbar(props) {
         isDarkMode={props.isDarkMode}
         darkColor={"#a899e7"}
         lightColor={"#535353"}
-        onClick={() => {console.log("test")}}
+        onClick={() => navigate("/register")}
+
       >
-        Boutton 1
+        Inscription
       </CustomButton>
       <CustomButton 
         isDarkMode={props.isDarkMode}
         darkColor={"#a899e7"}
         lightColor={"#535353"}
-        onClick={() => {console.log("test")}}
+        onClick={() => navigate("/login")}
       >
-        Boutton 2
+        Connexion
       </CustomButton>
     </NavbarText>
   </Navbar>

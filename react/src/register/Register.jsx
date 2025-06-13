@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import CustomButton from "../utils/CustomButton";
 
-function Login(props) {
+export default function Register(props) {
    const navigate = useNavigate();
    
    const handleOnClickLogin = () => {
@@ -11,33 +11,7 @@ function Login(props) {
    };
    
    return (
-       <div className="d-flex flex-column w-100 h-100 mt-5 gap-4 align-items-center">
-           <div className="position-relative" style={{height:"20%", marginTop:"100px"}}>
-                <img
-                    alt="dark logo"
-                    src="/files/images/darkLogoDefiut.png"
-                    style={{
-                        position: "absolute",
-                        transform: "translateX(-50%)",
-                        height: "5vw",
-                        minHeight:"70px",
-                        opacity: props.isDarkMode ? 0 : 1,
-                        transition: "opacity 0.8s",
-                    }}
-                />
-                <img
-                    alt="light logo"
-                    src="/files/images/whiteLogoDefiut.png"
-                    style={{
-                        position: "absolute",
-                        transform: "translateX(-50%)",
-                        height: "5vw",
-                        minHeight:"70px",
-                        opacity: props.isDarkMode ? 1 : 0,
-                        transition: "opacity 0.8s",
-                    }}
-                />
-           </div>
+       <div className="d-flex flex-column w-100 h-100 gap-4 align-items-center justify-content-center">
            <h1
             style={{
                     textShadow: "2px 2px 5px rgba(0, 0, 0, 0.36)",
@@ -46,7 +20,7 @@ function Login(props) {
                     fontWeight:"600",
                 }}
             >
-            Connexion
+            Inscription
            </h1>
             <div className="d-flex flex-column gap-3 align-items-center" style={{width:"40vw", maxWidth:"300px"}}>
                 <FormGroup floating className="w-100">
@@ -70,7 +44,31 @@ function Login(props) {
                         className="shadow w-100"
                     />
                     <Label for="examplePassword">
-                        Mot de passe
+                        Pseudonyme
+                    </Label>
+                </FormGroup>
+                <FormGroup floating className="w-100">
+                    <Input
+                        id="exampleEmail"
+                        name="email"
+                        placeholder="Email"
+                        type="email"
+                        className="shadow"
+                    />
+                    <Label for="exampleEmail">
+                        Mot de Passe
+                    </Label>
+                </FormGroup>
+                <FormGroup floating className="w-100">
+                    <Input
+                        id="exampleEmail"
+                        name="email"
+                        placeholder="Email"
+                        type="email"
+                        className="shadow"
+                    />
+                    <Label for="exampleEmail">
+                        Confirmation du mot de passe
                     </Label>
                 </FormGroup>
             </div>
@@ -100,15 +98,13 @@ function Login(props) {
                         </svg>
                     </div>
                 </CustomButton>
-                <div className="d-flex flex-row" style={{color: props.isDarkMode ? "white" : "black", transition: "all 0.8s"}}>
-                    Pas de compte ? &nbsp;
-                    <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => navigate("/register")}>
-                        S'inscrire ici
+                <div className="d-flex flex-row align" style={{color: props.isDarkMode ? "white" : "black", transition: "all 0.8s"}}>
+                    Déjà un compte ? &nbsp;
+                    <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => navigate("/login")}>
+                        Se connecter
                     </div>
                 </div>
             </div>
        </div>
    );
 }
-
-export default Login;

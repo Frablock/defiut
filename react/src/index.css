@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(255, 255, 255, 0.199);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -30,7 +30,7 @@ body {
     height: 56px;
     padding: 5px;
     border-radius: 45px;
-    border: 3px solid #a899e7;
+    border: 2px solid #a899e7;
     background-color: #d3d3d3;
     overflow: hidden;
     transition: all 0.7s ;     
@@ -82,7 +82,6 @@ body {
 .move .large {
     left: 50px;
     background: rgb(255, 255, 66);
-    border-color: rgb(131, 131, 131);
 }
 
 .move .small {

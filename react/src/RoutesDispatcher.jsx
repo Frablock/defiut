@@ -4,6 +4,8 @@ import ErrorPage from './errorPage/Error';
 import Login from './login/Login';
 import Browser from './app/Browser';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Register from './register/Register';
+import Lobby from './lobby/Lobby';
 
 function RoutesDispatcher(props) {
   return (
@@ -12,10 +14,12 @@ function RoutesDispatcher(props) {
         <Route 
           path="/"
           element={
-            props.isLoggedIn ? 
-              <Navigate to="/app" replace /> : 
-              <Navigate to="/login" replace />
+              <Navigate to="/lobby" replace />
         } 
+        />
+        <Route 
+          path="/lobby"
+          element={<Lobby {...props}/>}
         />
         <Route 
           path="/login"
@@ -23,7 +27,7 @@ function RoutesDispatcher(props) {
         />
         <Route 
           path="/register"
-          element={<Login {...props}/>}
+          element={<Register {...props}/>}
         />
         <Route 
           path="/app"
