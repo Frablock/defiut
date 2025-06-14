@@ -6,7 +6,7 @@ Application de défis type "CTF"
 
 ## Instalation
 
-> Assurez vous d'avoir docker-compose installé
+> Assurez vous d'avoir docker-compose installé\
 > Clonnez ce repository
 
 ```sh
@@ -19,10 +19,10 @@ Puis lancez la commande suivante :
 make start
 ```
 
-Félicitations, vous venez de démarer l'application, il ne vous reste plus qu'à l'utiliser, regardez les parties ci-desous pour pouvoir déployer
+Félicitations, vous venez de démarer l'application, il ne vous reste plus qu'à installer les certificats pour pouvoir l'utiliser !
 
-### Installation des certificats SSL
-
+### Installation des certificats SSL (non obligatoire pour utiliser l'API)
+Cette partie est obligatoire si vous voulez utiliser le front en même temps que l'API.\
 Lancez la commande adapté à votre système, en ayant lancé le `make start` avant
 
 #### Sur Windows
@@ -47,6 +47,8 @@ docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt
 sudo chmod 644 /etc/ca-certificates/trust-source/anchors/root.crt
 sudo chown root:root /etc/ca-certificates/trust-source/anchors/root.crt
 ```
+
+Une fois la/les commandes lancées, il ne vous reste plus qu'à redémarrer votre navigateur pour pouvoir utiliser l'application
 
 ### Données SQL
 
