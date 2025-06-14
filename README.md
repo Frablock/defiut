@@ -22,7 +22,7 @@ make start
 Félicitations, vous venez de démarer l'application, il ne vous reste plus qu'à installer les certificats pour pouvoir l'utiliser !
 
 ### Installation des certificats SSL (non obligatoire pour utiliser l'API en HTTP)
-Cette partie est obligatoire si vous voulez utiliser le front en même temps que l'API.\ <br/>
+Cette partie est obligatoire si vous voulez utiliser le front en même temps que l'API.\
 Lancez la commande adapté à votre système, en ayant lancé le `make start` avant
 
 #### Sur Windows
