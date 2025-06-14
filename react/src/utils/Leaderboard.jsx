@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardBody, CardTitle, Collapse, Fade, Placeholder } from "reactstrap";
+import { Card, CardBody, CardTitle, CloseButton, Collapse, Fade, Placeholder } from "reactstrap";
 
 export default function Leaderboard(props) {
     const [loading, setLoading] = React.useState(true)
@@ -31,7 +31,9 @@ export default function Leaderboard(props) {
                     onExited={() => setUnmount(true)}
                 >
                     <div className="h-100 d-flex flex-column gap-5 h-100 justify-content-center" style={{marginRight:"20px"}}>
+                        
                         <Card className="border-0 shadow transition" style={{backgroundColor: props.isDarkMode ? "#535353" : "#a899e7", color: props.isDarkMode ? "white" : "black", }}>
+                            <CloseButton onClick={() => setUnmount(!unmount)}/>
                             <CardTitle className="d-flex flex-row justify-content-center my-5" style={{fontWeight:"700"}}>
                                 PODIUM
                             </CardTitle>

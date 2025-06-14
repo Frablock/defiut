@@ -30,7 +30,8 @@ export default function LeftNavigation(props) {
     
 
     const handleOnClick = (index) => {
-        console.log("tu as clique sur le truc "+data.categories[index]["title"])
+        props.navigateTo("/lobby"+data.categories[index]["url"]);
+        props.setCategory(data.categories[index]["url"])
     }
 
     return (
@@ -52,7 +53,7 @@ export default function LeftNavigation(props) {
                             className="mb-2 shadow" 
                             style={{backgroundColor:"#e2ddf7"}}
                             >
-                                <CardBody>
+                                <CardBody style={{width:"150px"}}>
                                     <Placeholder animation="wave" className="d-flex flex-row justify-content-between py-2">
                                         <Placeholder xs={7} />
                                         <Placeholder xs={2} />
@@ -68,12 +69,19 @@ export default function LeftNavigation(props) {
                             key={index} 
                             className="mb-2 shadow custom-button"
                             onClick={() => handleOnClick(index)}
-                            style={{height:"60px"}}
+                            style={{
+                                height:"60px",
+                                transform: props.category === element["url"] ? "scale(0.950)" : "scale(1)"
+                            }}
                             isDarkMode={props.isDarkMode}
-                            darkColor={"#a899e7"}
-                            lightColor={"#e2ddf7"}
+                            darkColor={props.category === element["url"] ? "#4625ba" : "#a899e7"}
+                            lightColor={props.category === element["url"] ? "#4625ba" : "#e2ddf7"}
                             >
-                                <CardBody className="d-flex flex-row justify-content-between align-items-center" style={{color:"black"}}>
+                                <CardBody className="d-flex flex-row transition justify-content-between align-items-center"
+                                style={{
+                                    color: props.category === element["url"] ? "white" : "black", 
+                                    width:"150px"
+                                }}>
                                     {element["title"]}
                                     <CardImg style={{width:"40px", height:"40px"}} src={element["img"]}></CardImg>
                                 </CardBody>

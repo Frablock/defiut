@@ -2,11 +2,9 @@ import React, {useState} from 'react';
 import { Button, Collapse, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap';
 import DarkModeSwitch from './DarkModeSwitch';
 import CustomButton from './CustomButton';
-import { useNavigate } from "react-router-dom";
 
 
 function AppNavbar(props) {
-  const navigate = useNavigate();
 
  return (
   <>
@@ -17,7 +15,7 @@ function AppNavbar(props) {
     transition: "background-color 0.8s ease, opacity 0.8s"
   }}
 >
-    <div style={{cursor:"pointer"}} onClick={() => navigate("/lobby")}>  
+    <div style={{cursor:"pointer"}} onClick={() => props.navigateTo("/lobby")}>  
     <img
       alt="dark logo"
       src="/files/images/darkLogoDefiut.png"
@@ -52,7 +50,7 @@ function AppNavbar(props) {
         isDarkMode={props.isDarkMode}
         darkColor={"#a899e7"}
         lightColor={"#535353"}
-        onClick={() => navigate("/register")}
+        onClick={() => props.navigateTo("/register")}
 
       >
         Inscription
@@ -61,7 +59,7 @@ function AppNavbar(props) {
         isDarkMode={props.isDarkMode}
         darkColor={"#a899e7"}
         lightColor={"#535353"}
-        onClick={() => navigate("/login")}
+        onClick={() => props.navigateTo("/login")}
       >
         Connexion
       </CustomButton>

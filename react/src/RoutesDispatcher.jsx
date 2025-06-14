@@ -22,6 +22,10 @@ function RoutesDispatcher(props) {
           element={<Lobby {...props}/>}
         />
         <Route 
+          path="/lobby/:category"
+          element={<Lobby {...props}/>}
+        />
+        <Route 
           path="/login"
           element={<Login {...props}/>}
         />

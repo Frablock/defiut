@@ -108,11 +108,11 @@ class DefiApiController extends AbstractController
     public function getLeftMenuCategories(Request $request): JsonResponse
     {
         $categories = array(
-            ["title"=>"Nos défis",      "img" => "liens de l'image (si tu fait cette tâche, envois un message dans le groupe pour savoir comment on fait pour mettre l'image ici)"], 
-            ["title"=>"Alorithmique",   "img" => "liens de l'image"],
-            ["title"=>"Reverse",        "img" => "liens de l'image"],
-            ["title"=>"Web",            "img" => "liens de l'image"],
-            ["title"=>"Reverse",        "img" => "liens de l'image"],
+            ["title"=>"Nos défis",      "img" => "liens de l'image", "url" => "/defis"], 
+            ["title"=>"Alorithmique",   "img" => "liens de l'image", "url" => "/alorithmique"],
+            ["title"=>"Reverse",        "img" => "liens de l'image", "url" => "/reverse"],
+            ["title"=>"Web",            "img" => "liens de l'image", "url" => "/web"],
+            ["title"=>"Reverse2",        "img" => "liens de l'image", "url" => "/reverse2"],
         ); // Asset de test
         return new JsonResponse(['categories' => $categories], JsonResponse::HTTP_OK);
     }
