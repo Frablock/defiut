@@ -1,12 +1,4 @@
-import React, {useState} from 'react';
-import { Button, Collapse, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap';
-import DarkModeSwitch from './DarkModeSwitch';
-import CustomButton from './CustomButton';
-import { useNavigate } from "react-router-dom";
-
-
 export default function AppFooter(props) {
-  const navigate = useNavigate();
 
  return (
   <>
@@ -18,10 +10,10 @@ export default function AppFooter(props) {
         height:"75px"
       }}
     >
-      <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => navigate("/legal")}>
+      <div className="text-decoration-underline transition" style={{cursor:"pointer", color: props.isDarkMode ? "white" : "black"}} onClick={() => props.navigateTo("/legal")}>
           Mentions légales
       </div>
-      <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => navigate("/login")}>
+      <div className="text-decoration-underline transition" style={{cursor:"pointer", color: props.isDarkMode ? "white" : "black"}} onClick={() => props.navigateTo("/login")}>
           Work in progress ...
       </div>
     </div>

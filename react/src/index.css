@@ -55,7 +55,7 @@ body {
     width: 30px;
     height: 30px;
     background: #a899e7;
-    border: 3px solid #a899e7;
+    border: 2px solid #a899e7;
     top: 50%;
     transform: translateY(-50%);
     left: 7px;
@@ -76,7 +76,6 @@ body {
 
 .move {
     background-color: #d3d3d3;
-    border-color: #777777;
 }
 
 .move .large {
@@ -88,4 +87,8 @@ body {
     left: 60px;
     top: 50px;
     background-color: #d3d3d3;
+}
+
+.transition{
+    transition: all 0.8s !important
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import { Button, Fade, Form, FormGroup, Input, Label } from "reactstrap";
 import CustomButton from "../utils/CustomButton";
 
 export default function Register(props) {
@@ -9,8 +9,14 @@ export default function Register(props) {
    const handleOnClickLogin = () => {
        navigate("/app");
    };
+
+   React.useEffect(() => {
+        props.setShowLeftNavigation(false)
+        props.setShowLeaderboard(false)
+    },[])
    
    return (
+    <Fade in={!props.unmount} className="w-100 h-100">
        <div className="d-flex flex-column w-100 h-100 gap-4 align-items-center justify-content-center">
            <h1
             style={{
@@ -100,11 +106,12 @@ export default function Register(props) {
                 </CustomButton>
                 <div className="d-flex flex-row align" style={{color: props.isDarkMode ? "white" : "black", transition: "all 0.8s"}}>
                     Déjà un compte ? &nbsp;
-                    <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => navigate("/login")}>
+                    <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => props.navigateTo("/login")}>
                         Se connecter
                     </div>
                 </div>
             </div>
        </div>
+       </Fade>
    );
 }

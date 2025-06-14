@@ -17,7 +17,7 @@ function AppNavbar(props) {
     transition: "background-color 0.8s ease, opacity 0.8s"
   }}
 >
-    <NavbarBrand href="/">  
+    <div style={{cursor:"pointer"}} onClick={() => navigate("/lobby")}>  
     <img
       alt="dark logo"
       src="/files/images/darkLogoDefiut.png"
@@ -41,7 +41,7 @@ function AppNavbar(props) {
         transition: "opacity 0.8s",
       }}
     />
-    </NavbarBrand>
+    </div>
     <NavbarText style={{display:"flex", gap:"10px", flexWrap: "wrap", alignItems: "center"}}>
       <DarkModeSwitch 
         setDarkMode={props.setDarkMode}
