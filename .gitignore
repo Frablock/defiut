@@ -1,7 +1,2 @@
 # Ignore MySQL database directory
-
-
-/node_modules
-/vendor
-/public/build
-/database
+/database/

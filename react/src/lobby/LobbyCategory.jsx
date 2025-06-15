@@ -52,7 +52,7 @@ export default function LobbyCategory(props) {
                 <DropdownToggle caret style={{backgroundColor:"#a899e7"}}>Filtres</DropdownToggle>
                 <DropdownMenu {...props} style={{backgroundColor:"#e2ddf7"}}>
                     {filter.map((elem, _) => {
-                        <DropdownItem onCLick={() => handleOnClickFilter(elem.action)}>{elem.title}</DropdownItem>
+                        <DropdownItem onCLick={() => handleOnClickFilter(elem.action)}>{elem.title} test</DropdownItem>
                     })}
                 </DropdownMenu>
             </Dropdown>
