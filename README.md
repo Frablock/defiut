@@ -28,7 +28,7 @@ Lancez la commande adapté à votre système, en ayant lancé le `make start` av
 #### Sur Windows
 
 ```batch
-docker compose cp php:/data/caddy/pki/authorities/local/root.crt %TEMP%/root.crt && certutil -addstore -f "ROOT" %TEMP%/root.crt
+docker compose cp php:/data/caddy/pki/authorities/local/root.crt "$env:TEMP\root.crt" && certutil -addstore -f "ROOT" "$env:TEMP\root.crt"
 ```
 
 #### Sur Linux
