@@ -44,4 +44,5 @@ endif
 clean_start_dev: clear start_dev
 
 bash:
+	echo -e "\nTapez \"exit\" pour quitter\n" 
 	docker exec -it defiut-php-1 "/bin/bash"
