@@ -1,2 +1,2 @@
 # Ignore MySQL database directory
-/database/
+database/
