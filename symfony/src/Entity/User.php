@@ -23,12 +23,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $nom;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $prenom;
-
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $mail;
 
@@ -55,49 +49,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $recentDefis;
     **/
 
-    public function __construct()
-    {
-        //$this->defis = new ArrayCollection();
-        //$this->recentDefis = new ArrayCollection();
-    }
-    public function __toString()
-    {
-        return $this->nom." ".$this->prenom;
-    }
-
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastTryDate = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $username = null;
+
 
     // Getters et setters
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): self
-    {
-        $this->prenom = $prenom;
-        return $this;
     }
 
     public function getMail(): ?string
@@ -298,6 +263,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastTryDate(?\DateTimeInterface $lastTryDate): static
     {
         $this->lastTryDate = $lastTryDate;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
 
         return $this;
     }

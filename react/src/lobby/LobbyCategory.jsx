@@ -9,6 +9,28 @@ import {
 export default function LobbyCategory(props) {
     const [loading, setLoading] = React.useState()
     const [dropdownOpen, setDropdownOpen] = React.useState()
+    const [currentFilter, setCurrentFilter] = React.useState(
+        {
+            "title": "Fitlres",
+            "action": ""
+        }
+    )
+    const [filter, setFilter] = React.useState(
+        [
+            {
+                "title" : "Difficulté croissante",
+                "action": "asc"
+            },
+            {
+                "title" : "Difficulté décroissante",
+                "action": "desc"
+            }
+        ]
+    )
+
+    const handleOnClickFilter = () => {
+        console.log("test")
+    }
     
     return (
     <div className="column">
@@ -24,14 +46,16 @@ export default function LobbyCategory(props) {
                 >
                     {props.category.charAt(0).toUpperCase() + props.category.slice(1)}
                 </div>
-                <Dropdown isOpen={dropdownOpen} toggle={() => setDropdownOpen(!dropdownOpen)}>
-                    <DropdownToggle caret>Filtres</DropdownToggle>
-                    <DropdownMenu {...props}>
-                        <DropdownItem>Difficulté croissante</DropdownItem>
-                        <DropdownItem>Difficulté décroissante</DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
+                
             </h1>
+            <Dropdown isOpen={dropdownOpen} toggle={() => setDropdownOpen(!dropdownOpen)}>
+                <DropdownToggle caret style={{backgroundColor:"#a899e7"}}>Filtres</DropdownToggle>
+                <DropdownMenu {...props} style={{backgroundColor:"#e2ddf7"}}>
+                    {filter.map((elem, _) => {
+                        <DropdownItem onCLick={() => handleOnClickFilter(elem.action)}>{elem.title}</DropdownItem>
+                    })}
+                </DropdownMenu>
+            </Dropdown>
         </div>
     </div>
     )
