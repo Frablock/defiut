@@ -46,7 +46,7 @@ VALUES (
     (
         5,
         'Pierre',
-        'NOé',
+        'Noé',
         'noe.pierre@example.com',
         'password3',
         0,

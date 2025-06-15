@@ -43,5 +43,5 @@ endif
 
 clean_start_dev: clear start_dev
 
-php:
-docker exec -it defiut-php-1 "/bin/bash"
+bash:
+	docker exec -it defiut-php-1 "/bin/bash"
