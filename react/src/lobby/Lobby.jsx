@@ -36,7 +36,7 @@ export default function Lobby(props) {
                     <ListGroup className="mx-4 mb-4 mb-md-0" style={{width:"400px", maxWidth: "100%"}}>
                         {
                             Array.from({ length: 5 }, (_, i) => (
-                                <HandleListGroupItem index={i} props>
+                                <HandleListGroupItem index={i} props isDarkMode={props.isDarkMode}>
                                     {loading ? 
                                     <Placeholder xs={6}/> 
                                     : 
@@ -54,7 +54,7 @@ export default function Lobby(props) {
                     <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
                         {
                             Array.from({ length: 5 }, (_, i) => (
-                                <HandleListGroupItem index={i} props>
+                                <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
                                     {loading ? 
                                     <Placeholder xs={6}/> 
                                     : 
@@ -73,7 +73,7 @@ export default function Lobby(props) {
     )
 }
 
-function HandleListGroupItem({index, children, ...props}){
+function HandleListGroupItem({index, children, isDarkMode}){
     const [hoveredItem, setHoveredItem] = React.useState(null)
     const isHovered = hoveredItem === index
     
@@ -84,9 +84,9 @@ function HandleListGroupItem({index, children, ...props}){
             tag="a"
             className="shadow"
             style={{
-                backgroundColor: isHovered ? '#4625ba' : (props.isDarkMode ? "#a899e7" : "#e2ddf7"),
+                backgroundColor: isHovered ? '#4625ba' : (isDarkMode ? "#a899e7" : "#e2ddf7"),
                 transform: isHovered ? 'scale(1.02)' : 'scale(1)',
-                transition: 'all 0.2s ease',
+                transition: 'transform 0.2s ease !important',
                 cursor: 'pointer',
                 color: isHovered ? "white" : "black"
             }}

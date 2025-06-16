@@ -121,11 +121,11 @@ export default function LobbyCategory(props) {
                 })}
             </div>
         </div>
-        <div className="w-100 d-flex flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-center"
+        <div className="w-100 d-flex pb-5 px-4 flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-center"
             style={{height:`calc(100vh - ${96+viewSize}px)`}}
         >
             {
-                Array.from({ length: 3 }, (_, index) => (
+                Array.from({ length: 12 }, (_, index) => (
                     <div className=" d-flex flex-column h-auto w-auto p-3 shadow" style={{backgroundColor:"#e2ddf7", borderRadius:"25px", minWidth:"440px", maxWidth:"500px"}}>
                         <div className="d-flex flex-row gap-3">
                             <Placeholder key={index} animation={"glow"}>
