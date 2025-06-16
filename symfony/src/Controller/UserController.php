@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,7 +42,7 @@ final class UserController extends AbstractController
         $password = $request->request->get('password');
 
         if (!$usermail || !$password) {
-            return new JsonResponse(['error' => 'Missing username or password'], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing username or password'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -56,7 +57,7 @@ final class UserController extends AbstractController
             }
 
             // Generate token
-            $token = md5($usermail).".".bin2hex(openssl_random_pseudo_bytes(80));//$this->jwtManager->create($user);
+            $token = md5($usermail) . "." . bin2hex(openssl_random_pseudo_bytes(80)); //$this->jwtManager->create($user);
 
             // adding the token to the db
             $user->setToken($token);
@@ -66,9 +67,9 @@ final class UserController extends AbstractController
 
             $entityManager->flush();
 
-            return new JsonResponse(['token' => $token, 'expirationDate' => $date->format('Y-m-d')], JsonResponse::HTTP_OK);
+            return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['token' => $token, 'expirationDate' => $date->format('Y-m-d')]], JsonResponse::HTTP_OK);
         } catch (AuthenticationException $e) {
-            return new JsonResponse(['error' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -89,11 +90,11 @@ final class UserController extends AbstractController
         // Extract token from Authorization header
         $token = $request->headers->get('Authorization');
         if (!$token) {
-            return new JsonResponse(['error' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         if (!$usermail || !$password) {
-            return new JsonResponse(['error' => 'Missing username or password'], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing username or password'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -111,9 +112,9 @@ final class UserController extends AbstractController
             $user->setMotDePasse(password_hash($password, PASSWORD_ARGON2ID));
             $entityManager->flush();
 
-            return new JsonResponse(['changed_password' => 'ok'], JsonResponse::HTTP_OK);
+            return new JsonResponse(['error' => false, 'data' => ['changed_password' => 'ok'], 'error_message' => ""], JsonResponse::HTTP_OK);
         } catch (AuthenticationException $e) {
-            return new JsonResponse(['error' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -126,19 +127,19 @@ final class UserController extends AbstractController
         // Extract token from Authorization header
         $token = $request->headers->get('Authorization');
         if (!$token) {
-            return new JsonResponse(['error' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         $user = $this->userRepository->findOneByToken($token);
 
         // Generate token
-        $token = bin2hex(openssl_random_pseudo_bytes(100));//$this->jwtManager->create($user);
+        $token = bin2hex(openssl_random_pseudo_bytes(100)); //$this->jwtManager->create($user);
 
         // adding the token to the db
         $user->setToken($token);
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Logged out successfully'], JsonResponse::HTTP_OK);
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => 'Logged out successfully']], JsonResponse::HTTP_OK);
     }
 
     /**
@@ -150,10 +151,10 @@ final class UserController extends AbstractController
         // Extract token from Authorization header
         $token = $request->headers->get('Authorization');
         if (!$token) {
-            return new JsonResponse(['error' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         $user = $this->userRepository->findOneByToken($token);
-        return new JsonResponse(['message' => $user], JsonResponse::HTTP_OK);
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => $user]], JsonResponse::HTTP_OK);
     }
 }
