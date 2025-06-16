@@ -5,7 +5,8 @@ INSERT INTO Utilisateur (
         mail,
         mot_de_passe,
         is_verified,
-        roles
+        roles,
+        score_total
     )
 VALUES (
         1,
@@ -13,7 +14,8 @@ VALUES (
         'baptiste.guerni@example.com',
         'password1',
         0,
-        '[]'
+        '[]',
+        4120
     ),
     (
         2,
@@ -21,7 +23,8 @@ VALUES (
         'awen.bouillis@example.com',
         'password2',
         0,
-        '[]'
+        '[]',
+        1610
     ),
     (
         3,
@@ -29,7 +32,8 @@ VALUES (
         'francois.patinec@defiut.com',
         '$argon2id$v=19$m=16,t=2,p=1$NEt1YXRjSTA4ZFJsaTRxcg$1PWBiMiPnhieLJs/yjfo0A',
         0,
-        '[]'
+        '[]',
+        4980
     ),
     (
         4,
@@ -37,7 +41,8 @@ VALUES (
         'aime.raphael@example.com',
         'password3',
         0,
-        '[]'
+        '[]',
+        760
     ),
     (
         5,
@@ -45,7 +50,8 @@ VALUES (
         'noe.pierre@example.com',
         'password3',
         0,
-        '[]'
+        '[]',
+        2120
     ),
     (
         6,
@@ -54,6 +60,34 @@ VALUES (
         'password3',
         0,
         '[]',
+        2490
+    ),
+    (
+        7,
+        'Gabin LEGRAND',
+        'gabin.legrand@defiut.com',
+        'password3',
+        0,
+        '[]',
+        3340
+    ),
+    (
+        8,
+        'Camille LE BRECH',
+        'camille.lb@defiut.com',
+        'password3',
+        0,
+        '[]',
+        2900
+    ),
+    (
+        9,
+        'Gabriel ZENSEN DA SILVA',
+        'gabriel.zensen@defiut.com',
+        'password3',
+        0,
+        '[]',
+        2830
     );
 
 -- Ajout users pour tester le leaderboard
