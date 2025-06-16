@@ -39,7 +39,7 @@ def test_endpoint(url, expected_keys, expected_data=None, method='GET', payload=
         data = response.json()
 
         # Vérifier les clés
-        missing_keys = [key for key in expected_keys if key not in data]
+        missing_keys = [key for key in expected_keys if key not in data["data"]]
         if missing_keys:
             print(f"Error: Missing keys in response for {url}: {missing_keys}")
             return False
@@ -47,7 +47,7 @@ def test_endpoint(url, expected_keys, expected_data=None, method='GET', payload=
         # Vérifier les valeurs si expected_data est fourni
         if expected_data:
             for key, value in expected_data.items():
-                if key in data and data[key] != value:
+                if key in data["data"] and data["data"][key] != value:
                     print(f"Error: For {url}, expected {key} to be {value}, got {data[key]}")
                     return False
 

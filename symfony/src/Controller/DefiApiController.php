@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Defi;
-use App\Entity\User;
 use App\Entity\DefiFichier;
 use App\Repository\DefiRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,18 +13,28 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use App\Repository\UserRepository;
+use App\Entity\User;
 
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
+use OpenApi\Attributes as OA;
 
 #[Route('/api/defis', name: 'api_defi_')]
 class DefiApiController extends AbstractController
 {
     public function __construct(
         private readonly DefiRepository $defiRepository,
-        private readonly SerializerInterface $serializer
+        private readonly SerializerInterface $serializer,
+        private readonly UserRepository $userRepository,
     ) {}
 
 
     #[Route('', name: 'list', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Return a list of the defis between start_id and start_id + 10'
+    )]
     public function list(Request $request): JsonResponse
     {
         $startTime = microtime(true);
@@ -53,14 +62,26 @@ class DefiApiController extends AbstractController
         error_log("Total time: " . ($endTime - $startTime) . "s");
         error_log("Repository time: " . ($afterRepo - $beforeRepo) . "s");
         error_log("Serializer time: " . ($endTime - $beforeSerial) . "s");
-        return new JsonResponse($data, json: true);
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => json_decode($data)], JsonResponse::HTTP_OK);
     }
 
-    
+
 
     #[Route('/try_key', name: 'try_key', methods: ['POST'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Allow the user to try a key for a defi'
+    )]
     public function try_key(Request $request): JsonResponse
     {
+
+        // Extract token from Authorization header
+        $token = $request->headers->get('Authorization');
+        if (!$token) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userRepository->findOneByToken($token);
 
         // Retrieve parameters from the request body (JSON or form data)
         $id = $request->request->get('id') ?? json_decode($request->getContent(), true)['id'] ?? null;
@@ -69,18 +90,17 @@ class DefiApiController extends AbstractController
         // Retrieve the Defi by ID
         $defi = $this->defiRepository->find($id);
         if (!$defi) {
-            return new JsonResponse(['error' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => true, 'error_message' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         // Get the current user
-        $user = $this->getUser();
         if (!$user instanceof User) {
-            return new JsonResponse(['error' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         // Check if the user has already completed this Defi
         if ($user->getDefis()->contains($defi)) {
-            return new JsonResponse(['error' => 'Defi is already done'], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => true, 'error_message' => 'Defi is already done'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Verify the provided key
@@ -96,23 +116,23 @@ class DefiApiController extends AbstractController
 
             // Serialize and return success response
             $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
-            return new JsonResponse($data, JsonResponse::HTTP_OK, [], true);
+            return new JsonResponse(['error' => false, 'error_message' => '', 'data' => json_decode($data)], JsonResponse::HTTP_OK, [], true);
         }
 
         // Delay response to prevent brute force attacks
         sleep(2);
-        return new JsonResponse(['error' => 'Incorrect key'], JsonResponse::HTTP_UNAUTHORIZED);
+        return new JsonResponse(['error' => true, 'error_message' => 'Incorrect key'], JsonResponse::HTTP_UNAUTHORIZED);
     }
 
     #[Route('/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
     public function getLeftMenuCategories(Request $request): JsonResponse
     {
         $categories = array(
-            ["title"=>"Nos défis",      "img" => "liens de l'image", "url" => "/defis"], 
-            ["title"=>"Alorithmique",   "img" => "liens de l'image", "url" => "/alorithmique"],
-            ["title"=>"Reverse",        "img" => "liens de l'image", "url" => "/reverse"],
-            ["title"=>"Web",            "img" => "liens de l'image", "url" => "/web"],
-            ["title"=>"Reverse2",        "img" => "liens de l'image", "url" => "/reverse2"],
+            ["title" => "Nos défis",      "img" => "liens de l'image", "url" => "/defis"],
+            ["title" => "Alorithmique",   "img" => "liens de l'image", "url" => "/alorithmique"],
+            ["title" => "Reverse",        "img" => "liens de l'image", "url" => "/reverse"],
+            ["title" => "Web",            "img" => "liens de l'image", "url" => "/web"],
+            ["title" => "Reverse2",        "img" => "liens de l'image", "url" => "/reverse2"],
         ); // Asset de test
         return new JsonResponse(['categories' => $categories], JsonResponse::HTTP_OK);
     }
@@ -124,10 +144,10 @@ class DefiApiController extends AbstractController
         $defi = $this->defiRepository->find($id);
 
         if (!$defi) {
-            return new JsonResponse(['error' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => true, 'error_message' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
-        return new JsonResponse($data, json: true);
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => json_decode($data)], JsonResponse::HTTP_OK);
     }
 }
