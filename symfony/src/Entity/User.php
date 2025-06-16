@@ -3,6 +3,7 @@
 // src/Entity/User.php
 namespace App\Entity;
 
+use App\Repository\UserRepository;
 use Doctrine\Collections\ArrayCollection;
 use Doctrine\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
