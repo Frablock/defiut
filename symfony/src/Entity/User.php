@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 use DateTime;
 
-#[ORM\Entity] //(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'Utilisateur')]
 #[UniqueEntity(fields: ['mail'], message: 'Il y a déjà un compte avec ce mail')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
