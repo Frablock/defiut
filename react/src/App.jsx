@@ -17,6 +17,8 @@ export default function App(props) {
     const [showLeaderboard, setShowLeaderboard] = useState(true);
     const [unmount, setUnmount] = useState(false);
     const [category, setCategory] = useState(false);
+    const navbarRef = React.useRef(null);
+    const footerRef = React.useRef(null);
 
     const navigateTo = (url) => {
         if(location.pathname != url){
@@ -27,20 +29,19 @@ export default function App(props) {
                 setUnmount(false)
             }, 150);
         }
-        
     }
 
     return (
         <Fade className='d-flex flex-column h-100' 
             style={{backgroundColor: isDarkMode ? "#434343" : "#f0f0f0", transition: "all 0.8s"}}
         >
-            <AppNavbar {...{navigateTo,setDarkMode, isDarkMode, isLogedIn}}/>
+            <AppNavbar {...{navigateTo,setDarkMode, isDarkMode, isLogedIn, navbarRef}}/>
             <div className='d-flex flex-row justify-content-between h-100'>
                 <LeftNavigation {...{showLeftNavigation, setShowLeftNavigation, isDarkMode, navigateTo, category, setCategory}}/>
-                <RoutesDispatcher {...{showLeftNavigation, setShowLeftNavigation, showLeaderboard, setShowLeaderboard, isLogedIn, isDarkMode, unmount, setUnmount, navigateTo, category}}/>
+                <RoutesDispatcher {...{navbarRef, footerRef, showLeftNavigation, setShowLeftNavigation, showLeaderboard, setShowLeaderboard, isLogedIn, isDarkMode, unmount, setUnmount, navigateTo, category}}/>
                 <Leaderboard {...{showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo}}/>
             </div>
-            <AppFooter {...{isDarkMode, navigateTo}} />
+            <AppFooter {...{isDarkMode, navigateTo, footerRef}} />
         </Fade>
     );
 }

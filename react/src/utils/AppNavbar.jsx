@@ -14,6 +14,7 @@ function AppNavbar(props) {
     backgroundColor: props.isDarkMode ? "#535353" : "#a899e7",
     transition: "background-color 0.8s ease, opacity 0.8s"
   }}
+  ref={props.navbarRef}
 >
     <div style={{cursor:"pointer"}} onClick={() => props.navigateTo("/lobby")}>  
     <img

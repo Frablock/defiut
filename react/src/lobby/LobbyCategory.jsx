@@ -29,16 +29,38 @@ export default function LobbyCategory(props) {
         ]
     )
     const [tags, setTags] = React.useState([])
-    const headerRef = React.useRef();
+    const [viewSize, setViewSize] = React.useState("0");
+    const headerRef = React.useRef(null);
+
+    React.useEffect(() => {
+        if (!props.footerRef?.current || !props.navbarRef?.current || !headerRef?.current) return;
+
+        const calculateSize = () => {
+            const footerHeight = props.footerRef.current.offsetHeight;
+            const navbarHeight = props.navbarRef.current.offsetHeight;
+            setViewSize(footerHeight + navbarHeight + headerRef.current.offsetHeight );
+        };
+
+        calculateSize();
+
+        const resizeObserver = new ResizeObserver(calculateSize);
+        resizeObserver.observe(props.footerRef.current);
+        resizeObserver.observe(props.navbarRef.current);
+        resizeObserver.observe(headerRef.current);
+
+
+        return () => resizeObserver.disconnect();
+    }, [props.footerRef?.current, props.navbarRef?.current]);
+
 
     const handleOnClickFilter = (elem) => {
-        console.log("test")
+        console.log(viewSize)
     }
 
     const handleTagsSelected = () => {
         if (inputValue.trim() !== "" && !tags.includes(inputValue.trim())) {
             setTags([...tags, inputValue.trim()]);
-            setInputValue(""); // Clear input after adding
+            setInputValue("");
         }
     }
 
@@ -49,7 +71,7 @@ export default function LobbyCategory(props) {
     
     return (
     <div className="d-flex flex-column h-100">
-        <div className="row my-5 gap-2" style={{ flexShrink: 0 }}>
+        <div ref={headerRef} className="row my-5 gap-2" style={{ flexShrink: 0 }}>
             <div 
                 className="transition w-auto" 
                 style={{
@@ -99,8 +121,8 @@ export default function LobbyCategory(props) {
                 })}
             </div>
         </div>
-        <div className="w-100 d-flex flex-row flex-wrap gap-5 overflow-scroll" 
-            style={{maxHeight:"calc(100% - 0px) "}}
+        <div className="w-100 d-flex flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-center"
+            style={{height:`calc(100vh - ${96+viewSize}px)`}}
         >
             {
                 Array.from({ length: 3 }, (_, index) => (

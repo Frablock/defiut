@@ -9,6 +9,7 @@ export default function AppFooter(props) {
         transition: "background-color 0.8s ease, opacity 0.8s",
         height:"75px"
       }}
+      ref={props.footerRef}
     >
       <div className="text-decoration-underline transition" style={{cursor:"pointer", color: props.isDarkMode ? "white" : "black"}} onClick={() => props.navigateTo("/legal")}>
           Mentions légales
