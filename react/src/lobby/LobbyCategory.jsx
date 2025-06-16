@@ -1,17 +1,14 @@
 import React from "react"
 import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   Input,
   Badge,
+  Placeholder,
 } from 'reactstrap';
 import SelectableDropdown from "../utils/SelectableDropdown";
 import SVGDispatcher from "../utils/Utils";
 
 export default function LobbyCategory(props) {
-    const [loading, setLoading] = React.useState()
+    const [loading, setLoading] = React.useState(true)
     const [dropdownOpen, setDropdownOpen] = React.useState()
     const [inputValue, setInputValue] = React.useState("") // Add this state
     const [filter, setFilter] = React.useState(
@@ -23,10 +20,16 @@ export default function LobbyCategory(props) {
             {
                 "title" : "Difficulté décroissante",
                 "action": "desc"
+            },
+            {
+                "title": "Aucun",
+                "action": "",
+                "separator": "true"
             }
         ]
     )
     const [tags, setTags] = React.useState([])
+    const headerRef = React.useRef();
 
     const handleOnClickFilter = (elem) => {
         console.log("test")
@@ -45,8 +48,8 @@ export default function LobbyCategory(props) {
     }
     
     return (
-    <div className="column">
-        <div className="row my-5 gap-2">
+    <div className="d-flex flex-column h-100">
+        <div className="row my-5 gap-2" style={{ flexShrink: 0 }}>
             <div 
                 className="transition w-auto" 
                 style={{
@@ -96,9 +99,79 @@ export default function LobbyCategory(props) {
                 })}
             </div>
         </div>
+        <div className="w-100 d-flex flex-row flex-wrap gap-5 overflow-scroll" 
+            style={{maxHeight:"calc(100% - 0px) "}}
+        >
+            {
+                Array.from({ length: 3 }, (_, index) => (
+                    <div className=" d-flex flex-column h-auto w-auto p-3 shadow" style={{backgroundColor:"#e2ddf7", borderRadius:"25px", minWidth:"440px", maxWidth:"500px"}}>
+                        <div className="d-flex flex-row gap-3">
+                            <Placeholder key={index} animation={"glow"}>
+                                <Placeholder key={index} style={{height:"110px", width:"110px", borderRadius:"25px"}} />
+                            </Placeholder>
+                            <div className="d-flex flex-column w-100">
+                                <div className="d-flex flex-row gap-2 justify-content-between w-100">
+                                    <div className="w-auto h-auto" style={{fontSize:"15px"}}>
+                                        <Placeholder animation="wave" tag="p" style={{width:"100px"}}>
+                                            <Placeholder xs={12} />
+                                        </Placeholder>
+                                    </div>
+                                    <div className="w-auto h-auto">
+                                        {Array.from({length: 5}, () => (
+                                            <>
+                                                <i className="bi-star"></i>
+                                            </>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="row gap-2 ms-1">
+                                    {Array.from({length: 2}, ((_, index) => (
+                                        <Badge pill key={index} className="w-auto h-auto px-4 shadow" style={{fontSize:"15px", backgroundColor:"#a899e7"}}>
+                                            <Placeholder className="h-auto mb-1" animation="wave" tag="p" style={{width:"80px"}}>
+                                                <Placeholder className="h-auto" xs={12} />
+                                            </Placeholder>
+                                        </Badge>
+                                    )))}
+                                </div>
+                            </div>
+                        </div>
+                        {loading ? 
+                        <Placeholder className="h-auto mb-1 mt-2" animation="wave" tag="p" style={{width:"140px"}}>
+                            <Placeholder className="h-auto" xs={12} />
+                        </Placeholder>
+                        :
+                        <>
+                        </>
+                        }
+                        <hr/>
+                        <div className="d-flex flex-column align-items-center">
+                            <Placeholder className="h-auto mb-1" animation="wave" tag="p" style={{width:"400px"}}>
+                                <Placeholder className="h-auto" xs={12} />
+                                <Placeholder className="h-auto" xs={12} />
+                                <Placeholder className="h-auto" xs={12} />
+                            </Placeholder>
+                            <div className="d-flex flex-row justify-content-center align-items-center">
+                                Points : 
+                                    {
+                                    loading ? 
+                                    <Placeholder className="h-auto mb-1 ms-2" animation="wave" tag="p" style={{width:"40px"}}>
+                                        <Placeholder className="h-auto" xs={12} />
+                                    </Placeholder>
+                                    :
+                                    <>
+                                    </>
+                                }
 
-        <div>
-            
+                            </div>
+                        </div>
+                        <hr/>
+                        <div className="d-flex flex-row gap-2 justify-content-center">
+                            Cliquez pour voir le défis
+                            <i class="bi bi-mouse"></i>
+                        </div>
+                    </div>
+                ))
+            }
         </div>
     </div>
     )

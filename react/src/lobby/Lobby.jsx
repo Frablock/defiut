@@ -26,7 +26,7 @@ export default function Lobby(props) {
     return (
         <>
         {category ? 
-            <Fade in={!props.unmount} className="w-100 mx-5 justify-content-start">
+            <Fade in={!props.unmount} className="w-100 h-100 mx-5 justify-content-start">
                 <LobbyCategory {...props} {...{category}} />
             </Fade>
             :

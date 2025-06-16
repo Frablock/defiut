@@ -13,7 +13,12 @@ export default function SelectableDropdown({className, items, onClick}) {
   const toggle = () => setDropdownOpen(!dropdownOpen);
 
   const handleSelect = (item) => {
+    if(item.title == "Aucun"){
+      setSelectedItem("Filtres");
+    }else{
     setSelectedItem(item.title);
+
+    }
     setDropdownOpen(false);
     onClick(item);
   };
@@ -25,12 +30,15 @@ export default function SelectableDropdown({className, items, onClick}) {
       </DropdownToggle>
       <DropdownMenu className='shadow' style={{backgroundColor:"#e2ddf7"}}>
         {items.map((item, index) => (
-          <DropdownItem 
-            key={index}
-            onClick={() => handleSelect(item)}
-          >
-            {item.title}
-          </DropdownItem>
+          <>
+            {item.separator && <DropdownItem divider />}
+            <DropdownItem 
+              key={index}
+              onClick={() => handleSelect(item)}
+            >
+              {item.title}
+            </DropdownItem>
+          </>
         ))}
       </DropdownMenu>
     </Dropdown>
