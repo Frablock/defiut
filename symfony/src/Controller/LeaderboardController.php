@@ -28,26 +28,39 @@ class LeaderboardController extends AbstractController
     #[Route('/api/leaderboard', name: 'api_leaderboard', methods: ['GET'])]
     public function getLeaderboard(EntityManagerInterface $em): JsonResponse
     {
-        // Get user repository from entity manager
-        $userRepository = $em->getRepository(User::class);
-        
-        // Fetch top 10 users using custom repository method
-        $users = $userRepository->findTop10ByScore();
-        
-        // Build response array with necessary user information
-        $leaderboard = [];
-        foreach ($users as $index => $user) {
-            $leaderboard[] = [
-                'ranking' => $index + 1,                    // Position in leaderboard 
-                'userId' => $user->getId(),                 // Unique user identifier
-                'username' => $user->getUsername(),         // User's display name
-                'email' => $user->getMail(),                // User's email address
-                'totalScore' => $user->getScoreTotal()      // Total points accumulated in CTF
-            ];
+        try {
+            // Get user repository from entity manager
+            $userRepository = $em->getRepository(User::class);
+            
+            // Fetch top 10 users using custom repository method
+            $users = $userRepository->findTop10ByScore();
+            
+            // Build response array with necessary user information
+            $leaderboard = [];
+            foreach ($users as $index => $user) {
+                $leaderboard[] = [
+                    'ranking' => $index + 1,                    // Position in leaderboard 
+                    'userId' => $user->getId(),                 // Unique user identifier
+                    'username' => $user->getUsername(),         // User's display name
+                    'email' => $user->getMail(),                // User's email address
+                    'totalScore' => $user->getScoreTotal()      // Total points accumulated in CTF
+                ];
+            }
+            
+            
+            return $this->json([
+                'error' => false,
+                'data' => $leaderboard,
+                'error_message' => ''
+            ]);
+        } catch (\Throwable $e) {
+            
+            return $this->json([
+                'error' => true,
+                'data' => null,
+                'error_message' => "Une erreur s'est produite dans le LeaderBoard."
+            ], 500);
         }
-        
-        // Return JSON response with leaderboard data
-        return $this->json($leaderboard);
     }
 
     /**
@@ -62,144 +75,44 @@ class LeaderboardController extends AbstractController
     #[Route('/api/leaderboard/user/{id}', name: 'api_leaderboard_user', methods: ['GET'])]
     public function getUserRanking(int $id, EntityManagerInterface $em): JsonResponse
     {
-        // Get user repository from entity manager
-        $userRepository = $em->getRepository(User::class);
-        
-        // Find user by their ID
-        $user = $userRepository->find($id);
-        
-        // Check if user exists in database
-        if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+        try {
+            // Get user repository from entity manager
+            $userRepository = $em->getRepository(User::class);
+            
+            // Find user by their ID
+            $user = $userRepository->find($id);
+            
+            // Check if user exists in database
+            if (!$user) {
+                return $this->json([
+                    'error' => true,
+                    'data' => null,
+                    'error_message' => 'User not found'
+                ], 404);
+            }
+            
+            // Calculate user's position in general ranking
+            $ranking = $userRepository->getUserRanking($user);
+            
+            // Return standardized JSON response with user ranking data
+            return $this->json([
+                'error' => false,
+                'data' => [
+                    'userId' => $user->getId(),                 // Unique user identifier
+                    'username' => $user->getUsername(),         // User's display name
+                    'email' => $user->getMail(),                // User's email address
+                    'ranking' => $ranking,                      // Position in general ranking
+                    'totalScore' => $user->getScoreTotal()      // Total points accumulated in CTF
+                ],
+                'error_message' => ''
+            ]);
+        } catch (\Throwable $e) {
+            // Return standardized JSON response on error
+            return $this->json([
+                'error' => true,
+                'data' => null,
+                'error_message' => "Une erreur s'est produite dans le LeaderBoard."
+            ], 500);    
         }
-        
-        // Calculate user's position in general ranking
-        $ranking = $userRepository->getUserRanking($user);
-        
-        // Return user information with their current ranking
-        return $this->json([
-            'userId' => $user->getId(),                 // Unique user identifier
-            'username' => $user->getUsername(),         // User's display name
-            'email' => $user->getMail(),                // User's email address
-            'ranking' => $ranking,                      // Position in general ranking
-            'totalScore' => $user->getScoreTotal()      // Total points accumulated in CTF
-        ]);
     }
-    #[Route('/api/test-leaderboard', name: 'api_test-leaderboard', methods: ['GET'])]
-    public function testLeaderboard(): JsonResponse
-{
-    // Données JSON de test avec plus de 10 utilisateurs et rankings désordonnés
-    $mockData = [
-        [
-            "ranking" => 15,
-            "userId" => 15,
-            "username" => "guest",
-            "email" => "guest@ctf.com",
-            "totalScore" => 800
-        ],
-        [
-            "ranking" => 6,
-            "userId" => 11,
-            "username" => "reverse_engineer",
-            "email" => "kate@ctf.com",
-            "totalScore" => 3500
-        ],
-        [
-            "ranking" => 10,
-            "userId" => 12,
-            "username" => "flag_master",
-            "email" => "leo@ctf.com",
-            "totalScore" => 4200
-        ],
-        [
-            "ranking" => 1,
-            "userId" => 5,
-            "username" => "flag_hunter",
-            "email" => "eve@ctf.com",
-            "totalScore" => 1400
-        ],
-        [
-            "ranking" => 7,
-            "userId" => 1,
-            "username" => "hacker_pro",
-            "email" => "alice@ctf.com",
-            "totalScore" => 2500
-        ],
-        [
-            "ranking" => 5,
-            "userId" => 4,
-            "username" => "web_hacker",
-            "email" => "diana@ctf.com",
-            "totalScore" => 3200
-        ],
-        [
-            "ranking" => 13,
-            "userId" => 13,
-            "username" => "root",
-            "email" => "root@ctf.com",
-            "totalScore" => 1000
-        ],
-        [
-            "ranking" => 3,
-            "userId" => 9,
-            "username" => "crypto_wizard",
-            "email" => "irene@ctf.com",
-            "totalScore" => 3600
-        ],
-        [
-            "ranking" => 2,
-            "userId" => 2,
-            "username" => "cyber_ninja",
-            "email" => "bob@ctf.com",
-            "totalScore" => 2200
-        ],
-        [
-            "ranking" => 9,
-            "userId" => 6,
-            "username" => "binary_ninja",
-            "email" => "frank@ctf.com",
-            "totalScore" => 2800
-        ],
-        [
-            "ranking" => 14,
-            "userId" => 14,
-            "username" => "admin",
-            "email" => "admin@ctf.com",
-            "totalScore" => 900
-        ],
-        [
-            "ranking" => 4,
-            "userId" => 7,
-            "username" => "forensics_expert",
-            "email" => "grace@ctf.com",
-            "totalScore" => 2500
-        ],
-        [
-            "ranking" => 8,
-            "userId" => 8,
-            "username" => "pwn_master",
-            "email" => "henry@ctf.com",
-            "totalScore" => 2200
-        ],
-        [
-            "ranking" => 11,
-            "userId" => 10,
-            "username" => "exploit_king",
-            "email" => "jack@ctf.com",
-            "totalScore" => 3800
-        ],
-        [
-            "ranking" => 12,
-            "userId" => 3,
-            "username" => "code_breaker",
-            "email" => "charlie@ctf.com",
-            "totalScore" => 1800
-        ]
-    ];
-    
-    return $this->json($mockData);
-}
-
-
-
 }
