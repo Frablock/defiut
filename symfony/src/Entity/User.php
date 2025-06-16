@@ -11,12 +11,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
+use DateTime;
 
-#[ORM\Entity]//(repositoryClass: UserRepository::class)]
+#[ORM\Entity] //(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'Utilisateur')]
 #[UniqueEntity(fields: ['mail'], message: 'Il y a déjà un compte avec ce mail')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
-    {
+{
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,13 +42,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', nullable: false)]
     private bool $isVerified = false;
 
-    /**
     #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'user')]
     private $defis;
 
     #[ORM\OneToMany(targetEntity: RecentDefi::class, mappedBy: 'user')]
     private $recentDefis;
-    **/
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
@@ -57,6 +56,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $username = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $tokenExpirationDate = null;
 
 
     // Getters et setters
@@ -252,7 +257,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // Optional setter if needed
     public function setEmail(string $email): void
     {
-        $this->mail = $mail;
+        $this->mail = $email;
     }
 
     public function getLastTryDate(): ?\DateTimeInterface
@@ -275,6 +280,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpirationDate(): ?\DateTimeInterface
+    {
+        return $this->tokenExpirationDate;
+    }
+
+    public function isTokenvalid(): bool
+    {
+        return $this->tokenExpirationDate > new DateTime();
+    }
+
+    public function setTokenExpirationDate(?\DateTimeInterface $tokenExpirationDate): static
+    {
+        $this->tokenExpirationDate = $tokenExpirationDate;
 
         return $this;
     }
