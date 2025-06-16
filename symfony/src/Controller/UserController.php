@@ -38,8 +38,10 @@ final class UserController extends AbstractController
     public function login(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Extract credentials from request
-        $usermail = $request->request->get('usermail');
-        $password = $request->request->get('password');
+        $data = json_decode($request->getContent(), true);
+
+        $usermail = $data['usermail'] ?? null;
+        $password = $data['password'] ?? null;
 
         if (!$usermail || !$password) {
             return new JsonResponse(['error' => true, 'error_message' => 'Missing username or password'], JsonResponse::HTTP_BAD_REQUEST);
@@ -49,11 +51,11 @@ final class UserController extends AbstractController
             $user = $this->userRepository->findOneByMail($usermail);
 
             if (!$user instanceof User) {
-                throw new AuthenticationException('Invalid credentials');
+                throw new AuthenticationException('Invalid1 credentials');
             }
 
             if (!password_verify($password, $user->getMotDePasse())) {
-                throw new AuthenticationException('Invalid credentials');
+                throw new AuthenticationException('Invalid2 credentials');
             }
 
             // Generate token
@@ -69,7 +71,7 @@ final class UserController extends AbstractController
 
             return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['token' => $token, 'expirationDate' => $date->format('Y-m-d')]], JsonResponse::HTTP_OK);
         } catch (AuthenticationException $e) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'.$e->getMessage()], JsonResponse::HTTP_UNAUTHORIZED);
         }
     }
 

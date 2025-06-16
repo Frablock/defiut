@@ -5,12 +5,12 @@ import {
   Placeholder,
 } from 'reactstrap';
 import SelectableDropdown from "../utils/SelectableDropdown";
-import SVGDispatcher from "../utils/Utils";
+import SVGDispatcher, { sendData } from "../utils/Utils";
 
 export default function LobbyCategory(props) {
     const [loading, setLoading] = React.useState(true)
     const [dropdownOpen, setDropdownOpen] = React.useState()
-    const [inputValue, setInputValue] = React.useState("") // Add this state
+    const [inputValue, setInputValue] = React.useState("")
     const [filter, setFilter] = React.useState(
         [
             {
@@ -52,6 +52,10 @@ export default function LobbyCategory(props) {
         return () => resizeObserver.disconnect();
     }, [props.footerRef?.current, props.navbarRef?.current]);
 
+    React.useEffect(() => {
+        sendData({route:"/defis"})
+    })
+
 
     const handleOnClickFilter = (elem) => {
         console.log(viewSize)
@@ -64,7 +68,6 @@ export default function LobbyCategory(props) {
         }
     }
 
-    // Add delete function
     const handleDeleteTag = (indexToDelete) => {
         setTags(tags.filter((_, index) => index !== indexToDelete));
     }
@@ -121,12 +124,17 @@ export default function LobbyCategory(props) {
                 })}
             </div>
         </div>
-        <div className="w-100 d-flex pb-5 px-4 flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-center"
+        <div className="w-100 d-flex pb-5 px-4 pt-3 flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-center"
             style={{height:`calc(100vh - ${96+viewSize}px)`}}
         >
             {
                 Array.from({ length: 12 }, (_, index) => (
-                    <div className=" d-flex flex-column h-auto w-auto p-3 shadow" style={{backgroundColor:"#e2ddf7", borderRadius:"25px", minWidth:"440px", maxWidth:"500px"}}>
+                    <div 
+                        className=" d-flex flex-column h-auto w-auto p-3 shadow" 
+                        style={{backgroundColor:"#e2ddf7", borderRadius:"25px", minWidth:"440px", maxWidth:"500px", cursor:"pointer", transition: "transform 0.2s"}}
+                        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
                         <div className="d-flex flex-row gap-3">
                             <Placeholder key={index} animation={"glow"}>
                                 <Placeholder key={index} style={{height:"110px", width:"110px", borderRadius:"25px"}} />

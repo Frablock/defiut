@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardBody, CardTitle, CloseButton, Collapse, Fade, Placeholder } from "reactstrap";
+import { sendData } from "./Utils";
 
 export default function Leaderboard(props) {
     const [loading, setLoading] = React.useState(true)
@@ -13,6 +14,15 @@ export default function Leaderboard(props) {
             </Placeholder>
         )
     }
+
+    React.useEffect(() => {
+        sendData({route:'/leaderboard'}).then((data) => {
+            if(!data.error){
+                setData(data.data)
+                setLoading(false)
+            }
+        })
+    },[])
 
     React.useEffect(() => {
         setTimeout(() => {
@@ -39,9 +49,9 @@ export default function Leaderboard(props) {
                             </CardTitle>
                             <CardBody className="d-flex flex-column">
                                 <div className="d-flex flex-row mb-5">
-                                    <Podium className="h-25" number="3" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data.leaderboard[3]["name"]}</div> }</Podium>
-                                    <Podium className="h-75" number="1" zIndex="2" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data.leaderboard[1]["name"]}</div> }</Podium>
-                                    <Podium className="h-50" number="2" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data.leaderboard[2]["name"]}</div> }</Podium>
+                                    <Podium className="h-25" number="3" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data[2]["username"]}</div> }</Podium>
+                                    <Podium className="h-75" number="1" zIndex="2" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{fontWeight:"700",color: props.isDarkMode ? "white" : "black"}}>{data[0]["username"]}</div> }</Podium>
+                                    <Podium className="h-50" number="2" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data[1]["username"]}</div> }</Podium>
                                 </div>
                                 <CardBody className="d-flex flex-column">
                                     {loading ? 
@@ -58,6 +68,18 @@ export default function Leaderboard(props) {
                                     </div>
                                     :
                                     <>
+                                    {
+                                        
+                                        data.map((elem, index) => {
+                                            return(
+                                            <div className="d-flex flex-row justify-content-between">
+                                                {index+1}. {elem.username}
+                                                <div key={index} style={{fontWeight:"700"}}>
+                                                     {elem.total_score}
+                                                </div>
+                                            </div>)
+                                        })
+                                    }
                                     </>}
                                 </CardBody>
                             </CardBody>

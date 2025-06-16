@@ -37,13 +37,10 @@ class LeaderboardController extends AbstractController
             
             // Build response array with necessary user information
             $leaderboard = [];
-            foreach ($users as $index => $user) {
+            foreach ($users as $user) {
                 $leaderboard[] = [
-                    'ranking' => $index + 1,                    // Position in leaderboard 
-                    'userId' => $user->getId(),                 // Unique user identifier
                     'username' => $user->getUsername(),         // User's display name
-                    'email' => $user->getMail(),                // User's email address
-                    'totalScore' => $user->getScoreTotal()      // Total points accumulated in CTF
+                    'total_score' => $user->getScoreTotal()      // Total points accumulated in CTF
                 ];
             }
             
