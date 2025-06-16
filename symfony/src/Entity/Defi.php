@@ -100,7 +100,7 @@ class Defi
 
     public function getUser(): ?string
     {
-        return $this->user->getPrenom()." ".$this->user->getNom();
+        return $this->user->getUsername();
     }
 
     public function getFichiers(): ?Collection

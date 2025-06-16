@@ -1,7 +1,6 @@
 INSERT INTO Utilisateur (
         id,
-        nom,
-        prenom,
+        username,
         mail,
         mot_de_passe,
         is_verified,
@@ -9,8 +8,7 @@ INSERT INTO Utilisateur (
     )
 VALUES (
         1,
-        'GUERNY',
-        'Baptiste',
+        'GUERNY Baptiste',
         'baptiste.guerni@example.com',
         'password1',
         0,
@@ -18,8 +16,7 @@ VALUES (
     ),
     (
         2,
-        'BOUILLIS',
-        'Awen',
+        'BOUILLIS Awen',
         'awen.bouillis@example.com',
         'password2',
         0,
@@ -27,17 +24,15 @@ VALUES (
     ),
     (
         3,
-        'Patinec',
-        'François',
-        'francois.patinec@example.com',
-        'password2',
+        'Patinec François',
+        'francois.patinec@defiut.com',
+        '$argon2id$v=19$m=16,t=2,p=1$NEt1YXRjSTA4ZFJsaTRxcg$1PWBiMiPnhieLJs/yjfo0A', -- password2
         0,
         '[]'
     ),
     (
         4,
-        'AIMÉ',
-        'Raphaël',
+        'AIMÉ Raphaël',
         'aime.raphael@example.com',
         'password3',
         0,
@@ -45,8 +40,7 @@ VALUES (
     ),
     (
         5,
-        'Pierre',
-        'Noé',
+        'Pierre Noé',
         'noe.pierre@example.com',
         'password3',
         0,
@@ -54,8 +48,7 @@ VALUES (
     ),
     (
         6,
-        'MELLION',
-        'Jean-Loup',
+        'MELLION Jean-Loup',
         'jl.mellion@example.com',
         'password3',
         0,

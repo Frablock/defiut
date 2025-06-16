@@ -1,8 +1,7 @@
 -- Tables principales
 CREATE TABLE Utilisateur (
     id INTEGER AUTO_INCREMENT,
-    nom VARCHAR(255) NOT NULL,
-    prenom VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
     mail VARCHAR(255) NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
     score_total INTEGER DEFAULT 0,
@@ -10,9 +9,13 @@ CREATE TABLE Utilisateur (
     last_co DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_verified INTEGER DEFAULT 0,
     roles VARCHAR(255) NOT NULL,
+    token VARCHAR(255),
+    last_try_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    token_expiration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     
     CONSTRAINT pk_utilisateur PRIMARY KEY (id),
-    CONSTRAINT un_utilisateur_mail UNIQUE (mail)
+    CONSTRAINT un_utilisateur_mail UNIQUE (mail),
+    CONSTRAINT un_utilisateur_token UNIQUE (token)
 );
 
 CREATE TABLE Defi (
