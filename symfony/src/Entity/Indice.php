@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 #[ORM\Entity(repositoryClass: 'App\Repository\IndiceRepository')]
 #[ORM\Table(name: 'Indice')]
 class Indice
@@ -16,10 +18,11 @@ class Indice
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Groups(['defi-read'])]
     #[ORM\Column(type: 'text')]
     private string $contenu;
 
-    #[ORM\OneToMany(mappedBy: 'indice', targetEntity: DefiIndice::class)]
+    #[ORM\ManyToMany(targetEntity: Defi::class)]
     private Collection $defiIndices;
 
     public function __construct()

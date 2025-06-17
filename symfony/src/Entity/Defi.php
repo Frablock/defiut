@@ -52,7 +52,9 @@ class Defi
     #[ORM\JoinTable(name: 'Defi_Tag')]
     private Collection $tags;
 
-    #[ORM\OneToMany(mappedBy: 'defi', targetEntity: DefiIndice::class, orphanRemoval: true)]
+    #[Groups(['defi-read'])]
+    #[ORM\ManyToMany(targetEntity: Indice::class)]
+    #[ORM\JoinTable(name: 'Defi_Indice')]
     private Collection $defiIndices;
 
     #[Groups(['defi-read'])]
@@ -137,5 +139,9 @@ class Defi
         }
         return $this;
     }
-        
+    
+    public function getDefiIndices(): ?Collection
+    {
+        return $this->defiIndices;
+    }
 }

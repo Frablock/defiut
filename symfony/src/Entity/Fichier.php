@@ -51,21 +51,4 @@ class Fichier
     {
         return $this->defis;
     }
-
-    public function addDefi(Defi $defi): self
-    {
-        if (!$this->defis->contains($defi)) {
-            $this->defis[] = $defi;
-            $defi->addFichier($this);
-        }
-        return $this;
-    }
-
-    public function removeDefi(Defi $defi): self
-    {
-        if ($this->defis->removeElement($defi)) {
-            $defi->removeFichier($this);
-        }
-        return $this;
-    }
 }

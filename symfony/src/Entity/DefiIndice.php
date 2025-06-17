@@ -5,6 +5,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 #[ORM\Entity(repositoryClass: 'App\Repository\DefiIndiceRepository')]
 #[ORM\Table(name: 'Defi_Indice')]
 #[ORM\UniqueConstraint(name: 'un_defi_indice_ordre', columns: ['defi_id', 'ordre'])]
@@ -15,7 +17,7 @@ class DefiIndice
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Defi $defi;
 
-    #[ORM\Id]
+    #[Groups(['defi-read'])]
     #[ORM\ManyToOne(targetEntity: Indice::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Indice $indice;
