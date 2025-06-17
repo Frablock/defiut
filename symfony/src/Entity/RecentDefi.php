@@ -23,5 +23,19 @@ class RecentDefi
     #[ORM\Column(name: 'date_acces', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTimeInterface $dateAcces;
 
+    public function getDateAcces(): \DateTimeInterface
+    {
+        return $this->dateAcces;
+    }
+
+    public function getDefi(): Defi
+    {
+        return $this->defi;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
     // Getters/setters...
 }
