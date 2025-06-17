@@ -33,46 +33,41 @@ class CategorieController extends AbstractController
     #[Route('/api/defis/get_lobby_categories', name: 'get_lobby_categories', methods: ['GET'])]
     public function getCategories(EntityManagerInterface $em, Request $request): JsonResponse
     {
-        try{
-            $tagRepository = $em->getRepository(Tag::class);
+        $tagRepository = $em->getRepository(Tag::class);
 
-            $tags = $tagRepository->getTop5Tags();
-            $tagsName = [];
-            $recentDefisArray = [];
-            // Build list of tag titles for the response
-            foreach ($tags as $tag) {
-                $tagsName[] = [
-                    'title' => $tag->getNom(),
-                ];
-            }
-
-            $token = $request->headers->get('Authorization');
-            if ($token) {
-                // Find the User by their stored token
-                $user = $em->getRepository(User::class)->findOneByToken($token);
-                if ($user instanceof User) {
-                    // Get the collection of recent challenges for that user
-                    $recentDefis = $user->getRecentDefis();
-                    foreach ($recentDefis as $recentDefi) {
-                        $recentDefisArray[] = [
-                            'title' => $recentDefi->getNom(),
-                            'id'=> $recentDefi->getId()
-                        ];
-                    }
-                }
-            }
-            return new JsonResponse(
-                [
-                    'error'=> false,
-                    'data'=> [
-                        'tags_name' => $tagsName, // Top 5 tag titles
-                        'defis_recents' => $recentDefisArray // Recent challenges for the user (may be empty)
-                    ],
-                ]
-            );
-        }catch(Exception $e){
-
+        $tags = $tagRepository->getTop5Tags();
+        $tagsName = [];
+        $recentDefisArray = [];
+        // Build list of tag titles for the response
+        foreach ($tags as $tag) {
+            $tagsName[] = [
+                'title' => $tag->getNom(),
+            ];
         }
 
+        $token = $request->headers->get('Authorization');
+        if ($token) {
+            // Find the User by their stored token
+            $user = $em->getRepository(User::class)->findOneByToken($token);
+            if ($user instanceof User) {
+                // Get the collection of recent challenges for that user
+                $recentDefis = $user->getRecentDefis();
+                foreach ($recentDefis as $recentDefi) {
+                    $recentDefisArray[] = [
+                        'title' => $recentDefi->getNom(),
+                        'id'=> $recentDefi->getId()
+                    ];
+                }
+            }
+        }
+        return new JsonResponse(
+            [
+                'error'=> false,
+                'data'=> [
+                    'tags_name' => $tagsName, // Top 5 tag titles
+                    'defis_recents' => $recentDefisArray // Recent challenges for the user (may be empty)
+                ],
+            ]
+        );
     }
 }

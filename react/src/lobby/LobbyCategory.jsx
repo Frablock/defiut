@@ -65,11 +65,6 @@ export default function LobbyCategory(props) {
         )
     }, [props.category])
 
-
-    const handleOnClickFilter = (elem) => {
-        console.log(viewSize)
-    }
-
     const handleTagsSelected = () => {
         if (inputValue.trim() !== "" && !tags.includes(inputValue.trim())) {
             setTags([...tags, inputValue.trim()]);
@@ -170,7 +165,7 @@ export default function LobbyCategory(props) {
 }
 
 function HandleDefi({props, loading, index, elem, isDarkMode}){
-    // Extract the defi data (assuming it's the first item in props)
+    // Extract the defi data
     const { nom, description, difficulte, user, tags = [] } = elem || {};
     const pointsRecompense = elem ? elem['points_recompense'] : null
 

@@ -1,5 +1,4 @@
 <?php
-
 // src/Entity/RecentDefi.php
 namespace App\Entity;
 
@@ -16,7 +15,7 @@ class RecentDefi
     private User $user;
 
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: Defi::class)]
+    #[ORM\ManyToOne(targetEntity: Defi::class, inversedBy: 'recentDefis')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Defi $defi;
 

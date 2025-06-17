@@ -1,5 +1,4 @@
 <?php
-
 // src/Entity/User.php
 namespace App\Entity;
 
@@ -42,14 +41,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', nullable: false)]
     private bool $isVerified = false;
 
-    #[ORM\ManyToMany(targetEntity: Defi::class)]
-    #[ORM\JoinTable(name: 'Defi_Valid_Utilisateur')]
-    private Collection $defis_valid;
-
-    #[ORM\ManyToMany(targetEntity: Defi::class)]
-    #[ORM\JoinTable(name: 'Defi_Utilisateur_Recents')]
-    private Collection $recentDefis;
-
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -65,12 +56,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $tokenExpirationDate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userId')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?DefiValidUtilisateur $defiValidUtilisateur = null;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Defi::class, cascade: ['persist', 'remove'])]
+    private Collection $defis;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: RecentDefi::class, cascade: ['persist', 'remove'])]
+    private Collection $recentDefis;
 
     public function __construct()
     {
+        $this->defis = new ArrayCollection();
         $this->recentDefis = new ArrayCollection();
     }
 
@@ -123,7 +117,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-
     public function getScoreTotal(): ?int
     {
         return $this->scoreTotal;
@@ -157,31 +150,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    // Added defis relationship methods
+    public function getDefis(): Collection
+    {
+        return $this->defis;
+    }
+
+    public function addDefi(Defi $defi): self
+    {
+        if (!$this->defis->contains($defi)) {
+            $this->defis->add($defi);
+            $defi->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeDefi(Defi $defi): self
+    {
+        if ($this->defis->removeElement($defi)) {
+            if ($defi->getUser() === $this) {
+                $defi->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    // Fixed recentDefis methods
     public function getRecentDefis(): Collection
     {
         return $this->recentDefis;
     }
 
-    public function addRecentDefi(Defi $recentDefi): self
+    public function addRecentDefi(RecentDefi $recentDefi): self
     {
         if (!$this->recentDefis->contains($recentDefi)) {
-            $this->recentDefis[] = $recentDefi;
+            $this->recentDefis->add($recentDefi);
+            $recentDefi->setUser($this);
         }
         return $this;
     }
 
-        /**
-     * @return Collection|RecentDefi[]
-     */
-    public function getDefisValid(): Collection
+    public function removeRecentDefi(RecentDefi $recentDefi): self
     {
-        return $this->defis_valid;
-    }
-
-    public function addDefiValid(Defi $defi_valid): self
-    {
-        if (!$this->defis_valid->contains($defi_valid)) {
-            $this->defis_valid[] = $defi_valid;
+        if ($this->recentDefis->removeElement($recentDefi)) {
+            if ($recentDefi->getUser() === $this) {
+                $recentDefi->setUser(null);
+            }
         }
         return $this;
     }
@@ -214,7 +228,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 
     /**
      * @see UserInterface
@@ -286,18 +299,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTokenExpirationDate(?\DateTimeInterface $tokenExpirationDate): static
     {
         $this->tokenExpirationDate = $tokenExpirationDate;
-
-        return $this;
-    }
-
-    public function getDefiValidUtilisateur(): ?DefiValidUtilisateur
-    {
-        return $this->defiValidUtilisateur;
-    }
-
-    public function setDefiValidUtilisateur(?DefiValidUtilisateur $defiValidUtilisateur): static
-    {
-        $this->defiValidUtilisateur = $defiValidUtilisateur;
 
         return $this;
     }
