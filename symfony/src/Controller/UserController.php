@@ -96,7 +96,7 @@ final class UserController extends AbstractController
         }
 
         if (!$usermail || !$password || !$new_password) {
-            return new JsonResponse(['error' => true, 'error_message' => "Missing usermail or password" . " aa " . $usermail . " aa " . $password . " aa " . $new_password], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => true, 'error_message' => "Missing usermail or password"], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {

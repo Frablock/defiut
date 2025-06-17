@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Defi;
-use App\Entity\DefiFichier;
 use App\Repository\DefiRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use App\Repository\UserRepository;
 use App\Entity\User;
@@ -72,7 +70,7 @@ class DefiApiController extends AbstractController
         response: 200,
         description: 'Allow the user to try a key for a defi'
     )]
-    public function try_key(Request $request): JsonResponse
+    public function try_key(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
 
         // Extract token from Authorization header
@@ -82,10 +80,14 @@ class DefiApiController extends AbstractController
         }
 
         $user = $this->userRepository->findOneByToken($token);
-
+        
         // Retrieve parameters from the request body (JSON or form data)
-        $id = $request->request->get('id') ?? json_decode($request->getContent(), true)['id'] ?? null;
-        $key = $request->request->get('key') ?? json_decode($request->getContent(), true)['key'] ?? null;
+        $id = json_decode($request->getContent(), true)['id'] ?? null;
+        $key = json_decode($request->getContent(), true)['key'] ?? null;
+
+        if (!$id || !$key) {
+            return new JsonResponse(['error' => true, 'error_message' => "Missing id or key"], JsonResponse::HTTP_BAD_REQUEST);
+        }
 
         // Retrieve the Defi by ID
         $defi = $this->defiRepository->find($id);
@@ -99,7 +101,7 @@ class DefiApiController extends AbstractController
         }
 
         // Check if the user has already completed this Defi
-        if ($user->getDefis()->contains($defi)) {
+        if ($user->getDefisValid()->contains($defi)) {
             return new JsonResponse(['error' => true, 'error_message' => 'Defi is already done'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -109,18 +111,14 @@ class DefiApiController extends AbstractController
             $user->setScoreTotal($user->getScoreTotal() + $defi->getScore());
 
             // Add the Defi to the user's collection
-            $user->addDefi($defi);
+            $user->addDefiValid($defi);
 
             // Persist changes to the database
-            //$this->entityManager->flush();
+            $entityManager->flush();
 
             // Serialize and return success response
-            $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
-            return new JsonResponse(['error' => false, 'error_message' => '', 'data' => json_decode($data)], JsonResponse::HTTP_OK, [], true);
+            return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ["message" => "ok"]], JsonResponse::HTTP_OK);
         }
-
-        // Delay response to prevent brute force attacks
-        sleep(2);
         return new JsonResponse(['error' => true, 'error_message' => 'Incorrect key'], JsonResponse::HTTP_UNAUTHORIZED);
     }
 
@@ -180,7 +178,6 @@ class DefiApiController extends AbstractController
                 'data' => json_decode($data),
                 'error_message' => ''
             ], JsonResponse::HTTP_OK);
-
         } catch (\Throwable $e) {
             return new JsonResponse([
                 'error' => true,

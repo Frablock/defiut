@@ -129,3 +129,22 @@ CREATE TABLE Defi_Utilisateur_Recents (
         ON DELETE CASCADE,
     INDEX idx_date_acces (date_acces)
 );
+
+-- Table des défis résolus
+CREATE TABLE Defi_Valid_Utilisateur (
+    user_id INTEGER NOT NULL,
+    defi_id INTEGER NOT NULL,
+    date_valid DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_defi_valid_utilisateur
+        PRIMARY KEY (user_id, defi_id),
+    CONSTRAINT fk_valid_utilisateur 
+        FOREIGN KEY (user_id) 
+        REFERENCES Utilisateur(id) 
+        ON DELETE CASCADE,
+    CONSTRAINT fk_valid_defi 
+        FOREIGN KEY (defi_id) 
+        REFERENCES Defi(id) 
+        ON DELETE CASCADE,
+    INDEX idx_date_acces (date_valid)
+)

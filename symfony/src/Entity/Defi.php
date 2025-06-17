@@ -144,4 +144,14 @@ class Defi
     {
         return $this->defiIndices;
     }
+
+    public function getKey(): string
+    {
+        return $this->cle;
+    }
+
+    public function getScore(): string
+    {
+        return $this->pointsRecompense;
+    }
 }

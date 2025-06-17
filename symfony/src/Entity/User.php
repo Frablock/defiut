@@ -42,10 +42,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', nullable: false)]
     private bool $isVerified = false;
 
-    #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'user')]
-    private Collection $defis;
+    #[ORM\ManyToMany(targetEntity: Defi::class)]
+    #[ORM\JoinTable(name: 'Defi_Valid_Utilisateur')]
+    private Collection $defis_valid;
 
-    #[ORM\OneToMany(targetEntity: RecentDefi::class, mappedBy: 'user')]
+    #[ORM\ManyToMany(targetEntity: Defi::class)]
+    #[ORM\JoinTable(name: 'Defi_Utilisateur_Recents')]
     private Collection $recentDefis;
 
     #[ORM\Column(type: 'json')]
@@ -65,7 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->defis = new ArrayCollection();
         $this->recentDefis = new ArrayCollection();
     }
 
@@ -152,27 +153,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|Defi[]
-     */
-    public function getDefis(): Collection
-    {
-        return $this->defis;
-    }
-
-    /**
-     * @return Collection|RecentDefi[]
-     */
     public function getRecentDefis(): Collection
     {
         return $this->recentDefis;
     }
 
-    public function addRecentDefi(RecentDefi $recentDefi): self
+    public function addRecentDefi(Defi $recentDefi): self
     {
         if (!$this->recentDefis->contains($recentDefi)) {
             $this->recentDefis[] = $recentDefi;
-            $recentDefi->setUser($this);
+        }
+        return $this;
+    }
+
+        /**
+     * @return Collection|RecentDefi[]
+     */
+    public function getDefisValid(): Collection
+    {
+        return $this->defis_valid;
+    }
+
+    public function addDefiValid(Defi $defi_valid): self
+    {
+        if (!$this->defis_valid->contains($defi_valid)) {
+            $this->defis_valid[] = $defi_valid;
         }
         return $this;
     }
