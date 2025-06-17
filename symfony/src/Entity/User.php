@@ -4,8 +4,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Collections\ArrayCollection;
-use Doctrine\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -16,10 +16,9 @@ use DateTime;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'Utilisateur')]
-#[UniqueEntity(fields: ['mail'], message: 'Il y a déjà un compte avec ce mail')]
+#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec ce mail')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -29,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $mail;
 
     #[ORM\Column(name: 'mot_de_passe', type: 'string', length: 255)]
-    private $motDePasse;
+    private $password;
 
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private $scoreTotal = 0;
@@ -44,10 +43,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'user')]
-    private $defis;
+    private Collection $defis;
 
     #[ORM\OneToMany(targetEntity: RecentDefi::class, mappedBy: 'user')]
-    private $recentDefis;
+    private Collection $recentDefis;
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
@@ -64,11 +63,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $tokenExpirationDate = null;
 
+    public function __construct()
+    {
+        $this->defis = new ArrayCollection();
+        $this->recentDefis = new ArrayCollection();
+    }
 
-    // Getters et setters
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->mail;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->mail = $email;
+        return $this;
     }
 
     public function getMail(): ?string
@@ -76,22 +90,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->mail;
     }
 
-    public function setMail(string $mail): self
+    public function setMail(string $email): self
     {
-        $this->mail = $mail;
+        $this->mail = $email;
         return $this;
     }
 
-    public function getMotDePasse(): ?string
+    public function getPassword(): ?string
     {
-        return $this->motDePasse;
+        return $this->password;
     }
 
-    public function setMotDePasse(string $motDePasse): self
+    public function setPassword(string $password): self
     {
-        $this->motDePasse = $motDePasse;
+        $this->password = $password;
         return $this;
     }
+
+    public function setMotDePasse(string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function GetMotDePasse(): ?string
+    {
+        return $this->password;
+    }
+
 
     public function getScoreTotal(): ?int
     {
@@ -134,27 +160,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->defis;
     }
 
-    public function addDefi(Defi $defi): self
-    {
-        if (!$this->defis->contains($defi)) {
-            $this->defis[] = $defi;
-            $defi->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeDefi(Defi $defi): self
-    {
-        if ($this->defis->contains($defi)) {
-            $this->defis->removeElement($defi);
-            // set the owning side to null (unless already changed)
-            if ($defi->getUser() === $this) {
-                $defi->setUser(null);
-            }
-        }
-        return $this;
-    }
-
     /**
      * @return Collection|RecentDefi[]
      */
@@ -172,18 +177,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeRecentDefi(RecentDefi $recentDefi): self
-    {
-        if ($this->recentDefis->contains($recentDefi)) {
-            $this->recentDefis->removeElement($recentDefi);
-            // set the owning side to null (unless already changed)
-            if ($recentDefi->getUser() === $this) {
-                $recentDefi->setUser(null);
-            }
-        }
-        return $this;
-    }
-
     /**
      * The public representation of the user (e.g. a username, an email address, etc.)
      *
@@ -191,7 +184,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) $this->mail;
     }
 
     /**
@@ -213,20 +206,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
 
     /**
      * @see UserInterface
@@ -247,18 +226,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isVerified = $isVerified;
 
         return $this;
-    }
-
-    // Add the getter method
-    public function getEmail(): string
-    {
-        return $this->mail;
-    }
-
-    // Optional setter if needed
-    public function setEmail(string $email): void
-    {
-        $this->mail = $email;
     }
 
     public function getLastTryDate(): ?\DateTimeInterface
