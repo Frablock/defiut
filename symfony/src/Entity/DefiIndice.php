@@ -1,4 +1,5 @@
 <?php
+
 // src/Entity/DefiIndice.php
 namespace App\Entity;
 
@@ -22,5 +23,43 @@ class DefiIndice
     #[ORM\Column(type: 'integer')]
     private int $ordre;
 
-    // Getters/setters...
+    public function __construct(Defi $defi, Indice $indice, int $ordre)
+    {
+        $this->defi = $defi;
+        $this->indice = $indice;
+        $this->ordre = $ordre;
+    }
+
+    public function getDefi(): Defi
+    {
+        return $this->defi;
+    }
+
+    public function setDefi(Defi $defi): self
+    {
+        $this->defi = $defi;
+        return $this;
+    }
+
+    public function getIndice(): Indice
+    {
+        return $this->indice;
+    }
+
+    public function setIndice(Indice $indice): self
+    {
+        $this->indice = $indice;
+        return $this;
+    }
+
+    public function getOrdre(): int
+    {
+        return $this->ordre;
+    }
+
+    public function setOrdre(int $ordre): self
+    {
+        $this->ordre = $ordre;
+        return $this;
+    }
 }

@@ -57,14 +57,4 @@ class Indice
         }
         return $this;
     }
-
-    public function removeDefiIndice(DefiIndice $defiIndice): self
-    {
-        if ($this->defiIndices->removeElement($defiIndice)) {
-            if ($defiIndice->getIndice() === $this) {
-                $defiIndice->setIndice(null);
-            }
-        }
-        return $this;
-    }
 }
