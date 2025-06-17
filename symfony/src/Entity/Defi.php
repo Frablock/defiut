@@ -65,6 +65,10 @@ class Defi
     #[ORM\OneToMany(mappedBy: 'defi', targetEntity: RecentDefi::class)]
     private Collection $recentDefis;
 
+    #[ORM\ManyToOne(inversedBy: 'defiId')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?DefiValidUtilisateur $defiValidUtilisateur = null;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
@@ -181,5 +185,17 @@ class Defi
     public function setScore(int $score)
     {
         $this->pointsRecompense = $score;
+    }
+
+    public function getDefiValidUtilisateur(): ?DefiValidUtilisateur
+    {
+        return $this->defiValidUtilisateur;
+    }
+
+    public function setDefiValidUtilisateur(?DefiValidUtilisateur $defiValidUtilisateur): static
+    {
+        $this->defiValidUtilisateur = $defiValidUtilisateur;
+
+        return $this;
     }
 }
