@@ -31,8 +31,8 @@ export default function LeftNavigation(props) {
     
 
     const handleOnClick = (index) => {
-        props.navigateTo("/lobby"+data.categories[index]["url"]);
-        props.setCategory(data.categories[index]["url"])
+        props.navigateTo("/lobby"+data[index]["url"]);
+        props.setCategory(data[index]["url"])
     }
 
     return (

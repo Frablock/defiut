@@ -10,16 +10,6 @@ import { Fade } from 'reactstrap';
 export default function App(props) {
     const location = useLocation();
     const navigate = useNavigate();
-    
-    const [isLogedIn, setLogedIn] = useState(false);
-    const [authToken, setAuthToken] = useState('');
-    const [isDarkMode, setDarkMode] = useState(true);
-    const [showLeftNavigation, setShowLeftNavigation] = useState(true);
-    const [showLeaderboard, setShowLeaderboard] = useState(true);
-    const [unmount, setUnmount] = useState(false);
-    const [category, setCategory] = useState(false);
-    const navbarRef = React.useRef(null);
-    const footerRef = React.useRef(null);
 
     // Function to get cookie value
     const getCookie = (name) => {
@@ -28,20 +18,21 @@ export default function App(props) {
         if (parts.length === 2) return parts.pop().split(';').shift();
         return null;
     };
+    
+    const [authToken, setAuthToken] = useState(() => getCookie('auth_token') || '');
+    const [isLogedIn, setLogedIn] = useState(() => !!getCookie('auth_token'));
+    const [isDarkMode, setDarkMode] = useState(true);
+    const [showLeftNavigation, setShowLeftNavigation] = useState(true);
+    const [showLeaderboard, setShowLeaderboard] = useState(true);
+    const [unmount, setUnmount] = useState(false);
+    const [category, setCategory] = useState(false);
+    const navbarRef = React.useRef(null);
+    const footerRef = React.useRef(null);
 
     // Function to delete cookie
     const deleteCookie = (name) => {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     };
-
-    // Check for existing token on app load
-    useEffect(() => {
-        const token = getCookie('auth_token');
-        if (token) {
-            setAuthToken(token);
-            setLogedIn(true);
-        }
-    }, []);
 
     const navigateTo = (url) => {
         if(location.pathname != url){
@@ -62,33 +53,30 @@ export default function App(props) {
     };
 
     const sendData = async ({route = "/", data = {}, method="GET"}) => {
-        let options = {method: method}
-        
-        const requestToken = authToken;
-        
-        if(method == "POST"){
-            options.headers = {
-                "Content-Type": "application/json",
+        let options = {
+            method: method,
+            headers: {
+                'Accept': 'application/json',
             }
-            options.body = JSON.stringify(data)
-        } else {
-            options.headers = options.headers || {};
         }
         
         // Add authorization header if token exists
-        if(requestToken) {
-            options.headers = {
-                ...options.headers,
-                "Authorization": `Bearer ${requestToken}`
-            };
+        if(authToken) {
+            options.headers['Authorization'] = `Bearer ${authToken}`;
         }
+        
+        if(method == "POST"){
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(data);
+        }
+        
+        console.log(options)
         
         try {
             const response = await fetch("/api"+route, options);
             
-            // Check if token is expired (401 Unauthorized)
             if (response.status === 401 && isLogedIn) {
-                logout(); // Auto logout if token expired
+                logout();
                 return { error: true, error_message: "Session expired" };
             }
             
@@ -98,6 +86,8 @@ export default function App(props) {
             return { error: true, error_message: "Network error" };
         }
     }
+
+
 
     return (
         <Fade className='d-flex flex-column h-100' 

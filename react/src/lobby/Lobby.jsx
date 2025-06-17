@@ -13,14 +13,12 @@ export default function Lobby(props) {
         props.setShowLeftNavigation(true)
         props.setShowLeaderboard(true)
         sendData({route:"/defis/get_lobby_categories"}).then((data) => {
-            setData(data)
-            setLoading(false)
+            if(!data.error){
+                setData(data.data)
+                setLoading(false)
+            }
         })
     },[])
-
-    React.useEffect(() => {
-        sendData({route:category})
-    })
 
 
     return (
@@ -33,38 +31,66 @@ export default function Lobby(props) {
             <Fade in={!props.unmount} className="w-100 h-100 mx-3 my-3 row justify-content-evenly align-items-center">
                 <div className="d-flex flex-column w-auto align-items-center">
                     <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Défis tendances</h2>
-                    <ListGroup className="mx-4 mb-4 mb-md-0" style={{width:"400px", maxWidth: "100%"}}>
-                        {
-                            Array.from({ length: 5 }, (_, i) => (
-                                <HandleListGroupItem index={i} props isDarkMode={props.isDarkMode}>
-                                    {loading ? 
-                                    <Placeholder xs={6}/> 
-                                    : 
-                                    <>
-                                    {data.categories.tendances[i]}
-                                    </>
-                                    }
-                                    </HandleListGroupItem>
-                            ))
-                        }
-                    </ListGroup>
-                </div>
-                {props.isLogedIn && 
-                    <div className="d-flex flex-column w-auto align-items-center">
-                        <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Défis récents</h2>
-                        <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
+                    <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
+                            {loading ? 
+                            <>
+                                {
+                                    Array.from({ length: 5 }, (_, i) => (
+                                        <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
+                                            <Placeholder xs={6}/> 
+                                        </HandleListGroupItem>
+                                    ))
+                                }
+                            </>
+                            :
+                            <>
                             {
-                                Array.from({ length: 5 }, (_, i) => (
+                                data.tags_name.map((elem, i) => (
                                     <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
                                         {loading ? 
                                         <Placeholder xs={6}/> 
                                         : 
                                         <>
-                                        {data.categories.random[i]}
+                                            {elem.title}
                                         </>
                                         }
                                         </HandleListGroupItem>
                                 ))
+                            }
+                            </>
+                            }
+                        </ListGroup>
+                </div>
+                {props.isLogedIn && 
+                    <div className="d-flex flex-column w-auto align-items-center">
+                        <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Défis récents</h2>
+                        <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
+                            {loading ? 
+                            <>
+                                {
+                                    Array.from({ length: 5 }, (_, i) => (
+                                        <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
+                                            <Placeholder xs={6}/> 
+                                        </HandleListGroupItem>
+                                    ))
+                                }
+                            </>
+                            :
+                            <>
+                            {
+                                data.defis_recents.map((elem, i) => (
+                                    <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
+                                        {loading ? 
+                                        <Placeholder xs={6}/> 
+                                        : 
+                                        <>
+                                            {elem.title}
+                                        </>
+                                        }
+                                        </HandleListGroupItem>
+                                ))
+                            }
+                            </>
                             }
                         </ListGroup>
                     </div>                
@@ -88,9 +114,10 @@ function HandleListGroupItem({index, children, isDarkMode}){
             style={{
                 backgroundColor: isHovered ? '#4625ba' : (isDarkMode ? "#a899e7" : "#e2ddf7"),
                 transform: isHovered ? 'scale(1.02)' : 'scale(1)',
-                transition: 'transform 0.2s ease !important',
+                transition: 'all 0.2s ease',
                 cursor: 'pointer',
-                color: isHovered ? "white" : "black"
+                color: isHovered ? "white" : "black",
+                fontSize:"20px"
             }}
             onMouseEnter={() => setHoveredItem(index)}
             onMouseLeave={() => setHoveredItem(null)}

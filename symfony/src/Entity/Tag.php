@@ -2,13 +2,14 @@
 // src/Entity/Tag.php
 namespace App\Entity;
 
+use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Serializer\Attribute\Groups;
 
-#[ORM\Entity(repositoryClass: 'App\Repository\TagRepository')]
+#[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'Tag')]
 class Tag
 {
