@@ -167,8 +167,8 @@ final class UserController extends AbstractController
     /**
      * Get All user info for a user
      */
-    #[Route('/api/get_user_info', name: 'get_user_info', methods: ['GET'])]
-    public function get_user_info(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    #[Route('/api/user_info', name: 'user_info', methods: ['POST'])]
+    public function user_info(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Extract token from Authorization header
         
