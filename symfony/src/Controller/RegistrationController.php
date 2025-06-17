@@ -20,12 +20,12 @@ use OpenApi\Attributes as OA;
 
 final class RegistrationController extends AbstractController
 {
-    #[Route('/api/register', name: 'app_registration')]
+    #[Route('/api/register', name: 'app_registration', methods: ['POST'])]
     public function register(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Get the data
         $data = json_decode($request->getContent(), true);
-        
+
         $usermail = $data['usermail'] ?? null;
         $password = $data['password'] ?? null;
         $username = $data['username'] ?? null;

@@ -138,7 +138,7 @@ class DefiApiController extends AbstractController
                 ["title" => "Réseau",           "img" => "bi bi-diagram-3",             "url" => "/reseau"],
                 ["title" => "Mathématiques",    "img" => "bi bi-calculator",            "url" => "/mathematiques"],
                 ["title" => "Autres",           "img" => "bi bi-three-dots",            "url" => "/autres"],
-                
+
             ];
 
             return new JsonResponse([
@@ -146,7 +146,6 @@ class DefiApiController extends AbstractController
                 'data' => $categories,
                 'error_message' => ''
             ], JsonResponse::HTTP_OK);
-
         } catch (\Throwable $e) {
             return new JsonResponse([
                 'error' => true,
