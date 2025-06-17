@@ -10,11 +10,12 @@ export default function LeftNavigation(props) {
     
 
     React.useEffect(() => {
-        console.log("Fetching data...");
         sendData({ route: "/defis/get_left_menu_categories" })
             .then((result) => {
-                setData(result);
-                setLoading(false)
+                if(!result.error){
+                    setData(result.data);
+                    setLoading(false)
+                }
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
@@ -64,7 +65,7 @@ export default function LeftNavigation(props) {
                     </>
                 ) : (
                     <>
-                        {data.categories?.map((element, index) => (
+                        {data.map((element, index) => (
                             <CustomButton 
                             key={index} 
                             className="mb-2 shadow custom-button"
@@ -83,7 +84,7 @@ export default function LeftNavigation(props) {
                                     width:"150px"
                                 }}>
                                     {element["title"]}
-                                    <CardImg style={{width:"40px", height:"40px"}} src={element["img"]}></CardImg>
+                                    <i className={element["img"]}></i>
                                 </CardBody>
                             </CustomButton>
                         ))}
