@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Fade, Form, FormGroup, Input, Label } from "reactstrap";
 import CustomButton from "../utils/CustomButton";
-import { sendData } from "../utils/Utils";
 
 function Login(props) {
     const [formData, setFormData] = useState({
@@ -40,21 +39,37 @@ function Login(props) {
         };
         
         setErrors(newErrors);
-        
-        // Return true if no errors
         return !Object.values(newErrors).some(error => error);
     };
 
-    const handleLoginRequest = () => {
+    const handleLoginRequest = async () => {
         if (validateForm()) {
-            sendData({
-                route: '/login',
-                method: "POST",
-                data: {
-                    usermail: formData.usermail,
-                    password: formData.password
+            try {
+                const response = await props.sendData({
+                    route: '/login',
+                    method: "POST",
+                    data: {
+                        usermail: formData.usermail,
+                        password: formData.password
+                    }
+                });
+
+                if (!response.error) {
+                    // Store token as cookie with expiration date
+                    const expirationDate = new Date(response.data.expirationDate);
+                    document.cookie = `auth_token=${response.data.token}; expires=${expirationDate.toUTCString()}; path=/; secure; samesite=strict`;
+                    
+                    // Update app state
+                    props.setLogedIn(true);
+                    props.setAuthToken(response.data.token);
+                    
+                    props.navigateTo('/lobby');
+                } else {
+                    console.error('Login failed:', response.error_message);
                 }
-            });
+            } catch (error) {
+                console.error('Login request failed:', error);
+            }
         }
     };
 

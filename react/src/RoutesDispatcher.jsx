@@ -2,10 +2,10 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ErrorPage from './errorPage/Error';
 import Login from './login/Login';
-import Browser from './app/Browser';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './register/Register';
 import Lobby from './lobby/Lobby';
+import Profil from './profil/Profil'
 
 function RoutesDispatcher(props) {
   return (
@@ -33,9 +33,9 @@ function RoutesDispatcher(props) {
           path="/register"
           element={<Register {...props}/>}
         />
-        <Route 
-          path="/app"
-          element={<Browser {...props}/>}
+        <Route
+          path="/profil"
+          element={<Profil {...props}/>}
         />
         <Route 
           path="*"

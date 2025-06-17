@@ -49,24 +49,26 @@ export default function Lobby(props) {
                         }
                     </ListGroup>
                 </div>
-                <div className="d-flex flex-column w-auto align-items-center">
-                    <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Défis aléatoires</h2>
-                    <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
-                        {
-                            Array.from({ length: 5 }, (_, i) => (
-                                <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
-                                    {loading ? 
-                                    <Placeholder xs={6}/> 
-                                    : 
-                                    <>
-                                    {data.categories.random[i]}
-                                    </>
-                                    }
-                                    </HandleListGroupItem>
-                            ))
-                        }
-                    </ListGroup>
-                </div>
+                {props.isLogedIn && 
+                    <div className="d-flex flex-column w-auto align-items-center">
+                        <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Défis récents</h2>
+                        <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
+                            {
+                                Array.from({ length: 5 }, (_, i) => (
+                                    <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
+                                        {loading ? 
+                                        <Placeholder xs={6}/> 
+                                        : 
+                                        <>
+                                        {data.categories.random[i]}
+                                        </>
+                                        }
+                                        </HandleListGroupItem>
+                                ))
+                            }
+                        </ListGroup>
+                    </div>                
+                }
             </Fade>
         }
         </>

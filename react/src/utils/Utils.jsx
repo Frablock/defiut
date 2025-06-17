@@ -1,4 +1,4 @@
-export const sendData = async ({route = "/", data = {}, method="GET"}) => {
+export const sendData = async ({route = "/", data = {}, method="GET", token=""}) => {
     let options = {method: method}
     if(method == "POST"){
         options.headers = {

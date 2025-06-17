@@ -47,23 +47,37 @@ function AppNavbar(props) {
         isDarkMode={props.isDarkMode}
         height={"40px"}
         />
-      <CustomButton
-        isDarkMode={props.isDarkMode}
-        darkColor={"#a899e7"}
-        lightColor={"#535353"}
-        onClick={() => props.navigateTo("/register")}
+      {props.isLogedIn ? 
+      <>
+        <CustomButton
+          isDarkMode={props.isDarkMode}
+          darkColor={"#a899e7"}
+          lightColor={"#535353"}
+          onClick={() => props.navigateTo("/profil")}
 
-      >
-        Inscription
-      </CustomButton>
-      <CustomButton 
-        isDarkMode={props.isDarkMode}
-        darkColor={"#a899e7"}
-        lightColor={"#535353"}
-        onClick={() => props.navigateTo("/login")}
-      >
-        Connexion
-      </CustomButton>
+        >Mon Profil</CustomButton>
+      </>
+      :
+      <>
+        <CustomButton
+          isDarkMode={props.isDarkMode}
+          darkColor={"#a899e7"}
+          lightColor={"#535353"}
+          onClick={() => props.navigateTo("/register")}
+
+        >
+          Inscription
+        </CustomButton>
+        <CustomButton 
+          isDarkMode={props.isDarkMode}
+          darkColor={"#a899e7"}
+          lightColor={"#535353"}
+          onClick={() => props.navigateTo("/login")}
+        >
+          Connexion
+        </CustomButton>
+      </>
+      }
     </NavbarText>
   </Navbar>
 </>

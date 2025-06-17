@@ -16,7 +16,7 @@ export default function Leaderboard(props) {
     }
 
     React.useEffect(() => {
-        sendData({route:'/leaderboard'}).then((data) => {
+        props.sendData({route:'/leaderboard'}).then((data) => {
             if(!data.error){
                 setData(data.data)
                 setLoading(false)
