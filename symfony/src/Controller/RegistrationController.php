@@ -2,89 +2,77 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\RegistrationFormType;
-use App\Security\EmailVerifier;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
-class RegistrationController extends AbstractController
+use Doctrine\ORM\EntityManagerInterface;
+
+use DateTime;
+
+use App\Repository\UserRepository;
+use App\Entity\User;
+
+use Nelmio\ApiDocBundle\Attribute\Model;
+use Nelmio\ApiDocBundle\Attribute\Security;
+use OpenApi\Attributes as OA;
+
+final class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier)
+    #[Route('/api/registration', name: 'app_registration')]
+    public function register(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-    }
+        // Get the data
+        $data = json_decode($request->getContent(), true);
+        
+        $usermail = $data['usermail'] ?? null;
+        $password = $data['password'] ?? null;
+        $username = $data['username'] ?? null;
 
-    #[Route('register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+        // Validating inputs
+        if (empty($usermail) || empty($password) || empty($username)) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing required fields.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Email validation
+        if (!filter_var($usermail, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid email format.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Email unicity verification
+        $userRepository = $entityManager->getRepository(User::class);
+        $existingUser = $userRepository->findOneBy(['mail' => $usermail]);
+        if ($existingUser) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Email already in use.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Username unicity verification
+        $existingUsername = $userRepository->findOneBy(['username' => $username]);
+        if ($existingUsername) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Username already in use.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+        $user->setMail($usermail);
+        $user->setUsername($username);
+        $user->setMotDePasse($password);
+        $user->setCreationDate(new DateTime());
+        $user->setLastCo(new DateTime());
 
-            // encode the plain password
-            $user->setMotDePasse($userPasswordHasher->hashPassword($user, $plainPassword));
+        $token = md5($usermail) . "." . bin2hex(openssl_random_pseudo_bytes(80)); //$this->jwtManager->create($user);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+        // adding the token to the db
+        $user->setToken($token);
+        $date = new DateTime();
+        $date->modify('+15 days');
+        $user->setTokenExpirationDate($date);
 
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('noreply@defiut.fr', 'DefIUT'))
-                    ->to((string) $user->getMail())
-                    ->subject('Confirmez votre adresse courriel')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
+        // Add the user to the DB
+        $entityManager->persist($user);
+        $entityManager->flush();
 
-            // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('react_app');
-        }
-
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
-        ]);
-    }
-
-    #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, EntityManagerInterface $manager): Response
-    {
-        $id = $request->query->get('id');
-
-        if (null === $id) {
-            return $this->redirectToRoute('app_register');
-        }
-
-        $repository = $manager->getRepository(User::class);
-        $user = $repository->find($id);
-
-        if (null === $user) {
-            return $this->redirectToRoute('app_register');
-        }
-
-        // validate email confirmation link, sets User::isVerified=true and persists
-        try {
-            $this->emailVerifier->handleEmailConfirmation($request, $user);
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $exception->getReason());
-
-            return $this->redirectToRoute('app_register');
-        }
-
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Votre adresse mail a bien été vérifiée.');
-
-        return $this->redirectToRoute('app_register');
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['token' => $token, 'expirationDate' => $date->format('Y-m-d')]], JsonResponse::HTTP_OK);
     }
 }
