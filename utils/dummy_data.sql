@@ -32,7 +32,7 @@ VALUES (
         'francois.patinec@defiut.com',
         '$argon2id$v=19$m=16,t=2,p=1$NEt1YXRjSTA4ZFJsaTRxcg$1PWBiMiPnhieLJs/yjfo0A',
         0,
-        '[]',
+        '["editor"]',
         4980
     ),
     (

@@ -88,9 +88,19 @@ class Defi
         return $this->nom;
     }
 
+    public function setNom(string $nom)
+    {
+        $this->nom = $nom;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function setDescription(string $desc)
+    {
+        $this->description = $desc;
     }
 
     public function getPointsRecompense(): ?int
@@ -101,6 +111,11 @@ class Defi
     public function getDifficulte(): ?int
     {
         return $this->difficulte;
+    }
+
+    public function setDifficulte(int $diff)
+    {
+        $this->difficulte = $diff;
     }
 
     public function getUser(): ?string
@@ -153,8 +168,18 @@ class Defi
         return $this->cle;
     }
 
-    public function getScore(): string
+    public function setKey(string $key)
+    {
+        $this->cle = $key;
+    }
+
+    public function getScore(): int
     {
         return $this->pointsRecompense;
+    }
+
+    public function setScore(int $score)
+    {
+        $this->pointsRecompense = $score;
     }
 }

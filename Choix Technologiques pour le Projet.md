@@ -58,7 +58,7 @@
 
 **Pourquoi Argon2ID ?**
 
-1. **Sécurité** : Argon2ID est conçu pour être résistant aux attaques par force brute et aux attaques par canal auxiliaire. Il a remporté le concours de hachage de mots de passe en 2015.
+1. **Sécurité** : Argon2ID est conçu pour être résistant aux attaques par force brute et aux attaques par canal auxiliaire. Il a remporté le [Password Hashing Competition](https://www.password-hashing.net/#argon2) en 2015.
 2. **Flexibilité** : Argon2ID permet de configurer des paramètres tels que le temps de calcul, la mémoire utilisée et le nombre de threads, ce qui permet d'adapter la sécurité aux besoins spécifiques du projet.
 3. **Support communautaire** : Argon2ID est largement reconnu et soutenu par la communauté de la sécurité, ce qui garantit sa fiabilité et sa pérennité.
 4. **Compatibilité** : Argon2ID est compatible avec de nombreuses bibliothèques et frameworks, ce qui facilite son intégration dans le projet.
