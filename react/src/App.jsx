@@ -62,7 +62,7 @@ export default function App(props) {
         
         // Add authorization header if token exists
         if(authToken) {
-            options.headers['Authorization'] = `Bearer ${authToken}`;
+            options.headers['Authorization'] = authToken;
         }
         
         if(method == "POST"){
@@ -93,9 +93,9 @@ export default function App(props) {
         <Fade className='d-flex flex-column h-100' 
             style={{backgroundColor: isDarkMode ? "#434343" : "#f0f0f0", transition: "all 0.8s"}}
         >
-            <AppNavbar {...{navigateTo, setDarkMode, isDarkMode, isLogedIn, navbarRef, logout}}/>
+            <AppNavbar {...{sendData,navigateTo, setDarkMode, isDarkMode, isLogedIn, navbarRef, logout}}/>
             <div className='d-flex flex-row justify-content-between h-100'>
-                <LeftNavigation {...{showLeftNavigation, setShowLeftNavigation, isDarkMode, navigateTo, category, setCategory}}/>
+                <LeftNavigation {...{sendData,showLeftNavigation, setShowLeftNavigation, isDarkMode, navigateTo, category, setCategory}}/>
                 <RoutesDispatcher {...{
                     navbarRef, 
                     footerRef, 
@@ -115,9 +115,9 @@ export default function App(props) {
                     sendData,
                     logout
                 }}/>
-                <Leaderboard {...{showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo, sendData}}/>
+                <Leaderboard {...{sendData,showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo, sendData}}/>
             </div>
-            <AppFooter {...{isDarkMode, navigateTo, footerRef}} />
+            <AppFooter {...{sendData,isDarkMode, navigateTo, footerRef}} />
         </Fade>
     );
 }

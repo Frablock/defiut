@@ -1,5 +1,4 @@
 import React from "react";
-import { sendData } from "./Utils";
 import { Button, Card, CardBody, CardImg, CardText, Fade, Placeholder, PlaceholderButton } from "reactstrap";
 import CustomButton from "./CustomButton";
 
@@ -10,7 +9,7 @@ export default function LeftNavigation(props) {
     
 
     React.useEffect(() => {
-        sendData({ route: "/defis/get_left_menu_categories" })
+        props.sendData({ route: "/defis/get_left_menu_categories" })
             .then((result) => {
                 if(!result.error){
                     setData(result.data);

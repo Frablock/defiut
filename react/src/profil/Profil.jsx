@@ -1,5 +1,5 @@
 import React from "react";
-import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Placeholder } from "reactstrap";
+import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Button, Placeholder } from "reactstrap";
 
 export default function Pofil(props) {
     const [open, setOpen] = React.useState('1');
@@ -49,6 +49,7 @@ export default function Pofil(props) {
                         </AccordionItem>
                     </Accordion>
                 </div>
+                <Button onClick={() => props.logout()}>Se Déconnecter</Button>
             </div>
             <div className="d-flex flex-column h-100 justify-content-center">
                 <div>

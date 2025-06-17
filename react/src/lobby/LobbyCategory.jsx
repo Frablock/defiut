@@ -5,7 +5,7 @@ import {
   Placeholder,
 } from 'reactstrap';
 import SelectableDropdown from "../utils/SelectableDropdown";
-import SVGDispatcher, { sendData } from "../utils/Utils";
+import SVGDispatcher from "../utils/Utils";
 
 export default function LobbyCategory(props) {
     const [loading, setLoading] = React.useState(true)
@@ -53,7 +53,7 @@ export default function LobbyCategory(props) {
     }, [props.footerRef?.current, props.navbarRef?.current]);
 
     React.useEffect(() => {
-        sendData({route:"/defis"})
+        props.sendData({route:"/defis"})
     })
 
 

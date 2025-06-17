@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardBody, CardTitle, CloseButton, Collapse, Fade, Placeholder } from "reactstrap";
-import { sendData } from "./Utils";
 
 export default function Leaderboard(props) {
     const [loading, setLoading] = React.useState(true)

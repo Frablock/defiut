@@ -78,8 +78,11 @@ class Defi
         return $this->nom." ".$this->description;
     }
 
-
-    // Getters/setters...
+    public function getId() : int
+    {
+        return $this->id;
+    }
+    
     public function getNom(): ?string
     {
         return $this->nom;

@@ -31,18 +31,14 @@ class CategorieController extends AbstractController
             }
 
             $token = $request->headers->get('Authorization');
-            print_r($token);
-
             if ($token) {
-                print_r("test");
-
                 $user = $em->getRepository(User::class)->findOneByToken($token);
                 if ($user instanceof User) {
                     $recentDefis = $user->getRecentDefis();
                     foreach ($recentDefis as $recentDefi) {
                         $recentDefisArray[] = [
-                            'nom' => $recentDefi->getDefi()->getNom(),
-                            'date' => $recentDefi->getDateAcces(),
+                            'title' => $recentDefi->getNom(),
+                            'id'=> $recentDefi->getId()
                         ];
                     }
                 }
