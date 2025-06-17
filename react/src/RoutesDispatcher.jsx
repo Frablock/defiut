@@ -42,6 +42,18 @@ function RoutesDispatcher(props) {
           path="/defis/:id"
           element={<Defis {...props}/>}
         />
+        <Route
+          path="/legal-notices"
+          element={<LegalNotices {...props}/>}
+        />
+        <Route
+          path="/faq"
+          element={<FAQ {...props}/>}
+        />
+        <Route
+          path="/cgu"
+          element={<CGU {...props}/>}
+        />
         <Route 
           path="*"
           element={<ErrorPage {...props}/>}
