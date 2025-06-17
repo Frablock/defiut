@@ -35,10 +35,9 @@ class DefiApiController extends AbstractController
     )]
     public function list(Request $request): JsonResponse
     {
-        $startTime = microtime(true);
+        $data = json_decode($request->getContent(), true);
 
-        // Récupération du paramètre GET et validation
-        $startId = max(1, (int)$request->query->get('start_id', 1));
+        $startId = $data['start_id'] ?? 0;
 
         // Récupération des défis avec pagination par ID
         $defis = $this->defiRepository->findNextDefis($startId, 10);
@@ -48,19 +47,23 @@ class DefiApiController extends AbstractController
             'groups' => ['defi-read']
         ]);
 
-        //
-        $beforeRepo = microtime(true);
-        $defis = $this->defiRepository->findNextDefis($startId, 10);
-        $afterRepo = microtime(true);
-        $beforeSerial = microtime(true);
-        $data = $this->serializer->serialize($defis, 'json', ['groups' => ['defi-read']]);
-        $endTime = microtime(true);
 
-        // Log timings
-        error_log("Total time: " . ($endTime - $startTime) . "s");
-        error_log("Repository time: " . ($afterRepo - $beforeRepo) . "s");
-        error_log("Serializer time: " . ($endTime - $beforeSerial) . "s");
-        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => json_decode($data)], JsonResponse::HTTP_OK);
+        $data = [];
+
+        foreach($defis as $defi) {
+            $data[] = [
+                'nom' => $defi->getNom(),
+                'points_recompense' => $defi->getPointsRecompense(),
+                'description' => $defi->getDescription(),
+                'difficulte' => $defi->getDifficulte(),
+                'fichier' => $defi->getDifficulte(),
+                'id' => $defi->getId(),
+                'tags' => $defi->getTags(),
+                'user' => $defi->getUser(),
+            ];
+        }
+        
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => $data], JsonResponse::HTTP_OK);
     }
 
 
