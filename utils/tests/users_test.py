@@ -211,6 +211,39 @@ if __name__ == "__main__":
             'expected_data': {'changed_password': 'ok'},
             'json_body': True
         },
+        {
+            'url': '/api/logout',
+            'method': 'POST',
+            'expected_keys': ['message'],
+            'expected_data': {'message': 'Logged out successfully'},
+            'json_body': True
+        },
+
+        # test pour l'inscription (penser à supprimer avant test)
+        {
+            'url': '/api/register',
+            'method': 'POST',
+            'payload': {
+                'usermail': 'the.new.user@mail.org',
+                'password': 'da_password',
+                'username': 'The New User'
+            },
+            'expected_keys': ['token', 'expirationDate'],
+            'json_body': True
+        },
+        {
+            'url': '/api/token_validity_test',
+            'method': 'POST',
+            'expected_keys': ['message'],
+            'json_body': True
+        },
+        {
+            'url': '/api/logout',
+            'method': 'POST',
+            'expected_keys': ['message'],
+            'expected_data': {'message': 'Logged out successfully'},
+            'json_body': True
+        },
     ]
 
     # Exécuter les tests

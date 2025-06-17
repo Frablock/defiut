@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
 
 final class RegistrationController extends AbstractController
 {
-    #[Route('/api/registration', name: 'app_registration')]
+    #[Route('/api/register', name: 'app_registration')]
     public function register(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Get the data

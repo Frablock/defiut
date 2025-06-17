@@ -84,7 +84,7 @@ final class UserController extends AbstractController
     {
         // Extract credentials from request
         $data = json_decode($request->getContent(), true);
-        
+
         $usermail = $data['usermail'] ?? null;
         $password = $data['password'] ?? null;
         $new_password = $data['new_password'] ?? null;
@@ -157,6 +157,10 @@ final class UserController extends AbstractController
         }
 
         $user = $this->userRepository->findOneByToken($token);
+
+        if (!$user instanceof User) {
+            throw new AuthenticationException('Invalid credentials');
+        }
         return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => $user]], JsonResponse::HTTP_OK);
     }
 }
