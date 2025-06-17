@@ -162,7 +162,7 @@ function Login(props) {
                             </svg>
                         </div>
                     </CustomButton>
-                    <CustomButton
+                    {/*<CustomButton
                         lightColor={"#a899e7"}
                         darkColor={"#a899e7"}
                         onClick={handleGoogleLogin}
@@ -176,7 +176,7 @@ function Login(props) {
                                 <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
                             </svg>
                         </div>
-                    </CustomButton>
+                    </CustomButton>*/}
                     <div className="d-flex flex-row" style={{color: props.isDarkMode ? "white" : "black", transition: "all 0.8s"}}>
                         Pas de compte ? &nbsp;
                         <div className="text-decoration-underline" style={{cursor:"pointer"}} onClick={() => props.navigateTo("/register")}>
