@@ -31,7 +31,10 @@ export default function LeftNavigation(props) {
 
     const handleOnClick = (index) => {
         props.navigateTo("/lobby"+data[index]["url"]);
-        props.setCategory(data[index]["url"])
+        props.setCategory(data[index]["title"])
+
+        setTimeout(() => {
+        }, 150);
     }
 
     return (
@@ -74,12 +77,12 @@ export default function LeftNavigation(props) {
                                 transform: props.category === element["url"] ? "scale(0.950)" : "scale(1)"
                             }}
                             isDarkMode={props.isDarkMode}
-                            darkColor={props.category === element["url"] ? "#4625ba" : "#a899e7"}
-                            lightColor={props.category === element["url"] ? "#4625ba" : "#e2ddf7"}
+                            darkColor={props.category === element["title"] ? "#4625ba" : "#a899e7"}
+                            lightColor={props.category === element["title"] ? "#4625ba" : "#e2ddf7"}
                             >
                                 <CardBody className="d-flex flex-row transition justify-content-between align-items-center"
                                 style={{
-                                    color: props.category === element["url"] ? "white" : "black", 
+                                    color: props.category === element["title"] ? "white" : "black", 
                                     width:"150px"
                                 }}>
                                     {element["title"]}

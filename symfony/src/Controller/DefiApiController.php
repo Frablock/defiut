@@ -131,14 +131,13 @@ class DefiApiController extends AbstractController
         try {
             // Menu categories for the left sidebard
             $categories = [
-                ["title" => "Nos défis",        "img" => "bi bi-pencil-square",         "url" => "/defis"],
-                ["title" => "Algorithmique",    "img" => "bi bi-cpu",                   "url" => "/algorithmique"],
-                ["title" => "Reverse",          "img" => "bi bi-arrow-repeat",          "url" => "/reverse"],
-                ["title" => "Web",              "img" => "bi bi-code-slash",            "url" => "/web"],
-                ["title" => "Cryptanalyse",     "img" => "bi bi-bar-chart",             "url" => "/cryptanalyse"],
-                ["title" => "Réseau",           "img" => "bi bi-diagram-3",             "url" => "/reseau"],
-                ["title" => "Mathématiques",    "img" => "bi bi-calculator",            "url" => "/mathematiques"],
-                ["title" => "Autres",           "img" => "bi bi-three-dots",            "url" => "/autres"],
+                ["title" => "Tout les défis",        "img" => "bi bi-pencil-square",         "url" => "/all"],
+                ["title" => "Collaboration",    "img" => "bi bi-cpu",                   "url" => "/collaboration"],
+                ["title" => "Rétroingénierie",          "img" => "bi bi-arrow-repeat",          "url" => "/retroingenierie"],
+                ["title" => "Base de donnée",              "img" => "bi bi-code-slash",            "url" => "/base_de_donnee"],
+                ["title" => "Algorithmie",     "img" => "bi bi-bar-chart",             "url" => "/algorithmie"],
+                ["title" => "Web",           "img" => "bi bi-diagram-3",             "url" => "/web"],
+                ["title" => "Stégonographie",    "img" => "bi bi-calculator",            "url" => "/stegonographie"],
 
             ];
 
@@ -192,8 +191,8 @@ class DefiApiController extends AbstractController
 
 
     //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
-    #[Route('/{id}', name: 'get', methods: ['GET'])]
-    public function get(int $id): JsonResponse
+    #[Route('/{id}', name: 'get_single_defi', methods: ['GET'])]
+    public function getSingleDefi(int $id): JsonResponse
     {
         $defi = $this->defiRepository->find($id);
 

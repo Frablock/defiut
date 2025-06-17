@@ -10,6 +10,7 @@ import SVGDispatcher from "../utils/Utils";
 export default function LobbyCategory(props) {
     const [loading, setLoading] = React.useState(true)
     const [inputValue, setInputValue] = React.useState("")
+    const [categoryTitle, setCategoryTitle] = React.useState("")
     const [filter, setFilter] = React.useState(
         [
             {
@@ -58,6 +59,7 @@ export default function LobbyCategory(props) {
                 if(!data.error){
                     setData(data.data)
                     setLoading(false)
+                    props.setDefis(data.data)
                 }
             }
         )
@@ -75,10 +77,16 @@ export default function LobbyCategory(props) {
         }
     }
 
+    React.useEffect(() => {
+        setTimeout(() => {
+            setCategoryTitle(props.category)
+        }, 150);
+    },[props.category])
+
     const handleDeleteTag = (indexToDelete) => {
         setTags(tags.filter((_, index) => index !== indexToDelete));
     }
-    
+
     return (
     <div className="d-flex flex-column h-100">
         <div ref={headerRef} className="row my-5 gap-2" style={{ flexShrink: 0 }}>
@@ -91,7 +99,7 @@ export default function LobbyCategory(props) {
                     fontSize:"50px"
                 }}
                 >
-                    {props.category.charAt(0).toUpperCase() + props.category.slice(1)}
+                    {categoryTitle}
             </div>
             <SelectableDropdown className="w-auto align-content-center" items={filter} onClick={(elem) => handleOnClickFilter(elem)}/>
             <div className="row shadow align-items-center gap-2 py-2 my-3 w-auto h-auto" style={{backgroundColor:"#a899e7", borderRadius:"20px", minHeight:"40px"}}>
@@ -139,7 +147,7 @@ export default function LobbyCategory(props) {
                 <>
                 {
                     Array.from({ length: 12 }, (_, index) => (
-                        <HandleDefi props={props} loading={loading} index={index}/>
+                        <HandleDefi props={props} loading={loading} index={index} isDarkMode={props.isDarkMode}/>
                     ))
                 }
                 </>
@@ -149,7 +157,7 @@ export default function LobbyCategory(props) {
                     data.map((elem, index) => {
                         return (
                             <>
-                                <HandleDefi props={props} loading={loading} elem={elem} index={index}/>
+                                <HandleDefi props={props} loading={loading} elem={elem} index={index} isDarkMode={props.isDarkMode}/>
                             </>
                         )
                     })
@@ -161,15 +169,15 @@ export default function LobbyCategory(props) {
     )
 }
 
-function HandleDefi({props, loading, index, elem}){
+function HandleDefi({props, loading, index, elem, isDarkMode}){
     // Extract the defi data (assuming it's the first item in props)
     const { nom, description, difficulte, user, tags = [] } = elem || {};
     const pointsRecompense = elem ? elem['points_recompense'] : null
 
     return (
         <div 
-            className=" d-flex flex-column h-auto p-3 shadow" 
-            style={{backgroundColor:"#e2ddf7", borderRadius:"25px", width:"500px", cursor:"pointer", transition: "transform 0.2s"}}
+            className=" d-flex flex-column p-3 shadow transition" 
+            style={{backgroundColor: isDarkMode ? "#535353" : "#e2ddf7", borderRadius:"25px", width:"500px", height:"380px", cursor:"pointer", transition: "transform 0.2s", color: isDarkMode ? "white" : "black"}}
             onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
             onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             onClick={() => props.navigateTo('/defis/'+elem['id'])}
@@ -181,7 +189,7 @@ function HandleDefi({props, loading, index, elem}){
                     </Placeholder>
                 ) : (
                     <div style={{height:"110px", width:"110px", borderRadius:"25px", backgroundColor:"#a899e7"}} className="d-flex align-items-center justify-content-center">
-                        <i className="bi bi-trophy" style={{fontSize:"2rem", color:"white"}}></i>
+                        <i className="bi bi-trophy" style={{fontSize:"2rem"}}></i>
                     </div>
                 )}
                 
@@ -211,7 +219,7 @@ function HandleDefi({props, loading, index, elem}){
                     <div className="row gap-2 ms-1 mt-3">
                         {loading ? (
                             Array.from({length: 2}, ((_, index) => (
-                                <Badge pill key={index} className="w-auto h-auto px-4 shadow" style={{fontSize:"15px", backgroundColor:"#a899e7"}}>
+                                <Badge pill key={index} className="w-auto h-auto px-4 shadow" style={{fontSize:"15px"}}>
                                     <Placeholder className="h-auto mb-1" animation="wave" tag="p" style={{width:"80px"}}>
                                         <Placeholder className="h-auto" xs={12} />
                                     </Placeholder>
@@ -219,10 +227,10 @@ function HandleDefi({props, loading, index, elem}){
                             )))
                         ) : (
                             tags.map((tag, tagIndex) => (
-                                <Badge pill key={tagIndex} className="w-auto h-auto px-4 shadow" style={{fontSize:"15px", backgroundColor:"#a899e7"}}>
+                                <Badge pill key={tagIndex} className="w-auto h-auto px-4 shadow" style={{fontSize:"15px"}}>
                                     {tag}
                                 </Badge>
-                            ))
+                            )) 
                         )}
                     </div>
                 </div>
@@ -234,7 +242,7 @@ function HandleDefi({props, loading, index, elem}){
                 </Placeholder>
             ) : (
                 <div className="mt-2">
-                    <strong style={{fontSize:"25px"}} className="text-muted underline">{nom}</strong>
+                    <strong style={{fontSize:"25px"}} className="underline">{nom}</strong>
                 </div>
             )}
             

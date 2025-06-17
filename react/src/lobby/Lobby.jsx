@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom"
 import LobbyCategory from "./LobbyCategory";
 
 export default function Lobby(props) {
-    const { category } = useParams();
     const [data, setData] = React.useState({})
     const [loading, setLoading] = React.useState(true)
     
@@ -22,9 +21,9 @@ export default function Lobby(props) {
 
     return (
         <>
-        {category ? 
+        {props.category ? 
             <Fade in={!props.unmount} className="w-100 h-100 mx-5 justify-content-start">
-                <LobbyCategory {...props} {...{category}} />
+                <LobbyCategory {...props} />
             </Fade>
             :
             <Fade in={!props.unmount} className="w-100 h-100 mx-3 my-3 row justify-content-evenly align-items-center">

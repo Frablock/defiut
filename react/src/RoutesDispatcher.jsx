@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './register/Register';
 import Lobby from './lobby/Lobby';
 import Profil from './profil/Profil'
+import Defis from './defis/Defis';
 
 function RoutesDispatcher(props) {
   return (
@@ -36,6 +37,10 @@ function RoutesDispatcher(props) {
         <Route
           path="/profil"
           element={<Profil {...props}/>}
+        />
+        <Route
+          path="/defis/:id"
+          element={<Defis {...props}/>}
         />
         <Route 
           path="*"

@@ -28,6 +28,7 @@ export default function App(props) {
     const [category, setCategory] = useState(false);
     const navbarRef = React.useRef(null);
     const footerRef = React.useRef(null);
+    const [defis, setDefis] = React.useState({})
 
     // Function to delete cookie
     const deleteCookie = (name) => {
@@ -52,12 +53,10 @@ export default function App(props) {
         navigateTo('/login');
     };
 
-    const sendData = async ({route = "/", data = {}, method="GET"}) => {
+    const sendData = async ({route = "/", data = {}, method="GET", isFileDownload = false}) => {
         let options = {
             method: method,
-            headers: {
-                'Accept': 'application/json',
-            }
+            headers: {}
         }
         
         // Add authorization header if token exists
@@ -65,12 +64,17 @@ export default function App(props) {
             options.headers['Authorization'] = authToken;
         }
         
+        // For file downloads, don't set Accept header to application/json
+        if (!isFileDownload) {
+            options.headers['Accept'] = 'application/json';
+        }
+        
         if(method == "POST"){
             options.headers['Content-Type'] = 'application/json';
             options.body = JSON.stringify(data);
         }
         
-        console.log(options)
+        console.log(data)
         
         try {
             const response = await fetch("/api"+route, options);
@@ -80,12 +84,51 @@ export default function App(props) {
                 return { error: true, error_message: "Session expired" };
             }
             
+            // Handle file download
+            if (isFileDownload) {
+                if (!response.ok) {
+                    return { error: true, error_message: `Download failed: ${response.statusText}` };
+                }
+                
+                // Get filename from Content-Disposition header
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'download';
+                
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (match && match[1]) {
+                        filename = match[1].replace(/['"]/g, '');
+                    }
+                }
+                
+                // Convert to blob and trigger download
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                return { success: true, message: "File downloaded successfully" };
+            }
+            
+            // Handle regular JSON response
             return response.json();
+            
         } catch (error) {
             console.error('Request failed:', error);
             return { error: true, error_message: "Network error" };
         }
     }
+
 
 
 
@@ -113,7 +156,9 @@ export default function App(props) {
                     navigateTo, 
                     category,
                     sendData,
-                    logout
+                    logout,
+                    defis,
+                    setDefis
                 }}/>
                 <Leaderboard {...{sendData,showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo, sendData}}/>
             </div>
