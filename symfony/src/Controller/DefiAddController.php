@@ -49,6 +49,9 @@ final class DefiAddController extends AbstractController
         $key = $data['key'] ?? null;
         $score = $data['score'] ?? null;
 
+        if (!$nom || !$desc || !$diff || !$key || !$score) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing data'], JsonResponse::HTTP_BAD_REQUEST);
+        }
         $defi = new Defi();
         /*
         foreach ($tags as $tag) {
