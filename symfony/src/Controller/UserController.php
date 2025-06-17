@@ -96,7 +96,7 @@ final class UserController extends AbstractController
         }
 
         if (!$usermail || !$password || !$new_password) {
-            return new JsonResponse(['error' => true, 'error_message' => "Missing usermail or password"." aa ".$usermail." aa ".$password." aa ".$new_password], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => true, 'error_message' => "Missing usermail or password" . " aa " . $usermail . " aa " . $password . " aa " . $new_password], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -162,5 +162,34 @@ final class UserController extends AbstractController
             throw new AuthenticationException('Invalid credentials');
         }
         return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => $user]], JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Get All user info for a user
+     */
+    #[Route('/api/get_user_info', name: 'get_user_info', methods: ['GET'])]
+    public function get_user_info(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        // Extract token from Authorization header
+        
+        $token = $request->headers->get('Authorization');
+        if (!$token) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userRepository->findOneByToken($token);
+
+        if (!$user instanceof User) {
+            throw new AuthenticationException('Invalid credentials');
+        }
+        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => [
+            'mail' => $user->getMail(), 
+            'score_total' => $user->getScoreTotal(),
+            'creation_date' => $user->getCreationDate(),
+            'last_co' => $user->getLastCo(),
+            'username' => $user->getUsername(),
+            'defis_recents' => $user->getRecentDefis()
+
+        ]], JsonResponse::HTTP_OK);
     }
 }
