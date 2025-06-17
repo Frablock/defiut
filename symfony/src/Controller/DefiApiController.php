@@ -127,15 +127,35 @@ class DefiApiController extends AbstractController
     #[Route('/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
     public function getLeftMenuCategories(Request $request): JsonResponse
     {
-        $categories = array(
-            ["title" => "Nos défis",      "img" => "liens de l'image", "url" => "/defis"],
-            ["title" => "Alorithmique",   "img" => "liens de l'image", "url" => "/alorithmique"],
-            ["title" => "Reverse",        "img" => "liens de l'image", "url" => "/reverse"],
-            ["title" => "Web",            "img" => "liens de l'image", "url" => "/web"],
-            ["title" => "Reverse2",        "img" => "liens de l'image", "url" => "/reverse2"],
-        ); // Asset de test
-        return new JsonResponse(['categories' => $categories], JsonResponse::HTTP_OK);
+        try {
+            // Menu categories for the left sidebard
+            $categories = [
+                ["title" => "Nos défis",        "img" => "bi bi-pencil-square",         "url" => "/defis"],
+                ["title" => "Algorithmique",    "img" => "bi bi-cpu",                   "url" => "/algorithmique"],
+                ["title" => "Reverse",          "img" => "bi bi-arrow-repeat",          "url" => "/reverse"],
+                ["title" => "Web",              "img" => "bi bi-code-slash",            "url" => "/web"],
+                ["title" => "Cryptanalyse",     "img" => "bi bi-bar-chart",             "url" => "/cryptanalyse"],
+                ["title" => "Réseau",           "img" => "bi bi-diagram-3",             "url" => "/reseau"],
+                ["title" => "Mathématiques",    "img" => "bi bi-calculator",            "url" => "/mathematiques"],
+                ["title" => "Autres",           "img" => "bi bi-three-dots",            "url" => "/autres"],
+                
+            ];
+
+            return new JsonResponse([
+                'error' => false,
+                'data' => $categories,
+                'error_message' => ''
+            ], JsonResponse::HTTP_OK);
+
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'error' => true,
+                'data' => null,
+                'error_message' => "Une erreur s'est produite dans le menu des catégories rapide."
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
     #[Route('/{id}', name: 'get', methods: ['GET'])]
