@@ -6,10 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
-//use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-//use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
 
 use DateTime;
@@ -71,7 +68,7 @@ final class UserController extends AbstractController
 
             return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['token' => $token, 'expirationDate' => $date->format('Y-m-d')]], JsonResponse::HTTP_OK);
         } catch (AuthenticationException $e) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'.$e->getMessage()], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials' . $e->getMessage()], JsonResponse::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -86,21 +83,24 @@ final class UserController extends AbstractController
     public function changePassword(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Extract credentials from request
-        $usermail = $request->request->get('usermail');
-        $password = $request->request->get('password');
+        $data = json_decode($request->getContent(), true);
+        
+        $usermail = $data['usermail'] ?? null;
+        $password = $data['password'] ?? null;
+        $new_password = $data['new_password'] ?? null;
 
         // Extract token from Authorization header
         $token = $request->headers->get('Authorization');
         if (!$token) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        if (!$usermail || !$password) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Missing username or password'], JsonResponse::HTTP_BAD_REQUEST);
+        if (!$usermail || !$password || !$new_password) {
+            return new JsonResponse(['error' => true, 'error_message' => "Missing usermail or password"." aa ".$usermail." aa ".$password." aa ".$new_password], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
-            $user = $this->userRepository->findOneByMail($usermail);
+            $user = $this->userRepository->findOneByToken($token);
 
             if (!$user instanceof User) {
                 throw new AuthenticationException('Invalid credentials');
@@ -111,7 +111,7 @@ final class UserController extends AbstractController
             }
 
             // Changing the password
-            $user->setMotDePasse(password_hash($password, PASSWORD_ARGON2ID));
+            $user->setMotDePasse(password_hash($new_password, PASSWORD_ARGON2ID));
             $entityManager->flush();
 
             return new JsonResponse(['error' => false, 'data' => ['changed_password' => 'ok'], 'error_message' => ""], JsonResponse::HTTP_OK);
