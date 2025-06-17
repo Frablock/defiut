@@ -32,6 +32,33 @@ class DefiRepository extends ServiceEntityRepository
         return $this->findBy(array(), array('nom' => 'ASC'));
     }
 
+    /**
+     * Returns an array of Defi objects filtered by category and tags.
+     *
+     * @param string|null $category The category name to filter by, or null for any category
+     * @param string[] $tags List of tag names to filter by
+     * @return Defi[] The filtered Defi objects
+     */
+    public function findByCategoryAndTags(?string $category, array $tags): array
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->leftJoin('d.tags', 't')
+            ->addSelect('t');
+
+        if ($category !== null) {
+            $qb->andWhere('d.categorie = :category')
+            ->setParameter('category', $category);
+        }
+
+        if (!empty($tags)) {
+            $qb->andWhere('t.nom IN (:tags)')
+            ->setParameter('tags', $tags);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+
 
     //    /**
     //     * @return Defi[] Returns an array of Defi objects

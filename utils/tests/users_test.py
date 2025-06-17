@@ -244,6 +244,7 @@ if __name__ == "__main__":
             'expected_data': {'message': 'Logged out successfully'},
             'json_body': True
         },
+       
     ]
 
     # Exécuter les tests

@@ -155,6 +155,41 @@ class DefiApiController extends AbstractController
         }
     }
 
+    #[Route('/filter', name: 'filter', methods: ['POST'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns a list of Defi filtered by category and tags'
+    )]
+    public function filterDefisByCategoryAndTags(Request $request): JsonResponse
+    {
+        try {
+            // Extract the JSON body from the request
+            $body = json_decode($request->getContent(), true);
+            $tags = $body['tags'] ?? [];
+            $category = $body['category'] ?? null;
+
+            // Fetch Defi filtered by category and tags
+            $defis = $this->defiRepository->findByCategoryAndTags($category, $tags);
+
+            // Serialize the result with the appropriate group
+            $data = $this->serializer->serialize($defis, 'json', ['groups' => ['defi-read']]);
+
+            // Return a standardized JSON response
+            return new JsonResponse([
+                'error' => false,
+                'data' => json_decode($data),
+                'error_message' => ''
+            ], JsonResponse::HTTP_OK);
+
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'error' => true,
+                'data' => null,
+                'error_message' => "An error occurred while filtering Defi by category and tags."
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
     #[Route('/{id}', name: 'get', methods: ['GET'])]
