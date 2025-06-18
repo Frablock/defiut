@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Defi;
+use App\Entity\DefiValidUtilisateur;
 use App\Entity\RecentDefi;
 use App\Repository\DefiRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -144,7 +145,6 @@ class DefiApiController extends AbstractController
     )]
     public function try_key(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-
         // Extract token from Authorization header
         $token = $request->headers->get('Authorization');
         if (!$token) {
@@ -164,35 +164,62 @@ class DefiApiController extends AbstractController
         // Retrieve the Defi by ID
         $defi = $this->defiRepository->find($id);
         if (!$defi) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => true, 'error_message' => 'Defi non trouvé'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         // Get the current user
         if (!$user instanceof User) {
-            return new JsonResponse(['error' => true, 'error_message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => true, 'error_message' => 'Utilisateur non authentifié'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
+        // Check if the user's last try was less than 2 seconds ago
+        $currentTime = new \DateTime();
+        $lastTryDate = $user->getLastTryDate();
+        
+        if ($lastTryDate !== null) {
+            $timeDifference = $currentTime->getTimestamp() - $lastTryDate->getTimestamp();
+            
+            if ($timeDifference < 2) {
+                $remainingTime = 2 - $timeDifference;
+                return new JsonResponse([
+                    'error' => true, 
+                    'error_message' => "Veuillez attendre {$remainingTime} seconde(s) avant de réessayer"
+                ], JsonResponse::HTTP_TOO_MANY_REQUESTS);
+            }
+        }
+
+        // Update the user's last try date
+        $user->setLastTryDate($currentTime);
+        $entityManager->flush();
+
         // Check if the user has already completed this Defi
-        if ($user->getDefisValid()->contains($defi)) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Le défis est déjà fait '], JsonResponse::HTTP_BAD_REQUEST);
+        $existingCompletion = $entityManager->getRepository(DefiValidUtilisateur::class)
+            ->findOneBy(['user' => $user, 'defi' => $defi]);
+
+        if ($existingCompletion) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Le défis est déjà fait'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Verify the provided key
         if ($defi->getKey() === $key) {
             // Increment the user's score
-            $user->setScoreTotal($user->getScoreTotal() + $defi->getScore());
+            $user->setScoreTotal($user->getScoreTotal() + $defi->getPointsRecompense()); // Note: using getPointsRecompense()
 
-            // Add the Defi to the user's collection
-            $user->addDefiValid($defi);
-
-            // Persist changes to the database
+            // Create a new completion record
+            $completion = new DefiValidUtilisateur();
+            $completion->setUser($user);
+            $completion->setDefi($defi);
+            $completion->setDateValid(new \DateTime());
+            
+            $entityManager->persist($completion);
             $entityManager->flush();
 
-            // Serialize and return success response
             return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ["message" => "ok"]], JsonResponse::HTTP_OK);
         }
-        return new JsonResponse(['error' => true, 'error_message' => 'Incorrect key'], JsonResponse::HTTP_UNAUTHORIZED);
+        
+        return new JsonResponse(['error' => true, 'error_message' => 'Mauvaise clée'], JsonResponse::HTTP_BAD_REQUEST);
     }
+
 
     #[Route('/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
     public function getLeftMenuCategories(Request $request): JsonResponse

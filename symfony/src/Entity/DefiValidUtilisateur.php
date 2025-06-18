@@ -16,101 +16,52 @@ class DefiValidUtilisateur
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'defiValidUtilisateur')]
-    private Collection $userId;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'defiValidUtilisateurs')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
-    /**
-     * @var Collection<int, Defi>
-     */
-    #[ORM\OneToMany(targetEntity: Defi::class, mappedBy: 'defiValidUtilisateur')]
-    private Collection $defiId;
+    #[ORM\ManyToOne(targetEntity: Defi::class, inversedBy: 'defiValidUtilisateurs')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Defi $defi = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateValid = null;
-
-    public function __construct()
-    {
-        $this->userId = new ArrayCollection();
-        $this->defiId = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUserId(): Collection
+    public function getUser(): ?User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function addUserId(User $userId): static
+    public function setUser(?User $user): self
     {
-        if (!$this->userId->contains($userId)) {
-            $this->userId->add($userId);
-            $userId->setDefiValidUtilisateur($this);
-        }
-
+        $this->user = $user;
         return $this;
     }
 
-    public function removeUserId(User $userId): static
+    public function getDefi(): ?User
     {
-        if ($this->userId->removeElement($userId)) {
-            // set the owning side to null (unless already changed)
-            if ($userId->getDefiValidUtilisateur() === $this) {
-                $userId->setDefiValidUtilisateur(null);
-            }
-        }
+        return $this->defi;
+    }
 
+    public function setDefi(?Defi $defi): self
+    {
+        $this->defi = $defi;
         return $this;
     }
 
-    /**
-     * @return Collection<int, Defi>
-     */
-    public function getDefiId(): Collection
-    {
-        return $this->defiId;
-    }
-
-    public function addDefiId(Defi $defiId): static
-    {
-        if (!$this->defiId->contains($defiId)) {
-            $this->defiId->add($defiId);
-            $defiId->setDefiValidUtilisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDefiId(Defi $defiId): static
-    {
-        if ($this->defiId->removeElement($defiId)) {
-            // set the owning side to null (unless already changed)
-            if ($defiId->getDefiValidUtilisateur() === $this) {
-                $defiId->setDefiValidUtilisateur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getDateValid(): ?\DateTimeInterface
+    public function getDateValid(): ?User
     {
         return $this->dateValid;
     }
 
-    public function setDateValid(\DateTimeInterface $dateValid): static
+    public function setDateValid(?\DateTimeInterface $dateValid): self
     {
         $this->dateValid = $dateValid;
-
         return $this;
     }
 }

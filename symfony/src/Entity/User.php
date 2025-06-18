@@ -62,9 +62,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: RecentDefi::class, cascade: ['persist', 'remove'])]
     private Collection $recentDefis;
 
-    #[ORM\ManyToOne(inversedBy: 'userId')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?DefiValidUtilisateur $defiValidUtilisateur = null;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: DefiValidUtilisateur::class, cascade: ['persist', 'remove'])]
+    private Collection $defiValidUtilisateurs;
+
 
     public function __construct()
     {
@@ -307,15 +307,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDefiValidUtilisateur(): ?DefiValidUtilisateur
+    // Fixed recentDefis methods
+    public function getDefiValidUtilisateurs(): Collection
     {
-        return $this->defiValidUtilisateur;
+        return $this->defiValidUtilisateurs;
     }
 
-    public function setDefiValidUtilisateur(?DefiValidUtilisateur $defiValidUtilisateur): static
+    public function addDefiValidUtilisateurs(DefiValidUtilisateur $defiValidUtilisateur): self
     {
-        $this->defiValidUtilisateur = $defiValidUtilisateur;
+        if (!$this->defiValidUtilisateurs->contains($defiValidUtilisateur)) {
+            $this->defiValidUtilisateurs->add($defiValidUtilisateur);
+            $defiValidUtilisateur->setUser($this);
+        }
+        return $this;
+    }
 
+    public function removeDefiValidUtilisateurs(DefiValidUtilisateur $defiValidUtilisateur): self
+    {
+        if ($this->defiValidUtilisateurs->removeElement($defiValidUtilisateur)) {
+            if ($defiValidUtilisateur->getUser() === $this) {
+                $defiValidUtilisateur->setUser(null);
+            }
+        }
         return $this;
     }
 }

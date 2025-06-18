@@ -64,9 +64,9 @@ class Defi
     #[ORM\OneToMany(mappedBy: 'defi', targetEntity: RecentDefi::class, cascade: ['persist', 'remove'])]
     private Collection $recentDefis;
 
-    #[ORM\ManyToOne(inversedBy: 'defiId')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?DefiValidUtilisateur $defiValidUtilisateur = null;
+    #[ORM\OneToMany(mappedBy: 'defi', targetEntity: DefiValidUtilisateur::class, cascade: ['persist', 'remove'])]
+    private Collection $defiValidUtilisateurs;
+
 
     public function __construct()
     {
@@ -242,17 +242,6 @@ class Defi
         $this->pointsRecompense = $score;
     }
 
-    public function getDefiValidUtilisateur(): ?DefiValidUtilisateur
-    {
-        return $this->defiValidUtilisateur;
-    }
-
-    public function setDefiValidUtilisateur(?DefiValidUtilisateur $defiValidUtilisateur): static
-    {
-        $this->defiValidUtilisateur = $defiValidUtilisateur;
-
-        return $this;
-    }
     public function getCategorie(): string
     {
         return $this->categorie;
@@ -261,5 +250,30 @@ class Defi
     public function setCategorie(string $categorie)
     {
         $this->categorie = $categorie;
+    }
+
+        // Fixed recentDefis methods
+    public function getDefiValidUtilisateurs(): Collection
+    {
+        return $this->defiValidUtilisateurs;
+    }
+
+    public function addDefiValidUtilisateurs(DefiValidUtilisateur $defiValidUtilisateur): self
+    {
+        if (!$this->defiValidUtilisateurs->contains($defiValidUtilisateur)) {
+            $this->defiValidUtilisateurs->add($defiValidUtilisateur);
+            $defiValidUtilisateur->setDefi($this);
+        }
+        return $this;
+    }
+
+    public function removeDefiValidUtilisateurs(DefiValidUtilisateur $defiValidUtilisateur): self
+    {
+        if ($this->defiValidUtilisateurs->removeElement($defiValidUtilisateur)) {
+            if ($defiValidUtilisateur->getDefi() === $this) {
+                $defiValidUtilisateur->setDefi(null);
+            }
+        }
+        return $this;
     }
 }
