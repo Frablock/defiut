@@ -39,7 +39,7 @@ export default function Leaderboard(props) {
                     className="h-100 leaderboard"
                     onExited={() => setUnmount(true)}
                 >
-                    <div className="h-100 d-flex flex-column gap-5 h-100 justify-content-center" style={{marginRight:"20px"}}>
+                    <div className="h-100 d-flex flex-column gap-5 justify-content-center" style={{marginRight:"20px", width:"20vw", minWidth:"275px"}}>
                         
                         <Card className="border-0 shadow transition" style={{backgroundColor: props.isDarkMode ? "#535353" : "#a899e7", color: props.isDarkMode ? "white" : "black", }}>
                             <CloseButton onClick={() => setUnmount(!unmount)}/>
@@ -48,9 +48,9 @@ export default function Leaderboard(props) {
                             </CardTitle>
                             <CardBody className="d-flex flex-column">
                                 <div className="d-flex flex-row mb-5">
-                                    <Podium className="h-25" number="3" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data[2]["username"]}</div> }</Podium>
-                                    <Podium className="h-75" number="1" zIndex="2" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{fontWeight:"700",color: props.isDarkMode ? "white" : "black"}}>{data[0]["username"]}</div> }</Podium>
-                                    <Podium className="h-50" number="2" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div style={{color: props.isDarkMode ? "white" : "black"}}>{data[1]["username"]}</div> }</Podium>
+                                    <Podium className="h-25" number="3" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>{data[2]["username"]}</div> }</Podium>
+                                    <Podium className="h-75" number="1" zIndex="2" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div className="transition" style={{fontWeight:"700",color: props.isDarkMode ? "white" : "black"}}>{data[0]["username"]}</div> }</Podium>
+                                    <Podium className="h-50" number="2" zIndex="1" isDarkMode={props.isDarkMode}>{loading ? handlePlaceholder() : <div className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>{data[1]["username"]}</div> }</Podium>
                                 </div>
                                 <CardBody className="d-flex flex-column">
                                     {loading ? 
@@ -92,8 +92,10 @@ export default function Leaderboard(props) {
 
 function Podium({className, number, zIndex, children, isDarkMode}){
     return (
-        <div className="d-flex flex-column w-100 align-items-center justify-content-end" style={{height:"100px"}}>
-            {children}
+        <div className="d-flex flex-column w-100 align-items-center justify-content-end transition" style={{height:"100px"}}>
+            <div className="d-flex align-items-center justify-content-center text-center">
+                {children}
+            </div>
             <div className={"d-flex w-100 shadow justify-content-center transition "+className} style={{backgroundColor: isDarkMode ? "#a899e7" : "#e2ddf7", borderTopLeftRadius:"7px", borderTopRightRadius:"7px", zIndex: zIndex, fontWeight:"600"}}>
                 {number}
             </div>

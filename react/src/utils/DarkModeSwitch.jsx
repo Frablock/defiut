@@ -15,7 +15,7 @@ function DarkModeSwitch(props) {
     };
 
     return (
-        <div className="sun-moon move shadow" ref={switchBoxRef} style={{height:props.height}}>
+        <div className="sun-moon shadow" ref={switchBoxRef} style={{height:props.height}}>
             <input 
                 type="checkbox" 
                 checked={props.darkMode} 

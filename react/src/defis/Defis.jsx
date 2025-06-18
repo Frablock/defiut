@@ -11,14 +11,19 @@ export default function Defis(props) {
     const [viewSize, setViewSize] = React.useState("0")
 
     const handleDefisTest = () => { 
-        props.sendData({
-            route:"/defis/try_key", 
-            method:"POST",
-            data:{
-                id:id,
-                key:inputValue  //ho do i get the content of the ref here ? 
-            }
-        })
+        if(props.isLogedIn){
+            props.sendData({
+                route:"/defis/try_key", 
+                method:"POST",
+                data:{
+                    id:id,
+                    key:inputValue
+                }
+            })
+        } else {
+            props.setModalActive(true)
+            props
+        }
     }
 
     React.useEffect(() => {
@@ -74,7 +79,7 @@ export default function Defis(props) {
             <Spinner />
         </div>
     }
-    console.log(currentDefis)
+    
     const { user, difficulte, tags, nom, description, pointsRecompense } = currentDefis;
 
     return (

@@ -22,8 +22,8 @@ export default function Lobby(props) {
 
     return (
         <>
-        <Fade in={!props.unmount} className="w-100 h-100 mx-5 justify-content-start">
-            <div in={!props.unmount} className="w-100 h-100 mx-3 my-3 row justify-content-evenly align-items-center">
+        <Fade in={!props.unmount} className="w-100 h-100 justify-content-start">
+            <div in={!props.unmount} className="w-100 h-100 my-3 row justify-content-evenly align-items-center">
                 <div className="d-flex flex-column w-auto align-items-center">
                     <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Tags tendances</h2>
                     <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>

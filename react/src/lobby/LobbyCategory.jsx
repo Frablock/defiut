@@ -32,6 +32,38 @@ export default function LobbyCategory(props) {
                 }
             },
             {
+                "title": "Ordre Alphabétique croissante",
+                "action": 
+                {
+                    attribute:"nom",
+                    action:"asc"
+                }
+            },
+            {
+                "title": "Ordre Alphabétique décroissante",
+                "action": 
+                {
+                    attribute:"nom",
+                    action:"desc"
+                }
+            },
+            {
+                "title": "Points croissante",
+                "action": 
+                {
+                    attribute:"points_recompense",
+                    action:"asc"
+                }
+            },
+            {
+                "title": "Points décroissante",
+                "action": 
+                {
+                    attribute:"points_recompense",
+                    action:"desc"
+                }
+            },
+            {
                 "title": "Aucun",
                 "action":                 
                 {
@@ -39,7 +71,7 @@ export default function LobbyCategory(props) {
                     action:""
                 },
                 "separator": "true"
-            }
+            },
         ]
     )
     const [tags, setTags] = React.useState([])

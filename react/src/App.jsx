@@ -8,6 +8,7 @@ import Leaderboard from './utils/Leaderboard';
 import { Fade } from 'reactstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CustomModal from './utils/CustomModal';
 
 export default function App(props) {
     const location = useLocation();
@@ -31,6 +32,11 @@ export default function App(props) {
     const navbarRef = React.useRef(null);
     const footerRef = React.useRef(null);
     const [defis, setDefis] = React.useState({})
+
+    const [modalActive, setModalActive] = React.useState(false);
+    const [modalHeader, setModalHeader] = React.useState("");
+    const [modalContent, setModalContent] = React.useState("");
+    const [modalOnClick, setModalOnClick] = React.useState(() => {});
 
     //to see if the user is connected
     React.useEffect(() => {
@@ -177,6 +183,18 @@ export default function App(props) {
             style={{backgroundColor: isDarkMode ? "#434343" : "#f0f0f0", transition: "all 0.8s"}}
         >
             <AppNavbar {...{sendData,navigateTo, setDarkMode, isDarkMode, isLogedIn, navbarRef, logout}}/>
+            <CustomModal {
+                ...{
+                    modalActive, 
+                    setModalActive,
+                    modalHeader,
+                    setModalHeader,
+                    modalContent, 
+                    setModalContent,
+                    modalOnClick,
+                    setModalOnClick
+                }
+            } />
             <div className='d-flex flex-row justify-content-between h-100'>
                 <LeftNavigation {...{sendData,showLeftNavigation, setShowLeftNavigation, isDarkMode, navigateTo, category, setCategory}}/>
                 <RoutesDispatcher {...{
@@ -198,7 +216,15 @@ export default function App(props) {
                     sendData,
                     logout,
                     defis,
-                    setDefis
+                    setDefis,
+                    modalActive, 
+                    setModalActive,
+                    modalHeader,
+                    setModalHeader,
+                    modalContent, 
+                    setModalContent,
+                    modalOnClick,
+                    setModalOnClick
                 }}/>
                 <Leaderboard {...{sendData,showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo, sendData}}/>
             </div>
