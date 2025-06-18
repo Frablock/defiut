@@ -287,13 +287,6 @@ export default function Profil(props) {
         <Button onClick={() => props.logout()}>Se Déconnecter</Button>
       </div>
 
-      {/* Colonne de droite */}
-      <div className="d-flex flex-column h-100 justify-content-center">
-        <div>Défis récents</div>
-        <div>Défis récents</div>
-        <div>Défis récents</div>
-      </div>
-
        {/* ---------- MODAL CHANGE MD5 ---------- */}
      <Modal isOpen={modalMdp} toggle={() => setModalMdp(!modalMdp)}>
        <ModalHeader toggle={() => setModalMdp(false)}>
