@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repository;
-
+use App\Entity\User;  
 use App\Entity\DefiValidUtilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +16,21 @@ class DefiValidUtilisateurRepository extends ServiceEntityRepository
         parent::__construct($registry, DefiValidUtilisateur::class);
     }
 
+    public function findValidatedDefisByUser(User $user): array
+    {
+        return $this->createQueryBuilder('dv')
+            ->select('d.nom   AS nom')
+            ->addSelect('d.pointsRecompense AS points')
+            ->addSelect('dv.dateValid    AS dateValid')
+            ->innerJoin('dv.defiId', 'd')    // collection de Defi
+            ->innerJoin('dv.userId', 'u')    // collection de User
+            ->andWhere('u = :user')
+            ->setParameter('user', $user)
+            ->orderBy('dv.dateValid', 'DESC')
+            ->getQuery()
+            ->getArrayResult()
+        ;
+    }
     //    /**
     //     * @return DefiValidUtilisateur[] Returns an array of DefiValidUtilisateur objects
     //     */

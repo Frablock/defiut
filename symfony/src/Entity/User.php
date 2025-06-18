@@ -62,6 +62,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: RecentDefi::class, cascade: ['persist', 'remove'])]
     private Collection $recentDefis;
 
+    #[ORM\ManyToOne(inversedBy: 'userId')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?DefiValidUtilisateur $defiValidUtilisateur = null;
+
     public function __construct()
     {
         $this->defis = new ArrayCollection();
@@ -299,6 +303,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTokenExpirationDate(?\DateTimeInterface $tokenExpirationDate): static
     {
         $this->tokenExpirationDate = $tokenExpirationDate;
+
+        return $this;
+    }
+
+    public function getDefiValidUtilisateur(): ?DefiValidUtilisateur
+    {
+        return $this->defiValidUtilisateur;
+    }
+
+    public function setDefiValidUtilisateur(?DefiValidUtilisateur $defiValidUtilisateur): static
+    {
+        $this->defiValidUtilisateur = $defiValidUtilisateur;
 
         return $this;
     }
