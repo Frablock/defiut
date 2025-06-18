@@ -37,6 +37,7 @@ export default function App(props) {
     const [modalHeader, setModalHeader] = React.useState("");
     const [modalContent, setModalContent] = React.useState("");
     const [modalOnClick, setModalOnClick] = React.useState(() => {});
+    const [modalButtonText, setModalButtonText] = React.useState(() => {});
 
     //to see if the user is connected
     React.useEffect(() => {
@@ -53,11 +54,6 @@ export default function App(props) {
     const deleteCookie = (name) => {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     };
-
-    React.useEffect(() => {
-        console.log("unmount / mounot")
-        console.log(unmount)
-    },[unmount])
 
     const navigateTo = (url) => {
         if(location.pathname != url){
@@ -192,7 +188,9 @@ export default function App(props) {
                     modalContent, 
                     setModalContent,
                     modalOnClick,
-                    setModalOnClick
+                    setModalOnClick,
+                    modalButtonText,
+                    setModalButtonText
                 }
             } />
             <div className='d-flex flex-row justify-content-between h-100'>
@@ -224,7 +222,9 @@ export default function App(props) {
                     modalContent, 
                     setModalContent,
                     modalOnClick,
-                    setModalOnClick
+                    setModalOnClick,
+                    modalButtonText,
+                    setModalButtonText
                 }}/>
                 <Leaderboard {...{sendData,showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo, sendData}}/>
             </div>

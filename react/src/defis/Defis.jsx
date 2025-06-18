@@ -19,10 +19,28 @@ export default function Defis(props) {
                     id:id,
                     key:inputValue
                 }
+            }).then((data) => {
+                if(!data.error){
+                    props.setModalHeader("Bravo !")
+                    props.setModalButtonText("Page des défis")
+                    props.setModalContent("Bravo ! Vous avez trouvé le message secret ! Vos points viennent d'être comptabilisés.")
+                    props.setModalOnClick(() => () => {
+                        props.navigateTo("/lobby/all");
+                        props.setModalActive(false)
+                    })
+                    props.setModalActive(true)
+                }
             })
+            //
         } else {
+            props.setModalHeader("Veuillez vous connecter")
+            props.setModalButtonText("Se Connecter")
+            props.setModalContent("Pour pouvoir envoyer votre réponse, vous devez absolument créer un compte / vous connecter.")
+            props.setModalOnClick(() => () => {
+                props.navigateTo("/login");
+                props.setModalActive(false)
+            })
             props.setModalActive(true)
-            props
         }
     }
 
@@ -179,7 +197,7 @@ export default function Defis(props) {
                                     
                                     <hr className="my-4"/>
                                     
-                                    <div className="d-flex flex-column gap-2 p-2 shadow w-auto" style={{backgroundColor:props.isDarkMode ? "#53535" : "#f2f2f2"}}>
+                                    <div className="d-flex flex-column gap-2 p-2 shadow w-auto transition" style={{backgroundColor:props.isDarkMode ? "#535353" : "#f2f2f2", borderRadius:"25px"}}>
                                         <div className="d-flex flex-row gap-2 justify-content-around align-items-center">
                                             <Input onChange={(e)=> setInputValue(e.target.value)} className="w-75" style={{backgroundColor:"#e2ddf7"}} />
                                             <CustomButton
