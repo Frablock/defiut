@@ -31,6 +31,30 @@ sequenceDiagram
     Server-->>-Client: Confirmation de logout
 ```
 
+## Démarage et utilitaires
+
+Nous utilisons `Cmake` pour simplifier les différentes actions
+Voici les différentes commandes disponibles :
+
+- `start` : démarage simple, en arrière-plan, sans affichage de la journalisation
+- `stop` : arrête l'application
+- `start_dev` : Démarre l'application en mode développement avec une reconstruction complète des conteneurs Docker.
+- `stop_dev` : Arrête et supprime les conteneurs, réseaux et volumes définis dans le fichier docker-compose.
+- `restart_dev` : Redémarre l'application en mode développement avec une reconstruction complète des conteneurs Docker.
+- `soft_start_dev` : Démarre l'application en mode développement sans reconstruction des conteneurs Docker.
+- `compile` : Exécute la commande `npm run watch` dans le conteneur Docker pour compiler les assets.
+- `clear` : Supprime les dossiers `vendor`, `node_modules`, `var` et `public/build`.
+- `clean_start_dev` : Nettoie les dossiers spécifiés et démarre l'application en mode développement.
+- `bash` : Ouvre un shell Bash dans le conteneur Docker `defiut-php-1`.
+
+Pour lancer une commande, il vous suffit de faire :
+
+```bash
+make <votre commande>
+```
+
+Vous pouvez en ajouter en agrandissant le fichier Makefile
+
 ## Partie Back-end (PHP et Symfony)
 
 > Documentations utiles : [Symfony Documentation](https://symfony.com/doc/current/index.html) [PHP: Manuel PHP - Manual](https://www.php.net/manual/fr/) 
@@ -59,15 +83,11 @@ Nous utilisons OpenAPI, une norme de notation des endpoints qui permettent de po
 > 
 > Vous pouvez en savoir plus via :  [NelmioApiDocBundle Documentation](https://symfony.com/bundles/NelmioApiDocBundle/current/index.html) 
 
-
-
 Pour interagir avec la base de données, nous utilisons des entitées (via la partie Doctrine ORM de Symfony) ([Databases and the Doctrine ORM (Symfony Docs)](https://symfony.com/doc/current/doctrine.html))
 
 Pour chaque table stockant nos objets dans la base de données, nous avons une entités, avec des getters et des setters.
 
 > N'utilisez pas de commandes SQL, cela pourait mener à une potentielle faille de sécurité. Utilisez uniquement les entités.
-
-
 
 Pour ajouter des fonctionnalités à nos entités (par exemple : de pouvoir rechercher un utilisateur selon son adresse mail), nous utilisons les Repositories ([Databases and the Doctrine ORM (Symfony Docs)](https://symfony.com/doc/current/doctrine.html#querying-for-objects-the-repository))
 
@@ -86,21 +106,3 @@ public function findOneByMail($value): ?User
     ;
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -16,7 +16,7 @@ git clone https://github.com/frablock/defiut
 Puis lancez la commande suivante : 
 
 ```
-make start
+make start_dev
 ```
 
 Félicitations, vous venez de démarer l'application, il ne vous reste plus qu'à installer les certificats pour pouvoir l'utiliser !
