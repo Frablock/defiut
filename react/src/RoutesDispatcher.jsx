@@ -10,6 +10,7 @@ import Defis from './defis/Defis';
 import LegalNotices from './legal/LegalNotices';
 import FAQ from './faq/Faq';
 import CGU from './cgu/Cgu';
+import LobbyCategory from './lobby/LobbyCategory';
 
 function RoutesDispatcher(props) {
   return (
@@ -27,7 +28,7 @@ function RoutesDispatcher(props) {
         />
         <Route 
           path="/lobby/:category"
-          element={<Lobby {...props}/>}
+          element={<LobbyCategory {...props}/>}
         />
         <Route 
           path="/login"

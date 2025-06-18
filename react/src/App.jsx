@@ -46,11 +46,11 @@ export default function App(props) {
         if(location.pathname != url){
             setUnmount(true)
             setTimeout(() => {
-                navigate(url)
-                if(category === null){
+                if(url == "/lobby"){
                     console.log("ici")
                     setCategory(null)
                 }
+                navigate(url)
                 setUnmount(false)
             }, 150);
             
@@ -96,8 +96,6 @@ export default function App(props) {
             options.headers['Content-Type'] = 'application/json';
             options.body = JSON.stringify(data);
         }
-        
-        console.log(data)
         
         try {
             const response = await fetch("/api"+route, options);

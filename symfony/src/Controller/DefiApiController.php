@@ -31,16 +31,13 @@ class DefiApiController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     #[OA\Response(
         response: 200,
-        description: 'Return a list of the defis between start_id and start_id + 10'
+        description: 'Return a list of the defis'
     )]
     public function list(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        $startId = $data['start_id'] ?? 0;
 
         // Récupération des défis avec pagination par ID
-        $defis = $this->defiRepository->findNextDefis($startId, 10);
+        $defis = $this->defiRepository->findAll();
 
         // Sérialisation avec contexte de groupe pour les relations
         $data = $this->serializer->serialize($defis, 'json', [
@@ -56,7 +53,7 @@ class DefiApiController extends AbstractController
                 'points_recompense' => $defi->getPointsRecompense(),
                 'description' => $defi->getDescription(),
                 'difficulte' => $defi->getDifficulte(),
-                'fichier' => $defi->getDifficulte(),
+                'fichier' => $defi->getFichiers(),
                 'id' => $defi->getId(),
                 'tags' => $defi->getTags(),
                 'user' => $defi->getUser(),
@@ -65,6 +62,77 @@ class DefiApiController extends AbstractController
         
         return new JsonResponse(['error' => false, 'error_message' => '', 'data' => $data], JsonResponse::HTTP_OK);
     }
+
+    #[Route('', name: 'list_by_params', methods: ['POST'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Return a list of the defis between start_id and start_id + 10 with category, tags, and filter as JSON params in the body'
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'start_id', type: 'integer', example: 0),
+                new OA\Property(property: 'category', type: 'string', example: 'web'),
+                new OA\Property(property: 'tags', type: 'array', items: new OA\Items(type: 'string'), example: ['php', 'symfony']),
+                new OA\Property(
+                    property: 'filter', 
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'attribute', type: 'string', example: 'difficulte'),
+                        new OA\Property(property: 'action', type: 'string', enum: ['asc', 'desc'], example: 'desc')
+                    ]
+                )
+            ]
+        )
+    )]
+    public function listWithCategoryAndTag(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        // Fixed the parameter extraction (they were all using 'start_id')
+        $startId = $data['start_id'] ?? 0;
+        $category = $data['category'] ?? null;
+        $tags = $data['tags'] ?? null;
+        $filter = $data['filter'] ?? null;
+
+        // Validate filter structure if provided
+        if ($filter !== null) {
+            if (!isset($filter['attribute']) || !isset($filter['action'])) {
+                return new JsonResponse([
+                    'error' => true, 
+                    'error_message' => 'Filter must contain both attribute and action properties'
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            }
+        }
+
+        // Get defis with all filters including sorting
+        $defis = $this->defiRepository->findNextDefis($startId, 10, $category, $tags, $filter);
+
+        // Build response data array
+        $responseData = [];
+        foreach($defis as $defi) {
+            $responseData[] = [
+                'id' => $defi->getId(),
+                'nom' => $defi->getNom(),
+                'points_recompense' => $defi->getPointsRecompense(),
+                'description' => $defi->getDescription(),
+                'difficulte' => $defi->getDifficulte(),
+                'categorie' => $defi->getCategorie(), // Added missing category
+                'fichiers' => $defi->getFichiers(), // Convert collection to array
+                'tags' => $defi->getTags(), // Convert collection to array
+                'user' => $defi->getUser()->getUsername() // Adjust based on your User entit
+            ];
+        }
+        
+        return new JsonResponse([
+            'error' => false, 
+            'error_message' => '', 
+            'data' => $responseData
+        ], JsonResponse::HTTP_OK);
+    }
+
 
 
 
@@ -105,7 +173,7 @@ class DefiApiController extends AbstractController
 
         // Check if the user has already completed this Defi
         if ($user->getDefisValid()->contains($defi)) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Defi is already done'], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => true, 'error_message' => 'Le défis est déjà fait '], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Verify the provided key

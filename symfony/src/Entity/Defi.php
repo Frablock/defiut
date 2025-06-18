@@ -117,9 +117,9 @@ class Defi
         $this->difficulte = $diff;
     }
 
-    public function getUser(): ?string
+    public function getUser(): ?User
     {
-        return $this->user->getUsername();
+        return $this->user;
     }
 
     public function setUser(User $user): self
@@ -236,5 +236,15 @@ class Defi
     public function setScore(int $score)
     {
         $this->pointsRecompense = $score;
+    }
+
+    public function getCategorie(): string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(string $categorie)
+    {
+        $this->categorie = $categorie;
     }
 }

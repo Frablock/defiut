@@ -3,6 +3,7 @@ import {
     Input,
     Badge,
     Placeholder,
+    Fade,
 } from 'reactstrap';
 import SelectableDropdown from "../utils/SelectableDropdown";
 import SVGDispatcher from "../utils/Utils";
@@ -11,19 +12,32 @@ export default function LobbyCategory(props) {
     const [loading, setLoading] = React.useState(true)
     const [inputValue, setInputValue] = React.useState("")
     const [categoryTitle, setCategoryTitle] = React.useState("")
+    const [currentFilter, setCurrentFilter] = React.useState("")
     const [filter, setFilter] = React.useState(
         [
             {
                 "title": "Difficulté croissante",
-                "action": "asc"
+                "action": 
+                {
+                    attribute:"difficulte",
+                    action:"asc"
+                }
             },
             {
                 "title": "Difficulté décroissante",
-                "action": "desc"
+                "action": 
+                {
+                    attribute:"difficulte",
+                    action:"desc"
+                }
             },
             {
                 "title": "Aucun",
-                "action": "",
+                "action":                 
+                {
+                    attribute:"",
+                    action:""
+                },
                 "separator": "true"
             }
         ]
@@ -53,8 +67,20 @@ export default function LobbyCategory(props) {
         return () => resizeObserver.disconnect();
     }, [props.footerRef?.current, props.navbarRef?.current]);
 
+    const handleOnClickFilter = (elem) => {
+        setCurrentFilter(elem)
+    }
+
     React.useEffect(() => {
-        props.sendData({ route: "/defis" }).then(
+        props.sendData({ 
+            route: "/defis", 
+            data:{
+                category: props.category == "Tout les défis" ? null : props.category,
+                filter: currentFilter.action,
+                tags: tags
+            },
+            method:"POST"
+        }).then(
             (data) => {
                 if (!data.error) {
                     setData(data.data)
@@ -63,7 +89,7 @@ export default function LobbyCategory(props) {
                 }
             }
         )
-    }, [props.category])
+    }, [props.category, currentFilter, tags])
 
     const handleTagsSelected = () => {
         if (inputValue.trim() !== "" && !tags.includes(inputValue.trim())) {
@@ -83,84 +109,86 @@ export default function LobbyCategory(props) {
     }
 
     return (
-        <div className="d-flex flex-column h-100">
-            <div ref={headerRef} className="row my-5 gap-2" style={{ flexShrink: 0 }}>
-                <div
-                    className="transition w-auto"
-                    style={{
-                        textShadow: "2px 2px 5px rgba(0, 0, 0, 0.36)",
-                        color: props.isDarkMode ? "#a899e7" : "#4625ba",
-                        fontWeight: "700",
-                        fontSize: "50px"
-                    }}
-                >
-                    {categoryTitle}
-                </div>
-                <SelectableDropdown className="w-auto align-content-center" items={filter} onClick={(elem) => handleOnClickFilter(elem)} />
-                <div className="row shadow align-items-center gap-2 py-2 my-3 w-auto h-auto" style={{ backgroundColor: "#a899e7", borderRadius: "20px", minHeight: "40px" }}>
-                    <div className="d-flex position-relative flex-row align-items-center gap-2" style={{ width: "230px" }}>
-                        <div style={{ fontWeight: "700" }}>
-                            Tags:
-                        </div>
-                        <Input
-                            className=""
-                            style={{ height: "32px", paddingRight: "40px" }}
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleTagsSelected();
-                                }
-                            }}
-                            placeholder="Ajouter un Tag"
-                        />
-                        <div onClick={handleTagsSelected} className="position-absolute end-0 me-4" style={{ cursor: "pointer", top: "2px" }}>
-                            <SVGDispatcher type="plus" color="black" />
-                        </div>
+        <Fade in={!props.unmount} className="w-100 h-100 mx-5 justify-content-start">
+            <div className="d-flex flex-column h-100">
+                <div ref={headerRef} className="row my-5 gap-2" style={{ flexShrink: 0 }}>
+                    <div
+                        className="transition w-auto"
+                        style={{
+                            textShadow: "2px 2px 5px rgba(0, 0, 0, 0.36)",
+                            color: props.isDarkMode ? "#a899e7" : "#4625ba",
+                            fontWeight: "700",
+                            fontSize: "50px"
+                        }}
+                    >
+                        {categoryTitle}
                     </div>
-                    {tags.map((elem, index) => {
-                        return (
-                            <Badge key={index} className="w-auto shadow d-flex align-items-center gap-1" style={{ cursor: "default", backgroundColor: "#a899e7" }}>
-                                <span>{elem}</span>
-                                <span
-                                    onClick={() => handleDeleteTag(index)}
-                                    style={{ cursor: "pointer" }}
-                                    className="ms-1 d-flex align-items-center"
-                                >
-                                    <SVGDispatcher type="close" color="white" />
-                                </span>
-                            </Badge>
-                        )
-                    })}
+                    <SelectableDropdown className="w-auto align-content-center" items={filter} onClick={(elem) => handleOnClickFilter(elem)} />
+                    <div className="row shadow align-items-center gap-2 py-2 my-3 w-auto h-auto" style={{ backgroundColor: "#a899e7", borderRadius: "20px", minHeight: "40px" }}>
+                        <div className="d-flex position-relative flex-row align-items-center gap-2" style={{ width: "230px" }}>
+                            <div style={{ fontWeight: "700" }}>
+                                Tags:
+                            </div>
+                            <Input
+                                className=""
+                                style={{ height: "32px", paddingRight: "40px" }}
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleTagsSelected();
+                                    }
+                                }}
+                                placeholder="Ajouter un Tag"
+                            />
+                            <div onClick={handleTagsSelected} className="position-absolute end-0 me-4" style={{ cursor: "pointer", top: "2px" }}>
+                                <SVGDispatcher type="plus" color="black" />
+                            </div>
+                        </div>
+                        {tags.map((elem, index) => {
+                            return (
+                                <Badge key={index} className="w-auto shadow d-flex align-items-center gap-1" style={{ cursor: "default", backgroundColor: "#a899e7" }}>
+                                    <span>{elem}</span>
+                                    <span
+                                        onClick={() => handleDeleteTag(index)}
+                                        style={{ cursor: "pointer" }}
+                                        className="ms-1 d-flex align-items-center"
+                                    >
+                                        <SVGDispatcher type="close" color="white" />
+                                    </span>
+                                </Badge>
+                            )
+                        })}
+                    </div>
+                </div>
+                <div className="w-100 d-flex pb-5 px-4 pt-3 flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-around"
+                    style={{ height: `calc(100vh - ${96 + viewSize}px)` }}
+                >
+                    {loading ?
+
+                        <>
+                            {
+                                Array.from({ length: 12 }, (_, index) => (
+                                    <HandleDefi props={props} loading={loading} index={index} isDarkMode={props.isDarkMode} />
+                                ))
+                            }
+                        </>
+                        :
+                        <>
+                            {
+                                data.map((elem, index) => {
+                                    return (
+                                        <>
+                                            <HandleDefi props={props} loading={loading} elem={elem} index={index} isDarkMode={props.isDarkMode} />
+                                        </>
+                                    )
+                                })
+                            }
+                        </>
+                    }
                 </div>
             </div>
-            <div className="w-100 d-flex pb-5 px-4 pt-3 flex-row flex-wrap gap-5 overflow-scroll align-items-center justify-content-center"
-                style={{ height: `calc(100vh - ${96 + viewSize}px)` }}
-            >
-                {loading ?
-
-                    <>
-                        {
-                            Array.from({ length: 12 }, (_, index) => (
-                                <HandleDefi props={props} loading={loading} index={index} isDarkMode={props.isDarkMode} />
-                            ))
-                        }
-                    </>
-                    :
-                    <>
-                        {
-                            data.map((elem, index) => {
-                                return (
-                                    <>
-                                        <HandleDefi props={props} loading={loading} elem={elem} index={index} isDarkMode={props.isDarkMode} />
-                                    </>
-                                )
-                            })
-                        }
-                    </>
-                }
-            </div>
-        </div>
+        </Fade>
     )
 }
 
