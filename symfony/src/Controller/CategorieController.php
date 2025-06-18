@@ -12,6 +12,8 @@ use App\Entity\User;
 use Exception;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
+use OpenApi\Attributes as OA;
+
 /**
  * Controller to serve the lobby categories endpoint
  *
@@ -31,6 +33,48 @@ class CategorieController extends AbstractController
      * @return JsonResponse Structured JSON response with error flag and data
      */
     #[Route('/api/defis/get_lobby_categories', name: 'get_lobby_categories', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/defis/get_lobby_categories',
+        tags: ['Defi'],
+        summary: 'Get lobby categories and recent challenges',
+        description: 'Returns top 5 tags and up to 5 most recent challenges for the authenticated user. If not authenticated, returns only tags.',
+        operationId: 'getLobbyCategories',
+        parameters: [
+            new OA\Parameter(
+                name: 'Authorization',
+                in: 'header',
+                required: false,
+                description: 'Optional bearer token for authentication. If provided, includes recent challenges for the user.',
+                schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+            )
+        ]
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Lobby categories retrieved successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'tags_name', type: 'array', items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: 'title', type: 'string', description: 'Tag name', example: 'Web Development')
+                        ],
+                        type: 'object'
+                    ), description: 'Array of top 5 tag names'),
+                    new OA\Property(property: 'defis_recents', type: 'array', items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: 'title', type: 'string', description: 'Challenge name', example: 'PHP Basics'),
+                            new OA\Property(property: 'id', type: 'integer', description: 'Challenge ID', example: 123)
+                        ],
+                        type: 'object'
+                    ), description: 'Array of up to 5 most recent challenges for the user. Empty if not authenticated.')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
     public function getCategories(EntityManagerInterface $em, Request $request): JsonResponse
     {
         $tagRepository = $em->getRepository(Tag::class);
