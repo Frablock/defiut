@@ -139,6 +139,8 @@ final class DefiAddController extends AbstractController
         $defi->setScore($score);
         $defi->setCategorie($category);
 
+        $defi->setUser($user);
+
         $tagRepository = $entityManager->getRepository(Tag::class);
 
         foreach ($tags as $tag) {
