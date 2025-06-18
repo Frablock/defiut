@@ -28,9 +28,60 @@ final class UserController extends AbstractController
      * Token Generator Endpoint
      */
     #[Route('/api/login', name: 'login', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/login',
+        tags: ['Authentication'],
+        summary: 'Authenticate user and get token',
+        description: 'Returns a token for authenticated users',
+        operationId: 'login',
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: 'User credentials',
+            content: new OA\JsonContent(
+                required: ['usermail', 'password'],
+                properties: [
+                    new OA\Property(property: 'usermail', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'password123')
+                ]
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
-        description: 'Token generator endpoint'
+        description: 'Successful authentication',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'token', type: 'string', example: 'abc123.def456...'),
+                    new OA\Property(property: 'expirationDate', type: 'string', format: 'date', example: '2023-12-31')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Missing username or password',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Missing username or password')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Invalid credentials',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Invalid credentials')
+            ],
+            type: 'object'
+        )
     )]
     public function login(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
@@ -76,9 +127,67 @@ final class UserController extends AbstractController
      * Password change endpoint
      */
     #[Route('/api/change_password', name: 'change_password', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/change_password',
+        tags: ['Authentication'],
+        summary: 'Change user password',
+        description: 'Allows authenticated users to change their password',
+        operationId: 'changePassword',
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: 'Password change request',
+            content: new OA\JsonContent(
+                required: ['usermail', 'password', 'new_password'],
+                properties: [
+                    new OA\Property(property: 'usermail', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'oldpassword123'),
+                    new OA\Property(property: 'new_password', type: 'string', format: 'password', example: 'newpassword123')
+                ]
+            )
+        )
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
     #[OA\Response(
         response: 200,
-        description: 'change password endpoint'
+        description: 'Password successfully changed',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'changed_password', type: 'string', example: 'ok')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Missing token or required fields',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Missing token or required fields')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Invalid credentials',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Invalid credentials')
+            ],
+            type: 'object'
+        )
     )]
     public function changePassword(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
@@ -124,6 +233,45 @@ final class UserController extends AbstractController
      * Disconnect Endpoint (Token Invalidation)
      */
     #[Route('/api/logout', name: 'logout', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/logout',
+        tags: ['Authentication'],
+        summary: 'Logout and invalidate current token',
+        description: 'Invalidates the current authentication token, logging out the user',
+        operationId: 'logout',
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Successfully logged out',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'message', type: 'string', example: 'Logged out successfully')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Missing token',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Missing token')
+            ],
+            type: 'object'
+        )
+    )]
     public function logout(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Extract token from Authorization header
@@ -148,6 +296,47 @@ final class UserController extends AbstractController
      * Testing enspoint for token
      */
     #[Route('/api/token_validity_test', name: 'token_validity_test', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/token_validity_test',
+        tags: ['Authentication'],
+        summary: 'Test token validity',
+        description: 'Checks if the provided authentication token is valid and returns user information if valid',
+        operationId: 'tokenValidityTest',
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Token validation result',
+        content: new OA\JsonContent(
+            oneOf: [
+                new OA\Schema(
+                    properties: [
+                        new OA\Property(property: 'error', type: 'boolean', enum: [false], description: 'False indicates success'),
+                        new OA\Property(property: 'error_message', type: 'string', enum: [""], description: 'Empty string on success'),
+                        new OA\Property(property: 'data', properties: [
+                            new OA\Property(property: 'message', description: 'User object', type: 'object')
+                        ], type: 'object')
+                    ],
+                    type: 'object',
+                    description: 'Successful validation response'
+                ),
+                new OA\Schema(
+                    properties: [
+                        new OA\Property(property: 'error', type: 'boolean', enum: [true], description: 'True indicates error'),
+                        new OA\Property(property: 'error_message', type: 'string', description: 'Error message', example: 'Votre connexion à expiré')
+                    ],
+                    type: 'object',
+                    description: 'Failed validation response'
+                )
+            ]
+        )
+    )]
     public function token_validity_test(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         try{
@@ -172,6 +361,50 @@ final class UserController extends AbstractController
      * Get All user info for a user
      */
     #[Route('/api/user_info', name: 'user_info', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/user_info',
+        tags: ['User'],
+        summary: 'Get user information',
+        description: 'Returns comprehensive information about the authenticated user',
+        operationId: 'getUserInfo',
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'User information retrieved successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'mail', type: 'string', format: 'email', description: 'User email address', example: 'user@example.com'),
+                    new OA\Property(property: 'score_total', type: 'integer', description: 'User total score', example: 1000),
+                    new OA\Property(property: 'creation_date', type: 'string', format: 'date-time', description: 'User account creation date', example: '2023-01-01T12:00:00Z'),
+                    new OA\Property(property: 'last_co', type: 'string', format: 'date-time', description: 'Last connection date', example: '2023-05-15T09:30:00Z'),
+                    new OA\Property(property: 'username', type: 'string', description: 'Username', example: 'johndoe'),
+                    new OA\Property(property: 'defis_recents', type: 'array', items: new OA\Items(type: 'object'), description: 'Recent challenges')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Authentication error (missing token or invalid credentials)',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', description: 'Error message may be "Missing token" or "Invalid credentials"')
+            ],
+            type: 'object'
+        )
+    )]
     public function user_info(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Extract token from Authorization header
