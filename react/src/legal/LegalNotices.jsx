@@ -4,6 +4,28 @@ import SVGDispatcher from "../utils/Utils";
 import { Fade } from "reactstrap";
 
 export default function LegalNotices(props) {
+
+    const [viewSize, setViewSize] = React.useState("0")
+    
+    React.useEffect(() => {
+            if (!props.footerRef?.current || !props.navbarRef?.current) return;
+    
+            const calculateSize = () => {
+                const footerHeight = props.footerRef.current.offsetHeight;
+                const navbarHeight = props.navbarRef.current.offsetHeight;
+                setViewSize(footerHeight + navbarHeight);
+            };
+    
+            calculateSize();
+    
+            const resizeObserver = new ResizeObserver(calculateSize);
+            resizeObserver.observe(props.footerRef.current);
+            resizeObserver.observe(props.navbarRef.current);
+    
+    
+            return () => resizeObserver.disconnect();
+        }, [props.footerRef?.current, props.navbarRef?.current]);
+
     React.useEffect(() => {
         props.setShowLeftNavigation(false);
         props.setShowLeaderboard(false);
@@ -12,11 +34,11 @@ export default function LegalNotices(props) {
     return (
         <Fade in={!props.unmount} className="w-100 h-100">
             <div 
-                className="d-flex flex-column w-100 h-100 p-5"
+                className="d-flex flex-column w-100 p-5 overflow-scroll"
                 style={{
                     color: props.isDarkMode ? "white" : "black",
-                    backgroundColor: props.isDarkMode ? "#2d2d2d" : "#f8f9fa",
-                    overflowY: "auto"
+                    backgroundColor: props.isDarkMode ? "#434343" : "#f2f2f2",
+                    height:`calc(100vh - ${20+viewSize}px)`
                 }}
             >
                 <div className="container-fluid">
@@ -30,7 +52,7 @@ export default function LegalNotices(props) {
                         <ul>
                             <li><strong>Nom de l'entité responsable :</strong> François PATINEC, Camille LE BRECH, Gabriel ZENSEN DA SILVA, Gabin LEGRAND</li>
                             <li><strong>Adresse postale :</strong> 56000 Vannes</li>
-                            <li><strong>Adresse email :</strong> camille.lebrech14@gmail.com / chatgpt@openai.com</li>
+                            <li><strong>Adresse email :</strong> camille.lebrech14@gmail.com</li>
                             <li><strong>Responsable de la publication :</strong> Camille LE BRECH</li>
                             <li><strong>Statut juridique :</strong> Projet pédagogique universitaire (non professionnel)</li>
                         </ul>
@@ -42,9 +64,9 @@ export default function LegalNotices(props) {
                         </h3>
                         <p className="mb-2">Le site est hébergé localement par :</p>
                         <ul>
-                            <li><strong>Nom de l'hébergeur :</strong> dsk11-elb01 (poste local)</li>
+                            <li><strong>Nom de l'hébergeur :</strong> ton ordinateur (poste local)</li>
                             <li><strong>Adresse :</strong> Poste utilisateur local – hébergement non public</li>
-                            <li><strong>Site web :</strong> http://localhost</li>
+                            <li><strong>Site web :</strong> https://localhost</li>
                         </ul>
                     </div>
 

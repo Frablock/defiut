@@ -5,6 +5,26 @@ import { Fade, Collapse } from "reactstrap";
 
 export default function FAQ(props) {
     const [openItems, setOpenItems] = useState({});
+    const [viewSize, setViewSize] = React.useState("0")
+
+    React.useEffect(() => {
+            if (!props.footerRef?.current || !props.navbarRef?.current) return;
+    
+            const calculateSize = () => {
+                const footerHeight = props.footerRef.current.offsetHeight;
+                const navbarHeight = props.navbarRef.current.offsetHeight;
+                setViewSize(footerHeight + navbarHeight);
+            };
+    
+            calculateSize();
+    
+            const resizeObserver = new ResizeObserver(calculateSize);
+            resizeObserver.observe(props.footerRef.current);
+            resizeObserver.observe(props.navbarRef.current);
+    
+    
+            return () => resizeObserver.disconnect();
+        }, [props.footerRef?.current, props.navbarRef?.current]);
 
     React.useEffect(() => {
         props.setShowLeftNavigation(true); 
@@ -53,11 +73,13 @@ export default function FAQ(props) {
     return (
         <Fade in={!props.unmount} className="w-100 h-100">
             <div 
-                className="d-flex flex-column w-100 h-100 p-5"
+                className="d-flex flex-column w-100 p-5 transition"
                 style={{
                     color: props.isDarkMode ? "white" : "black",
-                    backgroundColor: props.isDarkMode ? "#2d2d2d" : "#f8f9fa",
-                    overflowY: "auto"
+                    backgroundColor: props.isDarkMode ? "#434343" : "#f2f2f2",
+                    overflowY: "auto",
+                    
+                    height:`calc(100vh - ${20+viewSize}px)`
                 }}
             >
                 <div className="container-fluid">
@@ -67,7 +89,7 @@ export default function FAQ(props) {
                         {faqItems.map((item, index) => (
                             <div key={index} className="mb-3">
                                 <div 
-                                    className="d-flex justify-content-between align-items-center p-3 rounded"
+                                    className="d-flex justify-content-between align-items-center p-3 rounded transition"
                                     style={{
                                         backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
                                         cursor: "pointer",
@@ -111,9 +133,9 @@ export default function FAQ(props) {
                         ))}
                     </div>
 
-                    <div className="text-center mb-4">
+                    <div className="text-center mb-4 ">
                         <div 
-                            className="p-4 rounded"
+                            className="p-4 rounded transition"
                             style={{
                                 backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
                                 border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`

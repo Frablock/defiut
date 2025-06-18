@@ -7,6 +7,9 @@ import Register from './register/Register';
 import Lobby from './lobby/Lobby';
 import Profil from './profil/Profil'
 import Defis from './defis/Defis';
+import LegalNotices from './legal/LegalNotices';
+import FAQ from './faq/Faq';
+import CGU from './cgu/Cgu';
 
 function RoutesDispatcher(props) {
   return (
