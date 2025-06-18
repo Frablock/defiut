@@ -24,7 +24,7 @@ class CategorieController extends AbstractController
      *
      * Returns:
      * - tags_name: array of top 5 tag titles
-     * - defis_recents: array of recent challenges for the user (title + id), empty if not authenticated
+     * - defis_recents: array of 5 most recent challenges for the user (title + id), empty if not authenticated
      *
      * @param EntityManagerInterface $em   Doctrine entity manager
      * @param Request                $request HTTP request to access headers
@@ -38,6 +38,7 @@ class CategorieController extends AbstractController
         $tags = $tagRepository->getTop5Tags();
         $tagsName = [];
         $recentDefisArray = [];
+        
         // Build list of tag titles for the response
         foreach ($tags as $tag) {
             $tagsName[] = [
@@ -50,22 +51,29 @@ class CategorieController extends AbstractController
             // Find the User by their stored token
             $user = $em->getRepository(User::class)->findOneByToken($token);
             if ($user instanceof User) {
-                // Get the collection of recent challenges for that user
-                $recentDefis = $user->getRecentDefis();
+                // Get the 5 most recent défis for the user, ordered by date (latest first)
+                $recentDefisRepository = $em->getRepository(RecentDefi::class);
+                $recentDefis = $recentDefisRepository->findBy(
+                    ['user' => $user],           // criteria
+                    ['dateAcces' => 'DESC'],     // order by date descending (latest first)
+                    5                            // limit to 5 results
+                );
+                
                 foreach ($recentDefis as $recentDefi) {
                     $recentDefisArray[] = [
                         'title' => $recentDefi->getDefi()->getNom(),
-                        'id'=> $recentDefi->getDefi()->getId()
+                        'id' => $recentDefi->getDefi()->getId()
                     ];
                 }
             }
         }
+        
         return new JsonResponse(
             [
-                'error'=> false,
-                'data'=> [
-                    'tags_name' => $tagsName, // Top 5 tag titles
-                    'defis_recents' => $recentDefisArray // Recent challenges for the user (may be empty)
+                'error' => false,
+                'data' => [
+                    'tags_name' => $tagsName,           // Top 5 tag titles
+                    'defis_recents' => $recentDefisArray // 5 most recent challenges for the user
                 ],
             ]
         );

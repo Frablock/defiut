@@ -36,7 +36,7 @@ export default function Leaderboard(props) {
                 : 
                 <Fade
                     in={!unmount && props.showLeaderboard} 
-                    className="h-100"
+                    className="h-100 leaderboard"
                     onExited={() => setUnmount(true)}
                 >
                     <div className="h-100 d-flex flex-column gap-5 h-100 justify-content-center" style={{marginRight:"20px"}}>

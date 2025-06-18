@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Defi;
+use App\Entity\RecentDefi;
 use App\Repository\DefiRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -261,15 +262,44 @@ class DefiApiController extends AbstractController
 
     //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
     #[Route('/{id}', name: 'get_single_defi', methods: ['GET'])]
-    public function getSingleDefi(int $id): JsonResponse
+    public function getSingleDefi(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
         $defi = $this->defiRepository->find($id);
 
         if (!$defi) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Defi not found'], JsonResponse::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => true, 'error_message' => "Défis introuvable"], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $token = $request->headers->get('Authorization');
+        if ($token) {
+            $user = $this->userRepository->findOneByToken($token);
+            if ($user instanceof User) {
+
+                $recentDefisRepository = $em->getRepository(RecentDefi::class);
+                
+                // Check if the user already has this defi in recent defis
+                $existingRecentDefi = $recentDefisRepository->findOneBy([
+                    'user' => $user,
+                    'defi' => $defi
+                ]);
+
+                // Only add if it doesn't exist
+                if (!$existingRecentDefi) {
+                    $recentDefis = new RecentDefi($user, $defi, new \DateTime());
+                    $user->addRecentDefi($recentDefis);
+                    
+                    // Persist the new RecentDefi
+                    $em->persist($recentDefis);
+                    $em->flush();
+                } else {
+                    // Update the access date if it already exists
+                    $existingRecentDefi->setDateAcces(new \DateTime());
+                    $em->flush();
+                }
+            }
         }
 
         $data = $this->serializer->serialize($defi, 'json', ['groups' => ['defi-read']]);
-        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => json_decode($data)], JsonResponse::HTTP_OK);
+        return new JsonResponse(['error' => false, 'data' => json_decode($data)], JsonResponse::HTTP_OK);
     }
 }

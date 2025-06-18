@@ -57,7 +57,7 @@ final class RegistrationController extends AbstractController
 
         $user->setMail($usermail);
         $user->setUsername($username);
-        $user->setMotDePasse($password);
+        $user->setMotDePasse(password_hash($password, PASSWORD_ARGON2ID));
         $user->setCreationDate(new DateTime());
         $user->setLastCo(new DateTime());
 

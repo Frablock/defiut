@@ -102,13 +102,13 @@ export default function App(props) {
             
             if (response.status === 401 && isLogedIn) {
                 logout();
-                return { error: true, error_message: "Session expired" };
+                return { error: true, error_message: "Votre session à expiré" };
             }
             
             // Handle file download
             if (isFileDownload) {
                 if (!response.ok) {
-                    const errorResult = { error: true, error_message: `Download failed: ${response.statusText}` };
+                    const errorResult = { error: true, error_message: `Téléchargement non réussi : ${response.statusText}` };
                     showErrorNotification(errorResult.error_message);
                     return errorResult;
                 }

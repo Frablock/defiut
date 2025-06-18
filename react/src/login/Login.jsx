@@ -73,11 +73,6 @@ function Login(props) {
         }
     };
 
-    const handleGoogleLogin = () => {
-        // Add Google login logic here if needed
-        console.log("Google login clicked");
-    };
-
     return (
         <Fade in={!props.unmount} className="w-100 h-100">
             <div className="d-flex flex-column w-100 h-100 mt-5 gap-4 align-items-center">

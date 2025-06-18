@@ -73,11 +73,18 @@ export default function Lobby(props) {
                             :
                             <>
                             {
-                                data.defis_recents.map((elem, i) => (
-                                    <HandleListGroupItem onClick={() => props.navigateTo("/defis/"+elem['id'])} index={i} isDarkMode={props.isDarkMode}>
-                                        {elem.title}
+                                data.defis_recents.length > 0 ?
+                                    data.defis_recents.map((elem, i) => (
+                                        <HandleListGroupItem onClick={() => props.navigateTo("/defis/"+elem['id'])} index={i} isDarkMode={props.isDarkMode}>
+                                            {elem.title}
+                                        </HandleListGroupItem>
+                                    ))
+                                :
+                                <>
+                                    <HandleListGroupItem isDarkMode={props.isDarkMode}>
+                                        Aucun défis récents !
                                     </HandleListGroupItem>
-                                ))
+                                </>
                             }
                             </>
                             }
