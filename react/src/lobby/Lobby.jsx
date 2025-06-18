@@ -25,7 +25,7 @@ export default function Lobby(props) {
         <Fade in={!props.unmount} className="w-100 h-100 justify-content-start">
             <div in={!props.unmount} className="w-100 h-100 my-3 row justify-content-evenly align-items-center">
                 <div className="d-flex flex-column w-auto align-items-center">
-                    <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Tags tendances</h2>
+                    <h2 className="transition" style={{color: props.isDarkMode ? "white" : "black"}}>Défis tendances</h2>
                     <ListGroup className="mx-4" style={{width:"400px", maxWidth: "100%"}}>
                             {loading ? 
                             <>
@@ -40,8 +40,8 @@ export default function Lobby(props) {
                             :
                             <>
                             {
-                                data.tags_name.map((elem, i) => (
-                                    <HandleListGroupItem index={i} isDarkMode={props.isDarkMode}>
+                                data.top_defis.map((elem, i) => (
+                                    <HandleListGroupItem onClick={() => props.navigateTo("/defis/"+elem['id'])} index={i} isDarkMode={props.isDarkMode}>
                                         {loading ? 
                                         <Placeholder xs={6}/> 
                                         : 

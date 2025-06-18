@@ -107,30 +107,24 @@ class DefiRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-
-
-    //    /**
-    //     * @return Defi[] Returns an array of Defi objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('d.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Defi
-    //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Get top 5 defis based on validations in the last 48 hours
+     *
+     * @return array
+     */
+    public function getTop5DefisByValidations(): array
+    {
+        $date48HoursAgo = new \DateTime();
+        $date48HoursAgo->modify('-48 hours');
+        
+        return $this->createQueryBuilder('d')
+            ->select('d as defi, COUNT(dvu.id) as validation_count')
+            ->leftJoin('d.defiValidUtilisateurs', 'dvu', 'WITH', 'dvu.dateValid >= :date48HoursAgo')
+            ->setParameter('date48HoursAgo', $date48HoursAgo)
+            ->groupBy('d.id')
+            ->orderBy('validation_count', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+    }
 }
