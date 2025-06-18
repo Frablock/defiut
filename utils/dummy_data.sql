@@ -387,7 +387,7 @@ VALUES (
     (
         5,
         'L’agence matrimoniale parfaite',
-        '# 💍 L’Agence Matrimoniale Parfaite\n\nVous travaillez pour une agence matrimoniale révolutionnaire qui garantit des couples parfaitement compatibles ! Votre mission : créer un algorithme qui assure des mariages stables entre deux groupes de personnes.\n\n📊 Voici les inscrits avec leurs préférences classées du plus apprécié au moins apprécié :\n\n**Hommes :**\n- Alex : Iris, Fabienne, Léa, Sarah, Julie\n- Ben : Léa, Julie, Fabienne, Sarah, Iris\n- Charles : Sarah, Iris, Fabienne, Julie, Léa\n- David : Julie, Léa, Sarah, Fabienne, Iris\n- Éric : Fabienne, Sarah, Léa, Iris, Julie\n\n**Femmes :**\n- Iris : Ben, David, Charles, Alex, Éric\n- Fabienne : David, Éric, Ben, Charles, Alex\n- Léa : Alex, Ben, Charles, Éric, David\n- Sarah : Charles, Ben, David, Alex, Éric\n- Julie : Ben, Charles, Alex, Éric, David\n\n🚩 Format du flag : `ILSJF` (initiales des couples formés)',
+        '# 💍 L’Agence Matrimoniale Parfaite\n\nVous travaillez pour une agence matrimoniale révolutionnaire qui garantit des couples parfaitement compatibles ! Votre mission : créer un algorithme qui assure des mariages stables entre deux groupes de personnes.\n\n📊 Voici les inscrits avec leurs préférences classées du plus apprécié au moins apprécié :\n\n**Hommes :**\n- Alex : Iris, Fabienne, Léa, Sarah, Julie\n- Ben : Léa, Julie, Fabienne, Sarah, Iris\n- Charles : Sarah, Iris, Fabienne, Julie, Léa\n- David : Julie, Léa, Sarah, Fabienne, Iris\n- Éric : Fabienne, Sarah, Léa, Iris, Julie\n\n**Femmes :**\n- Iris : Ben, David, Charles, Alex, Éric\n- Fabienne : David, Éric, Ben, Charles, Alex\n- Léa : Alex, Ben, Charles, Éric, David\n- Sarah : Charles, Ben, David, Alex, Éric\n- Julie : Ben, Charles, Alex, Éric, David',
         'ILSJF',
         425,
         'Algorithmie',
@@ -397,7 +397,7 @@ VALUES (
     (
         6,
         'SQLI Level 1',
-        '# 🔐 SQLI Level 1\n\nTu viens d''être embauché comme testeur de sécurité par une start-up technologique qui souhaite évaluer la sécurité de son nouveau portail de connexion développé en `Node.js`.\n\n🎯 Ta mission est de vérifier si le formulaire de connexion est vulnérable aux **injections SQL** et de prouver la faille en obtenant l''accès administrateur.\n\n🚩 Le flag se trouve dans l''interface administrateur, accessible uniquement après une connexion réussie en tant qu''administrateur.\n`DEF_IUT{N0D3JS_SQL1_M4ST3R}`',
+        '# 🔐 SQLI Level 1\n\nTu viens d''être embauché comme testeur de sécurité par une start-up technologique qui souhaite évaluer la sécurité de son nouveau portail de connexion développé en `Node.js`.\n\n🎯 Ta mission est de vérifier si le formulaire de connexion est vulnérable aux **injections SQL** et de prouver la faille en obtenant l''accès administrateur.\n\n🚩 Le flag se trouve dans l''interface administrateur, accessible uniquement après une connexion réussie en tant qu''administrateur.',
         'DEF_IUT{N0D3JS_SQL1_M4ST3R}',
         200,
         'Web',
@@ -407,7 +407,7 @@ VALUES (
     (
         7,
         'Le message invisible',
-        '# 🖼️ Le Message Invisible\n\nL''Agence a intercepté cette image qui semble provenir d''un groupe suspicieux. Nos analystes pensent qu''elle contient un message caché, mais leurs méthodes d''analyse habituelles n''ont rien révélé.\n\n🔍 Ta mission est de :\n1. Examiner l''image fournie en utilisant des techniques d''analyse avancées\n2. Trouver et extraire le message caché\n3. Communiquer le flag\n\n🚩 Flag : `DEF_IUT{ST3G0_1S_FUN}`',
+        '# 🖼️ Le Message Invisible\n\nL''Agence a intercepté cette image qui semble provenir d''un groupe suspicieux. Nos analystes pensent qu''elle contient un message caché, mais leurs méthodes d''analyse habituelles n''ont rien révélé.\n\n🔍 Ta mission est de :\n1. Examiner l''image fournie en utilisant des techniques d''analyse avancées\n2. Trouver et extraire le message caché\n3. Communiquer le flag',
         'DEF_IUT{ST3G0_1S_FUN}',
         250,
         'Stégonographie',
