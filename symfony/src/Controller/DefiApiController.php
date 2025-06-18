@@ -31,9 +31,36 @@ class DefiApiController extends AbstractController
 
 
     #[Route('', name: 'list', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/defis',
+        tags: ['Defi'],
+        summary: 'List all challenges',
+        description: 'Returns a list of all available challenges with their details',
+        operationId: 'listDefis',
+    )]
     #[OA\Response(
         response: 200,
-        description: 'Return a list of the defis'
+        description: 'List of challenges retrieved successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(
+                    properties: [
+                        new OA\Property(property: 'nom', type: 'string', description: 'Name of the challenge', example: 'Learn PHP'),
+                        new OA\Property(property: 'points_recompense', type: 'integer', description: 'Reward points for completing the challenge', example: 100),
+                        new OA\Property(property: 'description', type: 'string', description: 'Description of the challenge', example: 'Complete a PHP tutorial'),
+                        new OA\Property(property: 'difficulte', type: 'string', description: 'Difficulty level', example: 'beginner'),
+                        new OA\Property(property: 'fichier', type: 'array', description: 'Files associated with the challenge', items: new OA\Items()),
+                        new OA\Property(property: 'id', type: 'integer', description: 'Challenge ID', example: 1),
+                        new OA\Property(property: 'tags', type: 'array', description: 'Tags for the challenge', items: new OA\Items(type: 'string')),
+                        new OA\Property(property: 'user', type: 'object', description: 'User who created the challenge')
+                    ],
+                    type: 'object'
+                ))
+            ],
+            type: 'object'
+        )
     )]
     public function list(Request $request): JsonResponse
     {
@@ -66,27 +93,67 @@ class DefiApiController extends AbstractController
     }
 
     #[Route('', name: 'list_by_params', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/defis',
+        tags: ['Defi'],
+        summary: 'List challenges with filters',
+        description: 'Returns a filtered and paginated list of challenges based on the provided parameters',
+        operationId: 'listDefisByParams',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'start_id', type: 'integer', example: 0, description: 'Starting ID for pagination'),
+                    new OA\Property(property: 'category', type: 'string', example: 'web', description: 'Category to filter by'),
+                    new OA\Property(property: 'tags', type: 'array', items: new OA\Items(type: 'string'), example: ['php', 'symfony'], description: 'Tags to filter by'),
+                    new OA\Property(
+                        property: 'filter',
+                        type: 'object',
+                        description: 'Sorting filter',
+                        properties: [
+                            new OA\Property(property: 'attribute', type: 'string', example: 'difficulte', description: 'Attribute to sort by'),
+                            new OA\Property(property: 'action', type: 'string', enum: ['asc', 'desc'], example: 'desc', description: 'Sort direction')
+                        ]
+                    )
+                ]
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
-        description: 'Return a list of the defis between start_id and start_id + 10 with category, tags, and filter as JSON params in the body'
-    )]
-    #[OA\RequestBody(
-        required: true,
+        description: 'Filtered list of challenges retrieved successfully',
         content: new OA\JsonContent(
-            type: 'object',
             properties: [
-                new OA\Property(property: 'start_id', type: 'integer', example: 0),
-                new OA\Property(property: 'category', type: 'string', example: 'web'),
-                new OA\Property(property: 'tags', type: 'array', items: new OA\Items(type: 'string'), example: ['php', 'symfony']),
-                new OA\Property(
-                    property: 'filter', 
-                    type: 'object',
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(
                     properties: [
-                        new OA\Property(property: 'attribute', type: 'string', example: 'difficulte'),
-                        new OA\Property(property: 'action', type: 'string', enum: ['asc', 'desc'], example: 'desc')
-                    ]
-                )
-            ]
+                        new OA\Property(property: 'id', type: 'integer', description: 'Challenge ID', example: 1),
+                        new OA\Property(property: 'nom', type: 'string', description: 'Name of the challenge', example: 'Learn PHP'),
+                        new OA\Property(property: 'points_recompense', type: 'integer', description: 'Reward points', example: 100),
+                        new OA\Property(property: 'description', type: 'string', description: 'Challenge description', example: 'Complete a PHP tutorial'),
+                        new OA\Property(property: 'difficulte', type: 'string', description: 'Difficulty level', example: 'beginner'),
+                        new OA\Property(property: 'categorie', type: 'string', description: 'Category', example: 'web'),
+                        new OA\Property(property: 'fichiers', type: 'array', description: 'Files associated with the challenge', items: new OA\Items()),
+                        new OA\Property(property: 'tags', type: 'array', description: 'Tags', items: new OA\Items(type: 'string')),
+                        new OA\Property(property: 'user', type: 'string', description: 'Username of the creator', example: 'johndoe')
+                    ],
+                    type: 'object'
+                ))
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Invalid filter parameter',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Filter must contain both attribute and action properties')
+            ],
+            type: 'object'
         )
     )]
     public function listWithCategoryAndTag(Request $request): JsonResponse
@@ -139,9 +206,96 @@ class DefiApiController extends AbstractController
 
 
     #[Route('/try_key', name: 'try_key', methods: ['POST'])]
+    #[OA\Post(
+        path: 'api/defis/try_key',
+        tags: ['Defi'],
+        summary: 'Try a key for a challenge',
+        description: 'Allows a user to attempt to validate a challenge by providing its key',
+        operationId: 'tryKey',
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: 'Challenge ID and key to attempt',
+            content: new OA\JsonContent(
+                type: 'object',
+                required: ['id', 'key'],
+                properties: [
+                    new OA\Property(property: 'id', type: 'integer', description: 'ID of the challenge to attempt', example: 1),
+                    new OA\Property(property: 'key', type: 'string', description: 'Key to attempt for the challenge', example: 'secret123')
+                ]
+            )
+        )
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
     #[OA\Response(
         response: 200,
-        description: 'Allow the user to try a key for a defi'
+        description: 'Key was correct, challenge completed successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'message', type: 'string', example: 'ok')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Bad request (missing parameters, wrong key, or already completed)',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: [
+                    'Missing id or key',
+                    'Mauvaise clée',
+                    'Le défis est déjà fait'
+                ])
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Unauthorized (missing token or invalid authentication)',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: [
+                    'Missing token',
+                    'Utilisateur non authentifié'
+                ])
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Challenge not found',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Defi non trouvé')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 429,
+        description: 'Too many requests (rate limited)',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Veuillez attendre 1 seconde(s) avant de réessayer')
+            ],
+            type: 'object'
+        )
     )]
     public function try_key(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
@@ -222,6 +376,44 @@ class DefiApiController extends AbstractController
 
 
     #[Route('/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
+    #[OA\Get(
+        path: 'api/defis/get_left_menu_categories',
+        tags: ['UI', 'Defi'],
+        summary: 'Get left menu categories',
+        description: 'Returns a list of categories for the left sidebar menu',
+        operationId: 'getLeftMenuCategories',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Menu categories retrieved successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(
+                    properties: [
+                        new OA\Property(property: 'title', type: 'string', description: 'Category title', example: 'Tout les défis'),
+                        new OA\Property(property: 'img', type: 'string', description: 'Icon class for the category', example: 'bi bi-collection'),
+                        new OA\Property(property: 'url', type: 'string', description: 'URL for the category', example: '/all')
+                    ],
+                    type: 'object'
+                ))
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Internal server error',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Une erreur s\'est produite dans le menu des catégories rapide.'),
+                new OA\Property(property: 'data', type: 'string', example: null, nullable: true)
+            ],
+            type: 'object'
+        )
+    )]
     public function getLeftMenuCategories(Request $request): JsonResponse
     {
         try {
@@ -253,9 +445,60 @@ class DefiApiController extends AbstractController
     }
 
     #[Route('/filter', name: 'filter', methods: ['POST'])]
+    #[OA\Post(
+        path: 'api/defis/filter',
+        tags: ['Defi'],
+        summary: 'Filter challenges by category and tags',
+        description: 'Returns a filtered list of challenges based on specified category and tags',
+        operationId: 'filterDefisByCategoryAndTags',
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: 'Filter criteria for challenges',
+            content: new OA\JsonContent(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'tags', type: 'array', items: new OA\Items(type: 'string'), description: 'Tags to filter by', example: ['php', 'database']),
+                    new OA\Property(property: 'category', type: 'string', description: 'Category to filter by', example: 'web')
+                ]
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
-        description: 'Returns a list of Defi filtered by category and tags'
+        description: 'Filtered challenges retrieved successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(
+                    properties: [
+                        new OA\Property(property: 'id', type: 'integer', description: 'Challenge ID', example: 1),
+                        new OA\Property(property: 'nom', type: 'string', description: 'Name of the challenge', example: 'Learn PHP'),
+                        new OA\Property(property: 'points_recompense', type: 'integer', description: 'Reward points', example: 100),
+                        new OA\Property(property: 'description', type: 'string', description: 'Challenge description', example: 'Complete a PHP tutorial'),
+                        new OA\Property(property: 'difficulte', type: 'string', description: 'Difficulty level', example: 'beginner'),
+                        new OA\Property(property: 'categorie', type: 'string', description: 'Category', example: 'web'),
+                        new OA\Property(property: 'fichiers', type: 'array', description: 'Files associated with the challenge', items: new OA\Items()),
+                        new OA\Property(property: 'tags', type: 'array', description: 'Tags', items: new OA\Items(type: 'string')),
+                        new OA\Property(property: 'user', type: 'object', description: 'User who created the challenge')
+                    ],
+                    type: 'object'
+                ))
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Internal server error',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'An error occurred while filtering Defi by category and tags.'),
+                new OA\Property(property: 'data', type: 'string', example: null, nullable: true)
+            ],
+            type: 'object'
+        )
     )]
     public function filterDefisByCategoryAndTags(Request $request): JsonResponse
     {
@@ -289,6 +532,62 @@ class DefiApiController extends AbstractController
 
     //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
     #[Route('/{id}', name: 'get_single_defi', methods: ['GET'])]
+    #[OA\Get(
+        path: 'api/defis/{id}',
+        tags: ['Defi'],
+        summary: 'Get a single challenge by ID',
+        description: 'Returns details for a specific challenge. If authenticated, adds the challenge to the user\'s recent challenges list.',
+        operationId: 'getSingleDefi',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'ID of the challenge to retrieve',
+                schema: new OA\Schema(type: 'integer')
+            ),
+            new OA\Parameter(
+                name: 'Authorization',
+                in: 'header',
+                required: false,
+                description: 'Optional bearer token for authentication. If provided, the challenge will be added to the user\'s recent challenges list.',
+                schema: new OA\Schema(type: 'string')
+            )
+        ]
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Challenge retrieved successfully',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'id', type: 'integer', description: 'Challenge ID', example: 1),
+                    new OA\Property(property: 'nom', type: 'string', description: 'Name of the challenge', example: 'Learn PHP'),
+                    new OA\Property(property: 'points_recompense', type: 'integer', description: 'Reward points', example: 100),
+                    new OA\Property(property: 'description', type: 'string', description: 'Challenge description', example: 'Complete a PHP tutorial'),
+                    new OA\Property(property: 'difficulte', type: 'string', description: 'Difficulty level', example: 'beginner'),
+                    new OA\Property(property: 'categorie', type: 'string', description: 'Category', example: 'web'),
+                    new OA\Property(property: 'fichiers', type: 'array', description: 'Files associated with the challenge', items: new OA\Items()),
+                    new OA\Property(property: 'tags', type: 'array', description: 'Tags', items: new OA\Items(type: 'string')),
+                    new OA\Property(property: 'user', type: 'object', description: 'User who created the challenge')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Challenge not found',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Défis introuvable')
+            ],
+            type: 'object'
+        )
+    )]
     public function getSingleDefi(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
         $defi = $this->defiRepository->find($id);
