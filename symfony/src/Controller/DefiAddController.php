@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -116,8 +117,10 @@ final class DefiAddController extends AbstractController
         $diff = $data['diff'] ?? null;
         $key = $data['key'] ?? null;
         $score = $data['score'] ?? null;
+        $tags = $data['tags'] ?? null;
+        $category = $data['category'] ?? null;
 
-        if (!$nom || !$desc || !$diff || !$key || !$score) {
+        if (!$category || !$tags || !$nom || !$desc || !$diff || !$key || !$score) {
             return new JsonResponse(['error' => true, 'error_message' => 'Missing data'], JsonResponse::HTTP_BAD_REQUEST);
         }
         $defi = new Defi();
@@ -134,6 +137,19 @@ final class DefiAddController extends AbstractController
         $defi->setDifficulte($diff);
         $defi->setKey($key);
         $defi->setScore($score);
+        $defi->setCategorie($category);
+
+        $tagRepository = $entityManager->getRepository(Tag::class);
+
+        foreach ($tags as $tag) {
+            $entityTag = $tagRepository->findOneByNom($tag);
+            if(!$entityTag){
+                $entityTag = new Tag();
+                $entityTag->setNom($tag);
+                $entityTag->addDefi($defi);
+                $entityManager->persist($entityTag);
+            }
+        }
         $entityManager->persist($defi);
         $entityManager->flush();
         return new JsonResponse(['error' => false, 'error_message' => '', 'data' => []], JsonResponse::HTTP_OK);

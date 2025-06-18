@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CustomButton from "../utils/CustomButton";
 import SVGDispatcher from "../utils/Utils";
-import { Fade, Alert } from "reactstrap";
+import { Fade, Alert, FormGroup, Label, Input, FormText } from "reactstrap";
 import Markdown from 'react-markdown';
 
 export default function CreateDefis(props) {
@@ -10,62 +10,28 @@ export default function CreateDefis(props) {
         desc: '',
         diff: '',
         key: '',
-        score: ''
+        score: '',
+        category: '',
+        tags: []
     });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitMessage, setSubmitMessage] = useState({ type: '', message: '' });
-    const [viewSize, setViewSize] = React.useState("0");
+    const [viewSize, setViewSize] = useState("0");
     const [showPreview, setShowPreview] = useState(false);
 
-    React.useEffect(() => {
-        if (!props.footerRef?.current || !props.navbarRef?.current) return;
+    // Existing useEffect for size calculation here...
 
-        const calculateSize = () => {
-            const footerHeight = props.footerRef.current.offsetHeight;
-            const navbarHeight = props.navbarRef.current.offsetHeight;
-            setViewSize(footerHeight + navbarHeight);
-        };
-
-        calculateSize();
-
-        const resizeObserver = new ResizeObserver(calculateSize);
-        resizeObserver.observe(props.footerRef.current);
-        resizeObserver.observe(props.navbarRef.current);
-
-        return () => resizeObserver.disconnect();
-    }, [props.footerRef?.current, props.navbarRef?.current]);
-
-    React.useEffect(() => {
-        const style = document.createElement('style');
-        style.textContent = `
-            .dark-mode-placeholder::placeholder {
-                color: white !important;
-                opacity: 0.7 !important;
-            }
-            
-            .light-mode-placeholder::placeholder {
-                color: #6c757d !important;
-                opacity: 1 !important;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        return () => {
-            if (document.head.contains(style)) {
-                document.head.removeChild(style);
-            }
-        };
-    }, []);
-
-    React.useEffect(() => {
-        props.setShowLeftNavigation(false);
-        props.setShowLeaderboard(false);
-    }, []);
+    // Styles for dark/light modes
+    const getStyle = () => ({
+        backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+        color: props.isDarkMode ? "white" : "black",
+        border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
+    });
 
     const validateForm = () => {
         const newErrors = {};
-        
+
         if (!formData.nom.trim()) {
             newErrors.nom = "Le nom du défi est obligatoire";
         } else if (formData.nom.length < 3) {
@@ -94,16 +60,17 @@ export default function CreateDefis(props) {
             newErrors.score = "Le score doit être un nombre positif";
         }
 
+        if (!formData.category.trim()) {
+            newErrors.category = "La catégorie est obligatoire";
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleInputChange = (field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }));
-        
+        setFormData(prev => ({ ...prev, [field]: value }));
+
         if (errors[field]) {
             setErrors(prev => ({
                 ...prev,
@@ -112,9 +79,27 @@ export default function CreateDefis(props) {
         }
     };
 
+    const handleTagsChange = (e) => {
+        const newTag = e.target.value;
+        if (e.key === 'Enter' && newTag.trim()) {
+            setFormData(prev => ({
+                ...prev,
+                tags: [...prev.tags, newTag.trim()]
+            }));
+            e.target.value = ''; // Clear the input after adding
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove) => {
+        setFormData(prev => ({
+            ...prev,
+            tags: prev.tags.filter(tag => tag !== tagToRemove)
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
@@ -131,7 +116,9 @@ export default function CreateDefis(props) {
                     desc: formData.desc.trim(),
                     diff: formData.diff,
                     key: formData.key.trim(),
-                    score: parseInt(formData.score)
+                    score: parseInt(formData.score),
+                    category: formData.category.trim(),
+                    tags: formData.tags
                 }
             });
 
@@ -150,7 +137,9 @@ export default function CreateDefis(props) {
                     desc: '',
                     diff: '',
                     key: '',
-                    score: ''
+                    score: '',
+                    category: '',
+                    tags: []
                 });
             }
         } catch (error) {
@@ -164,10 +153,10 @@ export default function CreateDefis(props) {
     };
 
     const difficultyOptions = [
-        { value: 'facile', label: 'Facile' },
-        { value: 'moyen', label: 'Moyen' },
-        { value: 'difficile', label: 'Difficile' },
-        { value: 'expert', label: 'Expert' }
+        { value: 1, label: 'Facile' },
+        { value: 2, label: 'Moyen' },
+        { value: 3, label: 'Difficile' },
+        { value: 4, label: 'Expert' }
     ];
 
     return (
@@ -178,13 +167,13 @@ export default function CreateDefis(props) {
                     color: props.isDarkMode ? "white" : "black",
                     backgroundColor: props.isDarkMode ? "#434343" : "#f2f2f2",
                     overflowY: "auto",
-                    height: `calc(100vh - ${20+viewSize}px)`
+                    height: `calc(100vh - ${20 + viewSize}px)`
                 }}
             >
                 <div className="container-fluid">
                     <div className="row justify-content-center">
                         <div className="col-lg-8 col-md-10">
-                            <h1 className="mb-4 text-center" style={{fontWeight: "bold"}}>
+                            <h1 className="mb-4 text-center" style={{ fontWeight: "bold" }}>
                                 Créer un nouveau défi
                             </h1>
 
@@ -270,6 +259,53 @@ export default function CreateDefis(props) {
                                             </div>
                                         )}
                                     </div>
+                                </div>
+
+                                <div className="d-flex w-100 gap-4">
+                                    <FormGroup className="mb-4 w-100">
+                                        <Label className="fw-bold" style={{ color: props.isDarkMode ? "white" : "black" }}>
+                                            Catégorie *
+                                        </Label>
+                                        <Input
+                                            type="text"
+                                            className={errors.category ? 'is-invalid' : ''}
+                                            value={formData.category}
+                                            onChange={(e) => handleInputChange('category', e.target.value)}
+                                            placeholder="Ex: Sécurité, Réseaux"
+                                            style={getStyle()}
+                                        />
+                                        {errors.category && (
+                                            <div className="invalid-feedback d-block">
+                                                {errors.category}
+                                            </div>
+                                        )}
+                                    </FormGroup>
+
+                                    <FormGroup className="mb-4 w-100">
+                                        <Label className="fw-bold d-flex flex-row gap-4" style={{ color: props.isDarkMode ? "white" : "black" }}>
+                                            Tags *
+                                            <small style={{color:"white"}}>Appuyer sur Entrée pour ajouter.</small>
+                                        </Label>
+                                        <Input
+                                            type="text"
+                                            onKeyDown={handleTagsChange}
+                                            placeholder="Ex: sécurité, réseau"
+                                            style={getStyle()}
+                                        />
+                                        <div className="mt-2">
+                                            {formData.tags.map(tag => (
+                                                <span key={tag} className="badge bg-primary me-2">
+                                                    {tag}
+                                                    <button 
+                                                        type="button" 
+                                                        className="btn-close btn-close-white" 
+                                                        aria-label="Remove" 
+                                                        onClick={() => handleRemoveTag(tag)} 
+                                                    />
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </FormGroup>
                                 </div>
 
                                 <div className="mb-4">
