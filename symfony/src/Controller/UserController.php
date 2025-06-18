@@ -230,6 +230,250 @@ final class UserController extends AbstractController
     }
 
     /**
+     * Email change endpoint
+     */
+    #[Route('/api/change_email', name: 'change_email', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/change_email',
+        tags: ['Authentication'],
+        summary: 'Change user email',
+        description: 'Allows authenticated users to change their email address. Requires current password for verification.',
+        operationId: 'changeEmail',
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: 'Email change request',
+            content: new OA\JsonContent(
+                required: ['usermail', 'password', 'new_email'],
+                properties: [
+                    new OA\Property(property: 'usermail', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'currentpassword123'),
+                    new OA\Property(property: 'new_email', type: 'string', format: 'email', example: 'new.email@example.com')
+                ]
+            )
+        )
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Email successfully changed',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'changed_email', type: 'string', example: 'ok')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Missing token or required fields, or invalid email format',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Missing token or required fields')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Invalid credentials',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Invalid credentials')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 409,
+        description: 'Email already in use',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Email already in use')
+            ],
+            type: 'object'
+        )
+    )]
+    public function changeEmail(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        // Extract credentials from request
+        $data = json_decode($request->getContent(), true);
+
+        $usermail = $data['usermail'] ?? null;
+        $password = $data['password'] ?? null;
+        $new_email = $data['new_email'] ?? null;
+
+        // Extract token from Authorization header
+        $token = $request->headers->get('Authorization');
+        if (!$token) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        if (!$usermail || !$password || !$new_email) {
+            return new JsonResponse(['error' => true, 'error_message' => "Missing usermail, password or new_email"], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Validate email format
+        if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['error' => true, 'error_message' => "Invalid email format"], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $user = $this->userRepository->findOneByToken($token);
+
+            if (!$user instanceof User) {
+                throw new AuthenticationException('Invalid credentials');
+            }
+
+            // Verify current password
+            if (!password_verify($password, $user->getMotDePasse())) {
+                throw new AuthenticationException('Invalid credentials');
+            }
+
+            // Check if new email is already in use by another user
+            $existingUser = $this->userRepository->findOneBy(['mail' => $new_email]);
+            if ($existingUser && $existingUser->getId() !== $user->getId()) {
+                return new JsonResponse(['error' => true, 'error_message' => 'Email already in use'], JsonResponse::HTTP_CONFLICT);
+            }
+
+            // Update email
+            $user->setMail($new_email);
+            $entityManager->flush();
+
+            return new JsonResponse(['error' => false, 'data' => ['changed_email' => 'ok'], 'error_message' => ""], JsonResponse::HTTP_OK);
+        } catch (AuthenticationException $e) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * Username change endpoint
+     */
+    #[Route('/api/change_username', name: 'change_username', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/change_username',
+        tags: ['Authentication'],
+        summary: 'Change user username',
+        description: 'Allows authenticated users to change their username.',
+        operationId: 'changeUsername',
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: 'Username change request',
+            content: new OA\JsonContent(
+                required: ['new_username'],
+                properties: [
+                    new OA\Property(property: 'new_username', type: 'string', example: 'New Username')
+                ]
+            )
+        )
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Username successfully changed',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: false),
+                new OA\Property(property: 'error_message', type: 'string', example: ''),
+                new OA\Property(property: 'data', properties: [
+                    new OA\Property(property: 'changed_username', type: 'string', example: 'ok')
+                ], type: 'object')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Missing token or required fields, or invalid username format',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Missing token or required fields')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 401,
+        description: 'Invalid credentials',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Invalid credentials')
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
+        response: 409,
+        description: 'Username already in use',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'boolean', example: true),
+                new OA\Property(property: 'error_message', type: 'string', example: 'Username already in use')
+            ],
+            type: 'object'
+        )
+    )]
+    public function changeUsername(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        // Extract credentials from request
+        $data = json_decode($request->getContent(), true);
+
+        $username = $data['new_username'] ?? null;
+
+        // Extract token from Authorization header
+        $token = $request->headers->get('Authorization');
+        if (!$token) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        if (!$username) {
+            return new JsonResponse(['error' => true, 'error_message' => "Missing username"], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $user = $this->userRepository->findOneByToken($token);
+
+            if (!$user instanceof User) {
+                throw new AuthenticationException('Invalid credentials');
+            }
+
+            // Check if new email is already in use by another user
+            $existingUser = $this->userRepository->findOneBy(['username' => $username]);
+            if ($existingUser && $existingUser->getId() !== $user->getId()) {
+                return new JsonResponse(['error' => true, 'error_message' => 'Username already in use'], JsonResponse::HTTP_CONFLICT);
+            }
+
+            // Update email
+            $user->setUsername($username);
+            $entityManager->flush();
+
+            return new JsonResponse(['error' => false, 'data' => ['changed_username' => 'ok'], 'error_message' => ""], JsonResponse::HTTP_OK);
+        } catch (AuthenticationException $e) {
+            return new JsonResponse(['error' => true, 'error_message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+    }
+
+    /**
      * Disconnect Endpoint (Token Invalidation)
      */
     #[Route('/api/logout', name: 'logout', methods: ['POST'])]
@@ -339,7 +583,7 @@ final class UserController extends AbstractController
     )]
     public function token_validity_test(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        try{
+        try {
             // Extract token from Authorization header
             $token = $request->headers->get('Authorization');
             if (!$token) {
@@ -352,7 +596,7 @@ final class UserController extends AbstractController
                 throw new AuthenticationException('Invalid credentials');
             }
             return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => $user]], JsonResponse::HTTP_OK);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return new JsonResponse(['error' => true, 'error_message' => "Votre connexion à expiré"], JsonResponse::HTTP_OK);
         }
     }
@@ -408,7 +652,7 @@ final class UserController extends AbstractController
     public function user_info(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         // Extract token from Authorization header
-        
+
         $token = $request->headers->get('Authorization');
         if (!$token) {
             return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
@@ -420,7 +664,7 @@ final class UserController extends AbstractController
             throw new AuthenticationException('Invalid credentials');
         }
         return new JsonResponse(['error' => false, 'error_message' => '', 'data' => [
-            'mail' => $user->getMail(), 
+            'mail' => $user->getMail(),
             'score_total' => $user->getScoreTotal(),
             'creation_date' => $user->getCreationDate(),
             'last_co' => $user->getLastCo(),
