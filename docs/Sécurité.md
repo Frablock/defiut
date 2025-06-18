@@ -33,3 +33,17 @@ Exiger le mot de passe actuel lors du changement d'adresse e-mail vérifie l'ide
 ## Architecture par conteneur (Docker)
 
 Une architecture par conteneur offre plusieurs avantages en termes de sécurité. Les conteneurs isolent les applications et leurs dépendances, limitant l'impact des vulnérabilités et des attaques. Ils permettent également un déploiement cohérent et reproductible, réduisant les risques de configuration incorrecte. De plus, les conteneurs facilitent la gestion des dépendances, améliorent la scalabilité et la résilience, et permettent une réponse rapide aux vulnérabilités découvertes. Enfin, ils offrent une facilité de mise à jour et de correction, ce qui est essentiel pour maintenir un environnement sécurisé.
+
+## Usage de Doctrine ORM
+
+L'usage de Doctrine ORM renforce la sécurité de plusieurs manières. Tout d'abord, il protège contre les injections SQL en utilisant des requêtes paramétrées et un système de requêtes abstraites (DQL). Cela évite la concaténation directe de chaînes, qui peut mener à des vulnérabilités d'injection SQL.
+
+Ensuite, Doctrine ORM fournit une couche d'abstraction entre l'application et la base de données. Cela permet de changer de base de données sans modifier le code de l'application, réduisant ainsi les risques liés à des configurations spécifiques à une base de données.
+
+De plus, Doctrine ORM permet de définir des contraintes et des validations au niveau des entités. Cela aide à s'assurer que les données insérées ou mises à jour respectent les règles de validation définies, réduisant ainsi les risques d'injections de données invalides ou malveillantes.
+
+Doctrine ORM simplifie également la gestion des relations entre les entités et des transactions. Cela permet de maintenir l'intégrité des données et de réduire les erreurs liées à la gestion manuelle des transactions, qui peuvent mener à des incohérences ou à des vulnérabilités.
+
+En utilisant des méthodes comme `find()`, `findAll()`, et des requêtes DQL, Doctrine ORM génère des requêtes SQL sécurisées, réduisant ainsi le risque d'erreurs humaines dans la construction des requêtes.
+
+
