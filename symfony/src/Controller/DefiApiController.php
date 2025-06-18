@@ -131,15 +131,16 @@ class DefiApiController extends AbstractController
         try {
             // Menu categories for the left sidebard
             $categories = [
-                ["title" => "Tout les défis",           "img" => "bi bi-pencil-square",         "url" => "/all"],
-                ["title" => "Collaboration",            "img" => "bi bi-cpu",                   "url" => "/collaboration"],
-                ["title" => "Rétroingénierie",          "img" => "bi bi-arrow-repeat",          "url" => "/retroingenierie"],
-                ["title" => "Base de donnée",           "img" => "bi bi-code-slash",            "url" => "/base_de_donnee"],
-                ["title" => "Algorithmie",              "img" => "bi bi-bar-chart",             "url" => "/algorithmie"],
-                ["title" => "Web",                      "img" => "bi bi-diagram-3",             "url" => "/web"],
-                ["title" => "Stégonographie",           "img" => "bi bi-calculator",            "url" => "/stegonographie"],
+                
+            ["title" => "Tout les défis",           "img" => "bi bi-collection",           "url" => "/all"],
+            ["title" => "Algorithmie",              "img" => "bi bi-diagram-3",             "url" => "/algorithmie"],
+            ["title" => "Web",                      "img" => "bi bi-code-slash",                 "url" => "/web"],
+            ["title" => "Base de donnée",           "img" => "bi bi-database",              "url" => "/base_de_donnee"],
+            ["title" => "Rétroingénierie",          "img" => "bi bi-arrow-repeat",          "url" => "/retroingenierie"],
+            ["title" => "Stéganographie",           "img" => "bi bi-eye-slash",             "url" => "/stegonographie"],
+            ["title" => "Collaboration",            "img" => "bi bi-people",                "url" => "/collaboration"],
+        ];
 
-            ];
 
             return new JsonResponse([
                 'error' => false,
