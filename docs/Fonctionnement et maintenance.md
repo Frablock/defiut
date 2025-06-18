@@ -55,6 +55,109 @@ make <votre commande>
 
 Vous pouvez en ajouter en agrandissant le fichier Makefile
 
+## Base de données
+
+Nous utilisons MySQL
+
+Via le docker, nous fournissons une instance de PHPMyAdmin ([http://localhost:8080](http://localhost:8080))
+
+Il peut être utile d'utiliser ce logiciel afin de pouvoir visualiser le bon fonctionnement du stockage des données.
+
+> Utilisez au minimum MySQL pour interagir, afin de limiter les risques d'erreurs
+
+Pensez aussi à changer le mot de passe MySQL inclus dans le fichier `/.env`
+
+### Détail de l'architecture MySQL
+
+### Table Defi
+
+- **id**: Identifiant unique du défi. Clé primaire.
+- **nom**: Nom du défi.
+- **description**: Description détaillée du défi.
+- **cle**: Clé unique pour identifier le défi.
+- **points_recompense**: Nombre de points attribués à l'utilisateur qui complète ce défi.
+- **categorie**: Catégorie à laquelle appartient le défi.
+- **difficulte**: Niveau de difficulté du défi, probablement sur une échelle numérique.
+- **user_id**: Identifiant de l'utilisateur qui a créé le défi. Clé étrangère vers la table Utilisateur.
+
+### Table Defi_Tag
+
+- **defi_id**: Identifiant du défi. Clé étrangère vers la table Defi.
+- **tag_id**: Identifiant du tag. Clé étrangère vers la table Tag.
+  - Cette table est une table de jointure pour la relation plusieurs-à-plusieurs entre les défis et les tags.
+
+### Table Defi_Fichier
+
+- **defi_id**: Identifiant du défi. Clé étrangère vers la table Defi.
+- **fichier_id**: Identifiant du fichier. Clé étrangère vers la table Fichier.
+  - Cette table est une table de jointure pour la relation plusieurs-à-plusieurs entre les défis et les fichiers.
+
+### Table Defi_Indice
+
+- **ordre**: L'ordre de l'indice dans la séquence des indices pour un défi donné.
+- **defi_id**: Identifiant du défi. Clé étrangère vers la table Defi.
+- **indice_id**: Identifiant de l'indice. Clé étrangère vers la table Indice.
+  - Cette table est une table de jointure pour la relation 
+    plusieurs-à-plusieurs entre les défis et les indices, avec un champ 
+    supplémentaire pour l'ordre.
+
+### Table defi_valid_utilisateur
+
+- **id**: Identifiant unique de l'enregistrement.
+- **date_valid**: Date et heure à laquelle le défi a été validé par l'utilisateur.
+- **user_id**: Identifiant de l'utilisateur. Clé étrangère vers la table Utilisateur.
+- **defi_id**: Identifiant du défi. Clé étrangère vers la table Defi.
+  - Cette table enregistre quand un utilisateur a complété un défi.
+
+### Table Fichier
+
+- **id**: Identifiant unique du fichier.
+- **nom**: Nom du fichier. Doit être unique.
+  - Cette table stocke les métadonnées des fichiers associés aux défis.
+
+### Table Indice
+
+- **id**: Identifiant unique de l'indice.
+- **contenu**: Contenu textuel de l'indice.
+  - Cette table stocke les indices qui peuvent être associés aux défis.
+
+### Table indice_defi
+
+- **indice_id**: Identifiant de l'indice. Clé étrangère vers la table Indice.
+- **defi_id**: Identifiant du défi. Clé étrangère vers la table Defi.
+  - Cette table semble être une autre table de jointure pour la relation
+     entre les indices et les défis, mais elle semble redondante avec 
+    Defi_Indice. Peut-être une erreur dans le schéma ou une table 
+    historique.
+
+### Table Defi_Utilisateur_Recents
+
+- **date_acces**: Date et heure à laquelle l'utilisateur a accédé au défi pour la dernière fois.
+- **user_id**: Identifiant de l'utilisateur. Clé étrangère vers la table Utilisateur.
+- **defi_id**: Identifiant du défi. Clé étrangère vers la table Defi.
+  - Cette table enregistre les défis récemment consultés par un utilisateur.
+
+### Table Tag
+
+- **id**: Identifiant unique du tag.
+- **nom**: Nom du tag. Doit être unique.
+  - Cette table stocke les tags qui peuvent être associés aux défis.
+
+### Table Utilisateur
+
+- **id**: Identifiant unique de l'utilisateur.
+- **mail**: Adresse e-mail de l'utilisateur. Doit être unique.
+- **mot_de_passe**: Mot de passe de l'utilisateur (probablement stocké sous forme hachée).
+- **score_total**: Score total accumulé par l'utilisateur en complétant des défis.
+- **creation_date**: Date et heure de création du compte utilisateur.
+- **last_co**: Date et heure de la dernière connexion de l'utilisateur.
+- **is_verified**: Indique si l'utilisateur a vérifié son compte (probablement via un e-mail).
+- **roles**: Rôles de l'utilisateur stockés sous forme JSON.
+- **last_try_date**: Date et heure de la dernière tentative de connexion (peut être NULL).
+- **username**: Nom d'utilisateur.
+- **token**: Jeton d'authentification pour l'utilisateur (peut être NULL).
+- **token_expiration_date**: Date et heure d'expiration du jeton d'authentification (peut être NULL).
+
 ## Partie Back-end (PHP et Symfony)
 
 > Documentations utiles : [Symfony Documentation](https://symfony.com/doc/current/index.html) [PHP: Manuel PHP - Manual](https://www.php.net/manual/fr/) 
@@ -106,3 +209,47 @@ public function findOneByMail($value): ?User
     ;
 }
 ```
+
+Nous pouvons ensuite l'utiliser dans un controller :
+
+```php
+$user = $this->userRepository->findOneByMail($usermail);
+```
+
+## Gestion des rôles
+
+Par défaut, il n'existe que trois rôles :
+
+- Utilisateur non-connecté
+
+- Utilisateur connecté
+
+- Éditeur (peut ajouter des défis)
+
+Pour ajouter le rôle éditeur à un utilisateur, allez dans la base de données via PHPMyAdmin, qui est inclus dans le docker, et allez ensuite dans la table `Utilisateurs`, il vous suffit d'ajouter `"editor"` dans les crochets dans le champ`role`
+
+## Ajouter des défis
+
+Pour ajouter un défi, assurez-vous d'avoir le rôle `editor` et d'être bien connecté
+
+Allez sur la page [DefIUT - Création défi](https://localhost/create_defis) 
+
+![Formulaire de création de défi](./imgs/add_defi_form.png)
+
+Remplissez le formulaire
+
+### Intégration d'un fichier dans le défi
+
+Pour intégrer un fichier dans le défi, téléversez votre fichier `.zip` contenant **tout** les fichiers requis pour votre défis.
+
+Le fichier zip ne doit pas contenir d'espace ou de caractères hors `[a-Z][0-9]-_`
+
+Votre fichier sera alors dans le dossier `/symfony/defis_assets`
+
+Il sera lié via la base de données : 
+
+- La table Fichier sert à lier le nom de votre fichier et son id
+
+- La table Défi_Fichier va alors servir de table de liaisons entre l'id de votre fichier et l'id du défi
+
+
