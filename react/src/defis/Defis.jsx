@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Badge, Button, Fade, Input, Spinner } from "reactstrap";
 import SVGDispatcher from "../utils/Utils";
 import CustomButton from "../utils/CustomButton";
+import Markdown from 'react-markdown';
 
 export default function Defis(props) {
     const { id } = useParams();
@@ -11,37 +12,14 @@ export default function Defis(props) {
     const [viewSize, setViewSize] = React.useState("0")
 
     const handleDefisTest = () => { 
-        if(props.isLogedIn){
-            props.sendData({
-                route:"/defis/try_key", 
-                method:"POST",
-                data:{
-                    id:id,
-                    key:inputValue
-                }
-            }).then((data) => {
-                if(!data.error){
-                    props.setModalHeader("Bravo !")
-                    props.setModalButtonText("Page des défis")
-                    props.setModalContent("Bravo ! Vous avez trouvé le message secret ! Vos points viennent d'être comptabilisés.")
-                    props.setModalOnClick(() => () => {
-                        props.navigateTo("/lobby/all");
-                        props.setModalActive(false)
-                    })
-                    props.setModalActive(true)
-                }
-            })
-            //
-        } else {
-            props.setModalHeader("Veuillez vous connecter")
-            props.setModalButtonText("Se Connecter")
-            props.setModalContent("Pour pouvoir envoyer votre réponse, vous devez absolument créer un compte / vous connecter.")
-            props.setModalOnClick(() => () => {
-                props.navigateTo("/login");
-                props.setModalActive(false)
-            })
-            props.setModalActive(true)
-        }
+        props.sendData({
+            route:"/defis/try_key", 
+            method:"POST",
+            data:{
+                id:id,
+                key:inputValue
+            }
+        })
     }
 
     React.useEffect(() => {
@@ -59,7 +37,6 @@ export default function Defis(props) {
         resizeObserver.observe(props.footerRef.current);
         resizeObserver.observe(props.navbarRef.current);
 
-
         return () => resizeObserver.disconnect();
     }, [props.footerRef?.current, props.navbarRef?.current]);
 
@@ -70,12 +47,10 @@ export default function Defis(props) {
         });
         
         if (result.error) {
-            // Handle error - show notification, alert, etc.
             console.error('Download failed:', result.error_message);
             alert('Failed to download file: ' + result.error_message);
         }
     };
-
 
     React.useEffect(() => {
         if(!currentDefis){
@@ -108,7 +83,6 @@ export default function Defis(props) {
                         <div className="col-12 col-lg-10">
                             <div className="border-0">
                                 <div className="p-4">
-                                    {/* Header Section */}
                                     <div className="d-flex flex-column flex-md-row gap-4 mb-4">
                                         <div 
                                             className="flex-shrink-0 d-flex align-items-center justify-content-center"
@@ -129,7 +103,6 @@ export default function Defis(props) {
                                                     ))}
                                                     </div>
                                                     <strong>{user}</strong>
-
                                                 </div>
                                             </div>
                                             
@@ -138,11 +111,6 @@ export default function Defis(props) {
                                                     return (
                                                         <Badge key={index} className="w-auto shadow px-3 d-flex align-items-center gap-1" style={{cursor: "default", backgroundColor:"#a899e7", fontSize:"15px"}}>
                                                             <span>{elem}</span>
-                                                            <span 
-                                                                onClick={() => handleDeleteTag(index)} 
-                                                                className="ms-1 d-flex align-items-center"
-                                                            >
-                                                            </span>
                                                         </Badge>
                                                     )
                                                 })}
@@ -152,12 +120,85 @@ export default function Defis(props) {
                                     
                                     <hr className="my-4"/>
                                     
-                                    {/* Description Section */}
                                     <div className="mb-4">
                                         <h3 className="h4 mb-3">Description</h3>
-                                        <p className="lead" style={{fontSize:"16px", lineHeight:"1.6"}}>
-                                            {description}
-                                        </p>
+                                        <div 
+                                            className="p-3 rounded"
+                                            style={{
+                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "#f8f9fa",
+                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
+                                            }}
+                                        >
+                                            <Markdown
+                                                components={{
+                                                    h1: ({node, ...props}) => (
+                                                        <h1 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    h2: ({node, ...props}) => (
+                                                        <h2 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    h3: ({node, ...props}) => (
+                                                        <h3 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    p: ({node, ...props}) => (
+                                                        <p style={{color: props.isDarkMode ? "white" : "black", fontSize:"16px", lineHeight:"1.6"}} {...props} />
+                                                    ),
+                                                    code: ({node, inline, ...props}) => (
+                                                        <code 
+                                                            style={{
+                                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
+                                                                color: props.isDarkMode ? "#bb86fc" : "#4625ba",
+                                                                padding: inline ? "2px 4px" : "8px",
+                                                                borderRadius: "4px",
+                                                                fontFamily: "monospace"
+                                                            }}
+                                                            {...props} 
+                                                        />
+                                                    ),
+                                                    pre: ({node, ...props}) => (
+                                                        <pre 
+                                                            style={{
+                                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
+                                                                color: props.isDarkMode ? "white" : "black",
+                                                                padding: "12px",
+                                                                borderRadius: "8px",
+                                                                overflow: "auto"
+                                                            }}
+                                                            {...props} 
+                                                        />
+                                                    ),
+                                                    ul: ({node, ...props}) => (
+                                                        <ul style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    ol: ({node, ...props}) => (
+                                                        <ol style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    li: ({node, ...props}) => (
+                                                        <li style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    strong: ({node, ...props}) => (
+                                                        <strong style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    em: ({node, ...props}) => (
+                                                        <em style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    blockquote: ({node, ...props}) => (
+                                                        <blockquote 
+                                                            style={{
+                                                                borderLeft: `4px solid ${props.isDarkMode ? "#bb86fc" : "#4625ba"}`,
+                                                                paddingLeft: "16px",
+                                                                margin: "16px 0",
+                                                                fontStyle: "italic",
+                                                                color: props.isDarkMode ? "#ccc" : "#666"
+                                                            }}
+                                                            {...props} 
+                                                        />
+                                                    )
+                                                }}
+                                            >
+                                                {description}
+                                            </Markdown>
+                                        </div>
                                     </div>
 
                                     {
@@ -172,7 +213,7 @@ export default function Defis(props) {
                                                     {
                                                         currentDefis.fichiers.map((elem, index) => {
                                                             return (
-                                                                <div className="d-flex flex-column gap-1 align-items-center">
+                                                                <div key={index} className="d-flex flex-column gap-1 align-items-center">
                                                                     fichier {index+1}
                                                                     <CustomButton 
                                                                         className="custom-button"
@@ -183,7 +224,7 @@ export default function Defis(props) {
                                                                     >
                                                                         <div className="d-flex flex-row gap-2">
                                                                             Télécharger
-                                                                            <i class="bi bi-cloud-arrow-down"></i>
+                                                                            <i className="bi bi-cloud-arrow-down"></i>
                                                                         </div>
                                                                     </CustomButton>
                                                                 </div>
@@ -197,7 +238,7 @@ export default function Defis(props) {
                                     
                                     <hr className="my-4"/>
                                     
-                                    <div className="d-flex flex-column gap-2 p-2 shadow w-auto transition" style={{backgroundColor:props.isDarkMode ? "#535353" : "#f2f2f2", borderRadius:"25px"}}>
+                                    <div className="d-flex flex-column gap-2 p-2 shadow w-auto" style={{backgroundColor:props.isDarkMode ? "#535353" : "#f2f2f2"}}>
                                         <div className="d-flex flex-row gap-2 justify-content-around align-items-center">
                                             <Input onChange={(e)=> setInputValue(e.target.value)} className="w-75" style={{backgroundColor:"#e2ddf7"}} />
                                             <CustomButton
@@ -209,12 +250,11 @@ export default function Defis(props) {
                                             >
                                                 <div className="d-flex flex-row gap-2">
                                                     Envoyer
-                                                    <i class="bi bi-send"></i>
+                                                    <i className="bi bi-send"></i>
                                                 </div>
                                             </CustomButton>
                                         </div>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
