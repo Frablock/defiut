@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\User;
 use Exception;
 
+use OpenApi\Attributes as OA;
 
 class InfoUserController extends AbstractController
 {
