@@ -12,15 +12,40 @@ export default function Defis(props) {
     const [viewSize, setViewSize] = React.useState("0")
 
     const handleDefisTest = () => { 
-        props.sendData({
-            route:"/defis/try_key", 
-            method:"POST",
-            data:{
-                id:id,
-                key:inputValue
-            }
-        })
+        if(props.isLogedIn){
+            props.sendData({
+                route:"/defis/try_key", 
+                method:"POST",
+                data:{
+                    id:id,
+                    key:inputValue
+                }
+            }).then((data) => {
+                if(!data.error){
+                    props.setModalHeader("Bravo !")
+                    props.setModalButtonText("Page des défis")
+                    props.setModalContent("Bravo ! Vous avez trouvé le message secret ! Vos points viennent d'être comptabilisés.")
+                    props.setModalOnClick(() => () => {
+                        props.navigateTo("/lobby/all");
+                        props.setModalActive(false)
+                    })
+                    props.setModalActive(true)
+                }
+            })
+            //
+        } else {
+            props.setModalHeader("Veuillez vous connecter")
+            props.setModalButtonText("Se Connecter")
+            props.setModalContent("Pour pouvoir envoyer votre réponse, vous devez absolument créer un compte / vous connecter.")
+            props.setModalOnClick(() => () => {
+                props.navigateTo("/login");
+                props.setModalActive(false)
+            })
+            props.setModalActive(true)
+        }
     }
+
+    console.log(currentDefis)
 
     React.useEffect(() => {
         if (!props.footerRef?.current || !props.navbarRef?.current) return;
@@ -66,6 +91,82 @@ export default function Defis(props) {
             })
         }
     },[id, props.defis])
+
+    const createComponents = (isDarkMode) => ({
+        h1: ({node, ...props}) => (
+            <h1 style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        h2: ({node, ...props}) => (
+            <h2 style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        h3: ({node, ...props}) => (
+            <h3 style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        p: ({node, ...props}) => (
+            <p style={{color: isDarkMode ? "white" : "black", fontSize:"16px", lineHeight:"1.6"}} {...props} />
+        ),
+        code: ({node, inline, ...props}) => (
+            <code 
+                style={{
+                    backgroundColor: isDarkMode ? "#2d2d2d" : "#e9ecef",
+                    color: isDarkMode ? "#bb86fc" : "#4625ba",
+                    padding: inline ? "2px 4px" : "8px",
+                    borderRadius: "4px",
+                    fontFamily: "monospace"
+                }}
+                {...props} 
+            />
+        ),
+        pre: ({node, ...props}) => (
+            <pre 
+                style={{
+                    backgroundColor: isDarkMode ? "#2d2d2d" : "#e9ecef",
+                    color: isDarkMode ? "white" : "black",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    overflow: "auto"
+                }}
+                {...props} 
+            />
+        ),
+        ul: ({node, ...props}) => (
+            <ul style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        ol: ({node, ...props}) => (
+            <ol style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        li: ({node, ...props}) => (
+            <li style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        strong: ({node, ...props}) => (
+            <strong style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        em: ({node, ...props}) => (
+            <em style={{color: isDarkMode ? "white" : "black"}} {...props} />
+        ),
+        blockquote: ({node, ...props}) => (
+            <blockquote 
+                style={{
+                    borderLeft: `4px solid ${isDarkMode ? "#bb86fc" : "#4625ba"}`,
+                    paddingLeft: "16px",
+                    margin: "16px 0",
+                    fontStyle: "italic",
+                    color: isDarkMode ? "#ccc" : "#666"
+                }}
+                {...props} 
+            />
+        )
+    });
+
+    const handleIndice = (elem, indice) => {
+        props.setModalHeader("Indice numéro " +(indice+1))
+        props.setModalButtonText("Fermer")
+        props.setModalContent(elem.indice.contenu)
+        props.setModalOnClick(() => () => {
+            props.setModalActive(false)
+        })
+        props.setModalActive(true)
+    }
 
     if (!currentDefis) {
         return <div className="w-100 h-100 d-flex flex-row justify-content-center align-items-center">
@@ -130,71 +231,8 @@ export default function Defis(props) {
                                             }}
                                         >
                                             <Markdown
-                                                components={{
-                                                    h1: ({node, ...props}) => (
-                                                        <h1 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    h2: ({node, ...props}) => (
-                                                        <h2 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    h3: ({node, ...props}) => (
-                                                        <h3 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    p: ({node, ...props}) => (
-                                                        <p style={{color: props.isDarkMode ? "white" : "black", fontSize:"16px", lineHeight:"1.6"}} {...props} />
-                                                    ),
-                                                    code: ({node, inline, ...props}) => (
-                                                        <code 
-                                                            style={{
-                                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
-                                                                color: props.isDarkMode ? "#bb86fc" : "#4625ba",
-                                                                padding: inline ? "2px 4px" : "8px",
-                                                                borderRadius: "4px",
-                                                                fontFamily: "monospace"
-                                                            }}
-                                                            {...props} 
-                                                        />
-                                                    ),
-                                                    pre: ({node, ...props}) => (
-                                                        <pre 
-                                                            style={{
-                                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
-                                                                color: props.isDarkMode ? "white" : "black",
-                                                                padding: "12px",
-                                                                borderRadius: "8px",
-                                                                overflow: "auto"
-                                                            }}
-                                                            {...props} 
-                                                        />
-                                                    ),
-                                                    ul: ({node, ...props}) => (
-                                                        <ul style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    ol: ({node, ...props}) => (
-                                                        <ol style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    li: ({node, ...props}) => (
-                                                        <li style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    strong: ({node, ...props}) => (
-                                                        <strong style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    em: ({node, ...props}) => (
-                                                        <em style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    blockquote: ({node, ...props}) => (
-                                                        <blockquote 
-                                                            style={{
-                                                                borderLeft: `4px solid ${props.isDarkMode ? "#bb86fc" : "#4625ba"}`,
-                                                                paddingLeft: "16px",
-                                                                margin: "16px 0",
-                                                                fontStyle: "italic",
-                                                                color: props.isDarkMode ? "#ccc" : "#666"
-                                                            }}
-                                                            {...props} 
-                                                        />
-                                                    )
-                                                }}
+                                                style={{color: props.isDarkMode ? "white" : "black"}}
+                                                components={createComponents(props.isDarkMode)}
                                             >
                                                 {description}
                                             </Markdown>
@@ -238,7 +276,7 @@ export default function Defis(props) {
                                     
                                     <hr className="my-4"/>
                                     
-                                    <div className="d-flex flex-column gap-2 p-2 shadow w-auto" style={{backgroundColor:props.isDarkMode ? "#535353" : "#f2f2f2"}}>
+                                    <div className="d-flex flex-column gap-2 p-2 shadow w-auto transition" style={{backgroundColor:props.isDarkMode ? "#535353" : "#f2f2f2", borderRadius:"25px"}}>
                                         <div className="d-flex flex-row gap-2 justify-content-around align-items-center">
                                             <Input onChange={(e)=> setInputValue(e.target.value)} className="w-75" style={{backgroundColor:"#e2ddf7"}} />
                                             <CustomButton
@@ -254,6 +292,23 @@ export default function Defis(props) {
                                                 </div>
                                             </CustomButton>
                                         </div>
+                                    </div>
+                                    <div className="text-center w-100 mt-5" style={{fontWeight:"700"}}>
+                                        Vous êtes bloquées ?
+                                    </div>
+                                    <div className="d-flex flex-row gap-5 my-3 justify-content-center">
+                                        {
+                                            currentDefis.defiIndices.map((elem, indice) => (
+                                                <CustomButton
+                                                    isDarkMode={props.isDarkMode}
+                                                    darkColor={"#4625ba"}
+                                                    lightColor={"#4625ba"}
+                                                    onClick={() => handleIndice(elem, indice)}
+                                                >
+                                                    indice {indice+1}
+                                                </CustomButton>
+                                            ))
+                                        }
                                     </div>
                                 </div>
                             </div>
