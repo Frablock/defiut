@@ -600,6 +600,78 @@ final class UserController extends AbstractController
     }
 
     /**
+     * Check if user has editor role
+     */
+    #[Route('/api/is_editor', name: 'is_editor', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/is_editor',
+        tags: ['Authentication'],
+        summary: 'Check if user has editor role',
+        description: 'Checks if the authenticated user has editor role',
+        operationId: 'isEditor'
+    )]
+    #[OA\Parameter(
+        name: 'Authorization',
+        in: 'header',
+        required: true,
+        description: 'Bearer token for authentication',
+        schema: new OA\Schema(type: 'string', example: 'Bearer abc123.def456...')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Role check result',
+        content: new OA\JsonContent(
+            oneOf: [
+                new OA\Schema(
+                    properties: [
+                        new OA\Property(property: 'error', type: 'boolean', enum: [false], description: 'False indicates success'),
+                        new OA\Property(property: 'error_message', type: 'string', enum: [""], description: 'Empty string on success'),
+                        new OA\Property(property: 'data', properties: [
+                            new OA\Property(property: 'message', description: 'Success message', type: 'string', example: 'User has editor role')
+                        ], type: 'object')
+                    ],
+                    type: 'object',
+                    description: 'Successful response'
+                ),
+                new OA\Schema(
+                    properties: [
+                        new OA\Property(property: 'error', type: 'boolean', enum: [true], description: 'True indicates error'),
+                        new OA\Property(property: 'error_message', type: 'string', description: 'Error message', example: 'Missing permission')
+                    ],
+                    type: 'object',
+                    description: 'Failed response'
+                )
+            ]
+        )
+    )]
+    public function is_editor(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        try {
+            // Extract token from Authorization header
+            $token = $request->headers->get('Authorization');
+            if (!$token) {
+                return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+            }
+
+            $user = $this->userRepository->findOneByToken($token);
+
+            if (!$user instanceof User) {
+                throw new AuthenticationException('Invalid credentials');
+            }
+
+            // Check if user has editor role
+            if (!in_array("editor", $user->getRoles())) {
+                return new JsonResponse(['error' => true, 'error_message' => 'Missing permission'], JsonResponse::HTTP_FORBIDDEN);
+            }
+
+            return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => 'User has editor role']], JsonResponse::HTTP_OK);
+        } catch (Exception $e) {
+            return new JsonResponse(['error' => true, 'error_message' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /**
      * Get All user info for a user
      */
     #[Route('/api/user_info', name: 'user_info', methods: ['POST'])]
