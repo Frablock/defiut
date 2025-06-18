@@ -22,8 +22,8 @@ class DefiValidUtilisateurRepository extends ServiceEntityRepository
             ->select('d.nom   AS nom')
             ->addSelect('d.pointsRecompense AS points')
             ->addSelect('dv.dateValid    AS dateValid')
-            ->innerJoin('dv.defiId', 'd')    // collection de Defi
-            ->innerJoin('dv.userId', 'u')    // collection de User
+            ->innerJoin('dv.defi', 'd')    // collection de Defi
+            ->innerJoin('dv.user', 'u')    // collection de User
             ->andWhere('u = :user')
             ->setParameter('user', $user)
             ->orderBy('dv.dateValid', 'DESC')
