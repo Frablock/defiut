@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ErrorPage from './errorPage/Error';
 import Login from './login/Login';
@@ -14,15 +13,16 @@ import CGU from './cgu/Cgu';
 import LobbyCategory from './lobby/LobbyCategory';
 
 function RoutesDispatcher(props) {
+  const { isLogedIn } = props;
+  console.log(isLogedIn)
   return (
     <>
       <Routes>
         <Route 
           path="/"
-          element={
-              <Navigate to="/lobby" replace />
-        } 
+          element={<Navigate to="/lobby" replace />}
         />
+        
         <Route 
           path="/lobby"
           element={<Lobby {...props}/>}
@@ -31,25 +31,30 @@ function RoutesDispatcher(props) {
           path="/lobby/:category"
           element={<LobbyCategory {...props}/>}
         />
+        {/* Redirect to lobby if already logged in */}
         <Route 
           path="/login"
-          element={<Login {...props}/>}
+          element={isLogedIn ? <Navigate to="/lobby" replace /> : <Login {...props}/>}
         />
         <Route 
           path="/register"
-          element={<Register {...props}/>}
+          element={isLogedIn ? <Navigate to="/lobby" replace /> : <Register {...props}/>}
         />
+
+        {/* Redirect to login if not logged in */}
         <Route
           path="/profil"
-          element={<Profil {...props}/>}
-        />
-        <Route
-          path="/defis/:id"
-          element={<Defis {...props}/>}
+          element={isLogedIn ? <Profil {...props}/> : <Navigate to="/login" replace />}
         />
         <Route
           path="/create_defis"
-          element={<CreateDefis {...props}/>}
+          element={isLogedIn ? <CreateDefis {...props}/> : <Navigate to="/login" replace />}
+        />
+
+        {/* Public routes */}
+        <Route
+          path="/defis/:id"
+          element={<Defis {...props}/>}
         />
         <Route
           path="/legal-notices"

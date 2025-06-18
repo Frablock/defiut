@@ -28,7 +28,7 @@ VALUES (
     ),
     (
         3,
-        'Patinec François',
+        'François',
         'francois.patinec@defiut.com',
         '$argon2id$v=19$m=16,t=2,p=1$NEt1YXRjSTA4ZFJsaTRxcg$1PWBiMiPnhieLJs/yjfo0A',
         0,
@@ -64,12 +64,12 @@ VALUES (
     ),
     (
         7,
-        'Gabin LEGRAND',
+        'Gabin',
         'gabin.legrand@defiut.com',
         'password3',
         0,
-        '[]',
-        3340
+        '["editor"]',
+        5340
     ),
     (
         8,

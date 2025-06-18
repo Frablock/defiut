@@ -159,7 +159,7 @@ export default function Defis(props) {
     });
 
     const handleIndice = (elem, indice) => {
-        props.setModalHeader("Indice numéro " +(indice+1))
+        props.setModalHeader("Indice numéro " +indice+1)
         props.setModalButtonText("Fermer")
         props.setModalContent(elem.indice.contenu)
         props.setModalOnClick(() => () => {

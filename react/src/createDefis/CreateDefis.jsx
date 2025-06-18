@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import CustomButton from "../utils/CustomButton";
 import SVGDispatcher from "../utils/Utils";
-import { Fade, Alert, FormGroup, Label, Input, FormText } from "reactstrap";
+import { 
+    Form, 
+    FormGroup, 
+    Label, 
+    Input, 
+    Row, 
+    Col, 
+    FormFeedback,
+    Badge,
+    Button,
+    Fade
+} from 'reactstrap';
 import Markdown from 'react-markdown';
 
 export default function CreateDefis(props) {
@@ -21,6 +32,14 @@ export default function CreateDefis(props) {
     const [showPreview, setShowPreview] = useState(false);
 
     // Existing useEffect for size calculation here...
+
+    React.useEffect(()=>{
+        props.sendData({method:"POST", route:"is_editor"}).then((data) => {
+            if(data.error){
+                props.navigateTo('/lobby')
+            }
+        })
+    })
 
     // Styles for dark/light modes
     const getStyle = () => ({
@@ -79,16 +98,22 @@ export default function CreateDefis(props) {
         }
     };
 
-    const handleTagsChange = (e) => {
-        const newTag = e.target.value;
-        if (e.key === 'Enter' && newTag.trim()) {
-            setFormData(prev => ({
-                ...prev,
-                tags: [...prev.tags, newTag.trim()]
-            }));
-            e.target.value = ''; // Clear the input after adding
+    const handleTagsKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // This prevents the form submission
+            e.stopPropagation(); // This stops the event from bubbling up
+            
+            const value = e.target.value.trim();
+            if (value && !formData.tags.includes(value)) {
+                setFormData(prev => ({
+                    ...prev,
+                    tags: [...prev.tags, value]
+                }));
+                e.target.value = ''; // Clear the input
+            }
         }
     };
+
 
     const handleRemoveTag = (tagToRemove) => {
         setFormData(prev => ({
@@ -161,343 +186,334 @@ export default function CreateDefis(props) {
 
     return (
         <Fade in={!props.unmount} className="w-100 h-100">
-            <div 
-                className="d-flex flex-column w-100 p-5 transition"
-                style={{
-                    color: props.isDarkMode ? "white" : "black",
-                    backgroundColor: props.isDarkMode ? "#434343" : "#f2f2f2",
-                    overflowY: "auto",
-                    height: `calc(100vh - ${20 + viewSize}px)`
-                }}
-            >
-                <div className="container-fluid">
-                    <div className="row justify-content-center">
-                        <div className="col-lg-8 col-md-10">
-                            <h1 className="mb-4 text-center" style={{ fontWeight: "bold" }}>
-                                Créer un nouveau défi
-                            </h1>
-
-                            {submitMessage.message && (
-                                <Alert 
-                                    color={submitMessage.type === 'success' ? 'success' : 'danger'}
-                                    className="mb-4"
-                                >
-                                    {submitMessage.message}
-                                </Alert>
+            {
+                submitMessage &&
+                <div className="w-100 mx-5" style={{borderRadius:"25px",color:"white" ,backgroundColor: submitMessage.type="sucess"?"green":"red" }}>
+                    {submitMessage.message}
+                </div>
+            }
+            <Form onSubmit={handleSubmit} className="m-5">
+                <Row>
+                    <Col md={6} className="mb-4">
+                        <FormGroup>
+                            <Label 
+                                className="fw-bold"
+                                style={{color: props.isDarkMode ? "white" : "black"}}
+                            >
+                                Nom du défi *
+                            </Label>
+                            <Input
+                                type="text"
+                                invalid={!!errors.nom}
+                                value={formData.nom}
+                                onChange={(e) => handleInputChange('nom', e.target.value)}
+                                placeholder="Ex: Injection SQL basique"
+                                className={props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}
+                                style={{
+                                    backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                    color: props.isDarkMode ? "white" : "black",
+                                    border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
+                                }}
+                            />
+                            {errors.nom && (
+                                <FormFeedback>
+                                    {errors.nom}
+                                </FormFeedback>
                             )}
+                        </FormGroup>
+                    </Col>
 
-                            <form onSubmit={handleSubmit}>
-                                <div className="row">
-                                    <div className="col-md-6 mb-4">
-                                        <label 
-                                            className="form-label fw-bold"
-                                            style={{color: props.isDarkMode ? "white" : "black"}}
-                                        >
-                                            Nom du défi *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className={`form-control ${errors.nom ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
-                                            value={formData.nom}
-                                            onChange={(e) => handleInputChange('nom', e.target.value)}
-                                            placeholder="Ex: Injection SQL basique"
-                                            style={{
-                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                color: props.isDarkMode ? "white" : "black",
-                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
-                                            }}
-                                        />
-                                        {errors.nom && (
-                                            <div className="invalid-feedback d-block">
-                                                {errors.nom}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="col-md-6 mb-4">
-                                        <label 
-                                            className="form-label fw-bold"
-                                            style={{color: props.isDarkMode ? "white" : "black"}}
-                                        >
-                                            Difficulté *
-                                        </label>
-                                        <select
-                                            className={`form-select ${errors.diff ? 'is-invalid' : ''}`}
-                                            value={formData.diff}
-                                            onChange={(e) => handleInputChange('diff', e.target.value)}
-                                            style={{
-                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                color: props.isDarkMode ? "white" : "black",
-                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
-                                            }}
-                                        >
-                                            <option 
-                                                value=""
-                                                style={{
-                                                    backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                    color: props.isDarkMode ? "#999" : "#6c757d"
-                                                }}
-                                            >
-                                                Sélectionner une difficulté
-                                            </option>
-                                            {difficultyOptions.map(option => (
-                                                <option 
-                                                    key={option.value} 
-                                                    value={option.value}
-                                                    style={{
-                                                        backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                        color: props.isDarkMode ? "white" : "black"
-                                                    }}
-                                                >
-                                                    {option.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {errors.diff && (
-                                            <div className="invalid-feedback d-block">
-                                                {errors.diff}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="d-flex w-100 gap-4">
-                                    <FormGroup className="mb-4 w-100">
-                                        <Label className="fw-bold" style={{ color: props.isDarkMode ? "white" : "black" }}>
-                                            Catégorie *
-                                        </Label>
-                                        <Input
-                                            type="text"
-                                            className={errors.category ? 'is-invalid' : ''}
-                                            value={formData.category}
-                                            onChange={(e) => handleInputChange('category', e.target.value)}
-                                            placeholder="Ex: Sécurité, Réseaux"
-                                            style={getStyle()}
-                                        />
-                                        {errors.category && (
-                                            <div className="invalid-feedback d-block">
-                                                {errors.category}
-                                            </div>
-                                        )}
-                                    </FormGroup>
-
-                                    <FormGroup className="mb-4 w-100">
-                                        <Label className="fw-bold d-flex flex-row gap-4" style={{ color: props.isDarkMode ? "white" : "black" }}>
-                                            Tags *
-                                            <small style={{color:"white"}}>Appuyer sur Entrée pour ajouter.</small>
-                                        </Label>
-                                        <Input
-                                            type="text"
-                                            onKeyDown={handleTagsChange}
-                                            placeholder="Ex: sécurité, réseau"
-                                            style={getStyle()}
-                                        />
-                                        <div className="mt-2">
-                                            {formData.tags.map(tag => (
-                                                <span key={tag} className="badge bg-primary me-2">
-                                                    {tag}
-                                                    <button 
-                                                        type="button" 
-                                                        className="btn-close btn-close-white" 
-                                                        aria-label="Remove" 
-                                                        onClick={() => handleRemoveTag(tag)} 
-                                                    />
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </FormGroup>
-                                </div>
-
-                                <div className="mb-4">
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <label 
-                                            className="form-label fw-bold"
-                                            style={{color: props.isDarkMode ? "white" : "black"}}
-                                        >
-                                            Description * (Markdown supporté)
-                                        </label>
-                                        <div className="btn-group" role="group">
-                                            <button
-                                                type="button"
-                                                className={`btn btn-sm ${!showPreview ? 'btn-primary' : 'btn-outline-primary'}`}
-                                                onClick={() => setShowPreview(false)}
-                                            >
-                                                Édition
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`btn btn-sm ${showPreview ? 'btn-primary' : 'btn-outline-primary'}`}
-                                                onClick={() => setShowPreview(true)}
-                                            >
-                                                Aperçu
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                    {!showPreview ? (
-                                        <textarea
-                                            className={`form-control ${errors.desc ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
-                                            rows="6"
-                                            value={formData.desc}
-                                            onChange={(e) => handleInputChange('desc', e.target.value)}
-                                            placeholder="Décrivez le défi en Markdown...&#10;&#10;Exemples:&#10;# Titre principal&#10;## Sous-titre&#10;**Texte en gras** et *italique*&#10;- Liste à puces&#10;``````"
-                                            style={{
-                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                color: props.isDarkMode ? "white" : "black",
-                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
-                                                resize: "vertical",
-                                                fontFamily: "monospace"
-                                            }}
-                                        />
-                                    ) : (
-                                        <div 
-                                            className="form-control"
-                                            style={{
-                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                color: props.isDarkMode ? "white" : "black",
-                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
-                                                minHeight: "150px",
-                                                padding: "12px"
-                                            }}
-                                        >
-                                            <Markdown
-                                                components={{
-                                                    h1: ({node, ...props}) => (
-                                                        <h1 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    h2: ({node, ...props}) => (
-                                                        <h2 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    h3: ({node, ...props}) => (
-                                                        <h3 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    p: ({node, ...props}) => (
-                                                        <p style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    code: ({node, inline, ...props}) => (
-                                                        <code 
-                                                            style={{
-                                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
-                                                                color: props.isDarkMode ? "#bb86fc" : "#4625ba",
-                                                                padding: "2px 4px",
-                                                                borderRadius: "4px"
-                                                            }}
-                                                            {...props} 
-                                                        />
-                                                    ),
-                                                    ul: ({node, ...props}) => (
-                                                        <ul style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    ),
-                                                    li: ({node, ...props}) => (
-                                                        <li style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
-                                                    )
-                                                }}
-                                            >
-                                                {formData.desc || "*Aucun contenu à prévisualiser*"}
-                                            </Markdown>
-                                        </div>
-                                    )}
-                                    
-                                    {errors.desc && (
-                                        <div className="invalid-feedback d-block">
-                                            {errors.desc}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-8 mb-4">
-                                        <label 
-                                            className="form-label fw-bold"
-                                            style={{color: props.isDarkMode ? "white" : "black"}}
-                                        >
-                                            Clé/Flag *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className={`form-control ${errors.key ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
-                                            value={formData.key}
-                                            onChange={(e) => handleInputChange('key', e.target.value)}
-                                            placeholder="Ex: flag{exemple_de_flag}"
-                                            style={{
-                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                color: props.isDarkMode ? "white" : "black",
-                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
-                                            }}
-                                        />
-                                        {errors.key && (
-                                            <div className="invalid-feedback d-block">
-                                                {errors.key}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="col-md-4 mb-4">
-                                        <label 
-                                            className="form-label fw-bold"
-                                            style={{color: props.isDarkMode ? "white" : "black"}}
-                                        >
-                                            Score *
-                                        </label>
-                                        <input
-                                            type="number"
-                                            className={`form-control ${errors.score ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
-                                            value={formData.score}
-                                            onChange={(e) => handleInputChange('score', e.target.value)}
-                                            placeholder="100"
-                                            min="1"
-                                            style={{
-                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                                color: props.isDarkMode ? "white" : "black",
-                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
-                                            }}
-                                        />
-                                        {errors.score && (
-                                            <div className="invalid-feedback d-block">
-                                                {errors.score}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="d-flex justify-content-center gap-3 mt-4">
-                                    <CustomButton 
-                                        type="button"
-                                        className="w-25"
-                                        style={{minWidth:"200px", maxWidth: "250px"}}
-                                        darkColor={"#6c757d"}
-                                        lightColor={"#6c757d"}
-                                        onClick={() => props.navigateTo("/lobby")}
+                    <Col md={6} className="mb-4">
+                        <FormGroup>
+                            <Label 
+                                className="fw-bold"
+                                style={{color: props.isDarkMode ? "white" : "black"}}
+                            >
+                                Difficulté *
+                            </Label>
+                            <Input
+                                type="select"
+                                invalid={!!errors.diff}
+                                value={formData.diff}
+                                onChange={(e) => handleInputChange('diff', e.target.value)}
+                                style={{
+                                    backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                    color: props.isDarkMode ? "white" : "black",
+                                    border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
+                                }}
+                            >
+                                <option 
+                                    value=""
+                                    style={{
+                                        backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                        color: props.isDarkMode ? "#999" : "#6c757d"
+                                    }}
+                                >
+                                    Sélectionner une difficulté
+                                </option>
+                                {difficultyOptions.map(option => (
+                                    <option 
+                                        key={option.value} 
+                                        value={option.value}
+                                        style={{
+                                            backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                            color: props.isDarkMode ? "white" : "black"
+                                        }}
                                     >
-                                        <div className="d-flex flex-row align-items-center justify-content-center position-relative">
-                                            Annuler
-                                            <SVGDispatcher type="x" color="white" className="position-absolute end-0"/>
-                                        </div>
-                                    </CustomButton>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </Input>
+                            {errors.diff && (
+                                <FormFeedback>
+                                    {errors.diff}
+                                </FormFeedback>
+                            )}
+                        </FormGroup>
+                    </Col>
+                </Row>
 
-                                    <CustomButton 
-                                        type="submit"
-                                        className="w-25"
-                                        style={{minWidth:"200px", maxWidth: "250px"}}
-                                        darkColor={"#4625ba"}
-                                        lightColor={"#4625ba"}
-                                        disabled={isSubmitting}
-                                    >
-                                        <div className="d-flex flex-row align-items-center justify-content-center position-relative">
-                                            {isSubmitting ? "Création..." : "Créer le défi"}
-                                            <SVGDispatcher 
-                                                type={isSubmitting ? "loader" : "check"} 
-                                                color="white" 
-                                                className="position-absolute end-0"
-                                            />
-                                        </div>
-                                    </CustomButton>
-                                </div>
-                            </form>
+                <Row>
+                    <Col md={6} className="mb-4">
+                        <FormGroup>
+                            <Label className="fw-bold" style={{ color: props.isDarkMode ? "white" : "black" }}>
+                                Catégorie *
+                            </Label>
+                            <Input
+                                type="text"
+                                invalid={!!errors.category}
+                                value={formData.category}
+                                onChange={(e) => handleInputChange('category', e.target.value)}
+                                placeholder="Ex: Sécurité, Réseaux"
+                                style={getStyle()}
+                            />
+                            {errors.category && (
+                                <FormFeedback>
+                                    {errors.category}
+                                </FormFeedback>
+                            )}
+                        </FormGroup>
+                    </Col>
+
+                    <Col md={6} className="mb-4">
+                        <FormGroup>
+                            <Label className="fw-bold d-flex flex-row gap-4" style={{ color: props.isDarkMode ? "white" : "black" }}>
+                                Tags *
+                                <small style={{color: props.isDarkMode ? "#ccc" : "#666"}}>
+                                    Appuyer sur Entrée pour ajouter.
+                                </small>
+                            </Label>
+                            <Input
+                                type="text"
+                                onKeyDown={handleTagsKeyDown}
+                                placeholder="Ex: sécurité, réseau"
+                                style={getStyle()}
+                            />
+                            <div className="mt-2">
+                                {formData.tags.map(tag => (
+                                    <Badge key={tag} color="primary" className="me-2 d-inline-flex align-items-center">
+                                        {tag}
+                                        <Button
+                                            close
+                                            size="sm"
+                                            className="ms-1"
+                                            style={{ fontSize: '0.7rem' }}
+                                            onClick={() => handleRemoveTag(tag)}
+                                            aria-label="Remove tag"
+                                        />
+                                    </Badge>
+                                ))}
+                            </div>
+                        </FormGroup>
+                    </Col>
+                </Row>
+
+                <div className="mb-4">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                        <label 
+                            className="form-label fw-bold"
+                            style={{color: props.isDarkMode ? "white" : "black"}}
+                        >
+                            Description * (Markdown supporté)
+                        </label>
+                        <div className="btn-group" role="group">
+                            <button
+                                type="button"
+                                className={`btn btn-sm ${!showPreview ? 'btn-primary' : 'btn-outline-primary'}`}
+                                onClick={() => setShowPreview(false)}
+                            >
+                                Édition
+                            </button>
+                            <button
+                                type="button"
+                                className={`btn btn-sm ${showPreview ? 'btn-primary' : 'btn-outline-primary'}`}
+                                onClick={() => setShowPreview(true)}
+                            >
+                                Aperçu
+                            </button>
                         </div>
                     </div>
+                    
+                    {!showPreview ? (
+                        <textarea
+                            className={`form-control ${errors.desc ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
+                            rows="6"
+                            value={formData.desc}
+                            onChange={(e) => handleInputChange('desc', e.target.value)}
+                            placeholder="Décrivez le défi en Markdown...&#10;&#10;Exemples:&#10;# Titre principal&#10;## Sous-titre&#10;**Texte en gras** et *italique*&#10;- Liste à puces&#10;``````"
+                            style={{
+                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                color: props.isDarkMode ? "white" : "black",
+                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
+                                resize: "vertical",
+                                fontFamily: "monospace"
+                            }}
+                        />
+                    ) : (
+                        <div 
+                            className="form-control"
+                            style={{
+                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                color: props.isDarkMode ? "white" : "black",
+                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
+                                minHeight: "150px",
+                                padding: "12px"
+                            }}
+                        >
+                            <Markdown
+                                components={{
+                                    h1: ({node, ...props}) => (
+                                        <h1 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                    ),
+                                    h2: ({node, ...props}) => (
+                                        <h2 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                    ),
+                                    h3: ({node, ...props}) => (
+                                        <h3 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                    ),
+                                    p: ({node, ...props}) => (
+                                        <p style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                    ),
+                                    code: ({node, inline, ...props}) => (
+                                        <code 
+                                            style={{
+                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
+                                                color: props.isDarkMode ? "#bb86fc" : "#4625ba",
+                                                padding: "2px 4px",
+                                                borderRadius: "4px"
+                                            }}
+                                            {...props} 
+                                        />
+                                    ),
+                                    ul: ({node, ...props}) => (
+                                        <ul style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                    ),
+                                    li: ({node, ...props}) => (
+                                        <li style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                    )
+                                }}
+                            >
+                                {formData.desc || "*Aucun contenu à prévisualiser*"}
+                            </Markdown>
+                        </div>
+                    )}
+                    
+                    {errors.desc && (
+                        <div className="invalid-feedback d-block">
+                            {errors.desc}
+                        </div>
+                    )}
                 </div>
-            </div>
+
+                <div className="row">
+                    <div className="col-md-8 mb-4">
+                        <label 
+                            className="form-label fw-bold"
+                            style={{color: props.isDarkMode ? "white" : "black"}}
+                        >
+                            Clé/Flag *
+                        </label>
+                        <input
+                            type="text"
+                            className={`form-control ${errors.key ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
+                            value={formData.key}
+                            onChange={(e) => handleInputChange('key', e.target.value)}
+                            placeholder="Ex: flag{exemple_de_flag}"
+                            style={{
+                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                color: props.isDarkMode ? "white" : "black",
+                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
+                            }}
+                        />
+                        {errors.key && (
+                            <div className="invalid-feedback d-block">
+                                {errors.key}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="col-md-4 mb-4">
+                        <label 
+                            className="form-label fw-bold"
+                            style={{color: props.isDarkMode ? "white" : "black"}}
+                        >
+                            Score *
+                        </label>
+                        <input
+                            type="number"
+                            className={`form-control ${errors.score ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
+                            value={formData.score}
+                            onChange={(e) => handleInputChange('score', e.target.value)}
+                            placeholder="100"
+                            min="1"
+                            style={{
+                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                color: props.isDarkMode ? "white" : "black",
+                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`
+                            }}
+                        />
+                        {errors.score && (
+                            <div className="invalid-feedback d-block">
+                                {errors.score}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="d-flex justify-content-center gap-3 mt-4">
+                    <CustomButton 
+                        type="button"
+                        className="w-25"
+                        style={{minWidth:"200px", maxWidth: "250px"}}
+                        darkColor={"#6c757d"}
+                        lightColor={"#6c757d"}
+                        onClick={() => props.navigateTo("/lobby")}
+                    >
+                        <div className="d-flex flex-row align-items-center justify-content-center position-relative">
+                            Annuler
+                            <SVGDispatcher type="x" color="white" className="position-absolute end-0"/>
+                        </div>
+                    </CustomButton>
+
+                    <CustomButton 
+                        type="submit"
+                        className="w-25"
+                        style={{minWidth:"200px", maxWidth: "250px"}}
+                        darkColor={"#4625ba"}
+                        lightColor={"#4625ba"}
+                        disabled={isSubmitting}
+                    >
+                        <div className="d-flex flex-row align-items-center justify-content-center position-relative">
+                            {isSubmitting ? "Création..." : "Créer le défi"}
+                            <SVGDispatcher 
+                                type={isSubmitting ? "loader" : "check"} 
+                                color="white" 
+                                className="position-absolute end-0"
+                            />
+                        </div>
+                    </CustomButton>
+                </div>
+            </Form>
         </Fade>
     );
 }

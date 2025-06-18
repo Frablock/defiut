@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Defi;
 use App\Entity\RecentDefi;
 use App\Entity\Tag;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,7 +26,7 @@ class CategorieController extends AbstractController
      * GET /api/defis/get_lobby_categories
      *
      * Returns:
-     * - tags_name: array of top 5 tag titles
+     * - top_defis: array of top 5 defis with most validations in the last 48h
      * - defis_recents: array of 5 most recent challenges for the user (title + id), empty if not authenticated
      *
      * @param EntityManagerInterface $em   Doctrine entity manager
@@ -36,8 +37,8 @@ class CategorieController extends AbstractController
     #[OA\Get(
         path: '/api/defis/get_lobby_categories',
         tags: ['Defi'],
-        summary: 'Get lobby categories and recent challenges',
-        description: 'Returns top 5 tags and up to 5 most recent challenges for the authenticated user. If not authenticated, returns only tags.',
+        summary: 'Get top defis and recent challenges',
+        description: 'Returns top 5 defis with most validations in the last 48 hours and up to 5 most recent challenges for the authenticated user. If not authenticated, returns only top defis.',
         operationId: 'getLobbyCategories',
         parameters: [
             new OA\Parameter(
@@ -51,18 +52,22 @@ class CategorieController extends AbstractController
     )]
     #[OA\Response(
         response: 200,
-        description: 'Lobby categories retrieved successfully',
+        description: 'Top defis and recent challenges retrieved successfully',
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: 'error', type: 'boolean', example: false),
                 new OA\Property(property: 'error_message', type: 'string', example: ''),
                 new OA\Property(property: 'data', properties: [
-                    new OA\Property(property: 'tags_name', type: 'array', items: new OA\Items(
+                    new OA\Property(property: 'top_defis', type: 'array', items: new OA\Items(
                         properties: [
-                            new OA\Property(property: 'title', type: 'string', description: 'Tag name', example: 'Web Development')
+                            new OA\Property(property: 'id', type: 'integer', description: 'Defi ID', example: 123),
+                            new OA\Property(property: 'title', type: 'string', description: 'Defi name', example: 'SQL Injection Challenge'),
+                            new OA\Property(property: 'validation_count', type: 'integer', description: 'Number of validations in the last 48h', example: 42),
+                            new OA\Property(property: 'difficulty', type: 'integer', description: 'Difficulty level (1-5)', example: 3),
+                            new OA\Property(property: 'points', type: 'integer', description: 'Reward points', example: 100)
                         ],
                         type: 'object'
-                    ), description: 'Array of top 5 tag names'),
+                    ), description: 'Array of top 5 defis with most validations in the last 48 hours'),
                     new OA\Property(property: 'defis_recents', type: 'array', items: new OA\Items(
                         properties: [
                             new OA\Property(property: 'title', type: 'string', description: 'Challenge name', example: 'PHP Basics'),
@@ -77,16 +82,24 @@ class CategorieController extends AbstractController
     )]
     public function getCategories(EntityManagerInterface $em, Request $request): JsonResponse
     {
-        $tagRepository = $em->getRepository(Tag::class);
+        $defiRepository = $em->getRepository(Defi::class);
+        
+        // Get top 5 defis based on validations in the last 48 hours
+        // Replace the private method call with:
+        $topDefis = $defiRepository->getTop5DefisByValidations();
 
-        $tags = $tagRepository->getTop5Tags();
-        $tagsName = [];
+        $topDefisArray = [];
         $recentDefisArray = [];
         
-        // Build list of tag titles for the response
-        foreach ($tags as $tag) {
-            $tagsName[] = [
-                'title' => $tag->getNom(),
+        // Build list of top defis for the response
+        foreach ($topDefis as $defiData) {
+            $defi = $defiData['defi'];
+            $topDefisArray[] = [
+                'id' => $defi->getId(),
+                'title' => $defi->getNom(),
+                'validation_count' => $defiData['validation_count'],
+                'difficulty' => $defi->getDifficulte(),
+                'points' => $defi->getPointsRecompense()
             ];
         }
 
@@ -116,8 +129,8 @@ class CategorieController extends AbstractController
             [
                 'error' => false,
                 'data' => [
-                    'tags_name' => $tagsName,           // Top 5 tag titles
-                    'defis_recents' => $recentDefisArray // 5 most recent challenges for the user
+                    'top_defis' => $topDefisArray,           // Top 5 defis by validations in last 48h
+                    'defis_recents' => $recentDefisArray     // 5 most recent challenges for the user
                 ],
             ]
         );

@@ -9,6 +9,23 @@
 3. **Communauté et écosystème** : React bénéficie d'une grande communauté et d'un écosystème riche, ce qui facilite la résolution des problèmes et l'intégration de nouvelles fonctionnalités.
 4. **Flexibilité** : React peut être utilisé avec d'autres bibliothèques ou frameworks, ce qui le rend très flexible.
 
+**L'architecture de React :** <br>
+L'application React se trouve dans le dossier "./react" du projet. <br>
+Ce répertoire comprend plusieurs fichier : <br>
+- **Main.jsx** : est le fichier de base lu par le fichier twig. depuis ce fichier on importe **App.jsx**
+- **App.jsx** : Ce fichier contient la scène principale, il inclus : <br>
+    - la Navbar
+    - la scène principale
+        - le Panneau de navigation à gauche
+        - la sous scène
+        - le podium à droite
+    - le footer <br>
+
+il contient aussi toutes les "states" de React qui ont besoin d'être distribué au seins de tout les composants.
+- **Les sous dossiers** : Ces fichiers là contiennent les sous-scènes principales de notre application
+- **Le fichier 'utils'** : Ce fichier regroupe toutes les fonction React utile permettant une mise en palce du code plus facile.
+
+
 ## Symfony (et PHP) pour le BackEnd
 
 **Pourquoi Symfony et PHP ?**
