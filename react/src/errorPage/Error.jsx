@@ -17,7 +17,7 @@ export default function Error(props){
             style={{color: props.isDarkMode ? "white" : "black"}}
         >
             <div style={{fontWeight:"900", fontSize:"200px", marginBottom:"-50px"}}>404</div>
-            <div>Cette page nest introuvable</div>
+            <div>Cette page est introuvable</div>
             <div className="d-flex flex-row gap-3 w-100 justify-content-center">
                 <CustomButton 
                     className="w-25"
@@ -27,7 +27,7 @@ export default function Error(props){
                     onClick={() => props.navigateTo("/lobby")}
                 >
                     <div className="d-flex flex-row align-items-center justify-content-center position-relative">
-                        Acceuil
+                        Accueil
                         <SVGDispatcher type="arrow-right" color="white" className="position-absolute end-0"/>
                     </div>
                 </CustomButton>
