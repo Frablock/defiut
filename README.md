@@ -64,12 +64,23 @@ Si vous voulez charger nos données d'exemples, importez le script dummy_data.sq
 ## Accès à l'application
 
 Pour accéder à l'application, il vous suffit d'utiliser un navigateur et de vous rendre sur :
-[http://localhost:80](http://localhost:80) pour accéder à l'application
-[http://localhost:8080](http://localhost:8080) pour accéder à PHPMySQL
+
+- [http://localhost:80](http://localhost:80) pour accéder à l'application
+  ![Lobby du site](./docs/imgs/main_page.png)
+
+- [http://localhost:8080](http://localhost:8080) pour accéder à PHPMySQL
 
 ## Documentation
 
 Le projet intègre de la documentation dans le répertoire `/docs`
+
+Voici la documentation incluse dans le répertoire `/docs`
+
+- Sécurité
+
+- choix des technologies
+
+- images
 
 Il intègre aussi les spécifications OpenAPI
 
@@ -77,4 +88,8 @@ La documentation OpenAPI est trouvable à l'adresse suivante :
 
 http://localhost:80/api/doc.json
 
+![](./docs/imgs/open_api_json.png)
+
 Vous pouvez utiliser un lecteur de spécifications OpenAPI externe tel que https://www.openapiviewer.com/ si vous souhaitez bénéficier d'une interface graphique
+
+![Capture d'écran de OpenAPI Viewer](./docs/imgs/open_api_viewer.png)
