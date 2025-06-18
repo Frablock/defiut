@@ -22,6 +22,7 @@ make start
 Félicitations, vous venez de démarer l'application, il ne vous reste plus qu'à installer les certificats pour pouvoir l'utiliser !
 
 ### Installation des certificats SSL (non obligatoire pour utiliser l'API en HTTP)
+
 Cette partie est obligatoire si vous voulez utiliser le front en même temps que l'API.\
 Lancez la commande adapté à votre système, en ayant lancé le `make start` avant
 
@@ -65,3 +66,15 @@ Si vous voulez charger nos données d'exemples, importez le script dummy_data.sq
 Pour accéder à l'application, il vous suffit d'utiliser un navigateur et de vous rendre sur :
 [http://localhost:80](http://localhost:80) pour accéder à l'application
 [http://localhost:8080](http://localhost:8080) pour accéder à PHPMySQL
+
+## Documentation
+
+Le projet intègre de la documentation dans le répertoire `/docs`
+
+Il intègre aussi les spécifications OpenAPI
+
+La documentation OpenAPI est trouvable à l'adresse suivante : 
+
+http://localhost:80/api/doc.json
+
+Vous pouvez utiliser un lecteur de spécifications OpenAPI externe tel que https://www.openapiviewer.com/ si vous souhaitez bénéficier d'une interface graphique
