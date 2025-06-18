@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import CustomButton from "../utils/CustomButton";
 import SVGDispatcher from "../utils/Utils";
 import { Fade, Alert } from "reactstrap";
+import Markdown from 'react-markdown';
 
 export default function CreateDefis(props) {
     const [formData, setFormData] = useState({
@@ -15,8 +16,8 @@ export default function CreateDefis(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitMessage, setSubmitMessage] = useState({ type: '', message: '' });
     const [viewSize, setViewSize] = React.useState("0");
+    const [showPreview, setShowPreview] = useState(false);
 
-    // Gestion de la hauteur dynamique
     React.useEffect(() => {
         if (!props.footerRef?.current || !props.navbarRef?.current) return;
 
@@ -35,7 +36,6 @@ export default function CreateDefis(props) {
         return () => resizeObserver.disconnect();
     }, [props.footerRef?.current, props.navbarRef?.current]);
 
-    // Styles CSS pour les placeholders
     React.useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
@@ -104,7 +104,6 @@ export default function CreateDefis(props) {
             [field]: value
         }));
         
-        // Clear error when user starts typing
         if (errors[field]) {
             setErrors(prev => ({
                 ...prev,
@@ -146,7 +145,6 @@ export default function CreateDefis(props) {
                     type: 'success',
                     message: "Défi créé avec succès !"
                 });
-                // Reset form
                 setFormData({
                     nom: '',
                     desc: '',
@@ -201,7 +199,6 @@ export default function CreateDefis(props) {
 
                             <form onSubmit={handleSubmit}>
                                 <div className="row">
-                                    {/* Nom du défi */}
                                     <div className="col-md-6 mb-4">
                                         <label 
                                             className="form-label fw-bold"
@@ -228,7 +225,6 @@ export default function CreateDefis(props) {
                                         )}
                                     </div>
 
-                                    {/* Difficulté */}
                                     <div className="col-md-6 mb-4">
                                         <label 
                                             className="form-label fw-bold"
@@ -276,27 +272,96 @@ export default function CreateDefis(props) {
                                     </div>
                                 </div>
 
-                                {/* Description */}
                                 <div className="mb-4">
-                                    <label 
-                                        className="form-label fw-bold"
-                                        style={{color: props.isDarkMode ? "white" : "black"}}
-                                    >
-                                        Description *
-                                    </label>
-                                    <textarea
-                                        className={`form-control ${errors.desc ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
-                                        rows="4"
-                                        value={formData.desc}
-                                        onChange={(e) => handleInputChange('desc', e.target.value)}
-                                        placeholder="Décrivez le défi, les objectifs et les consignes..."
-                                        style={{
-                                            backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
-                                            color: props.isDarkMode ? "white" : "black",
-                                            border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
-                                            resize: "vertical"
-                                        }}
-                                    />
+                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                        <label 
+                                            className="form-label fw-bold"
+                                            style={{color: props.isDarkMode ? "white" : "black"}}
+                                        >
+                                            Description * (Markdown supporté)
+                                        </label>
+                                        <div className="btn-group" role="group">
+                                            <button
+                                                type="button"
+                                                className={`btn btn-sm ${!showPreview ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                onClick={() => setShowPreview(false)}
+                                            >
+                                                Édition
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`btn btn-sm ${showPreview ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                onClick={() => setShowPreview(true)}
+                                            >
+                                                Aperçu
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    {!showPreview ? (
+                                        <textarea
+                                            className={`form-control ${errors.desc ? 'is-invalid' : ''} ${props.isDarkMode ? 'dark-mode-placeholder' : 'light-mode-placeholder'}`}
+                                            rows="6"
+                                            value={formData.desc}
+                                            onChange={(e) => handleInputChange('desc', e.target.value)}
+                                            placeholder="Décrivez le défi en Markdown...&#10;&#10;Exemples:&#10;# Titre principal&#10;## Sous-titre&#10;**Texte en gras** et *italique*&#10;- Liste à puces&#10;``````"
+                                            style={{
+                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                                color: props.isDarkMode ? "white" : "black",
+                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
+                                                resize: "vertical",
+                                                fontFamily: "monospace"
+                                            }}
+                                        />
+                                    ) : (
+                                        <div 
+                                            className="form-control"
+                                            style={{
+                                                backgroundColor: props.isDarkMode ? "#3d3d3d" : "white",
+                                                color: props.isDarkMode ? "white" : "black",
+                                                border: `1px solid ${props.isDarkMode ? "#555" : "#ddd"}`,
+                                                minHeight: "150px",
+                                                padding: "12px"
+                                            }}
+                                        >
+                                            <Markdown
+                                                components={{
+                                                    h1: ({node, ...props}) => (
+                                                        <h1 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    h2: ({node, ...props}) => (
+                                                        <h2 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    h3: ({node, ...props}) => (
+                                                        <h3 style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    p: ({node, ...props}) => (
+                                                        <p style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    code: ({node, inline, ...props}) => (
+                                                        <code 
+                                                            style={{
+                                                                backgroundColor: props.isDarkMode ? "#2d2d2d" : "#e9ecef",
+                                                                color: props.isDarkMode ? "#bb86fc" : "#4625ba",
+                                                                padding: "2px 4px",
+                                                                borderRadius: "4px"
+                                                            }}
+                                                            {...props} 
+                                                        />
+                                                    ),
+                                                    ul: ({node, ...props}) => (
+                                                        <ul style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    ),
+                                                    li: ({node, ...props}) => (
+                                                        <li style={{color: props.isDarkMode ? "white" : "black"}} {...props} />
+                                                    )
+                                                }}
+                                            >
+                                                {formData.desc || "*Aucun contenu à prévisualiser*"}
+                                            </Markdown>
+                                        </div>
+                                    )}
+                                    
                                     {errors.desc && (
                                         <div className="invalid-feedback d-block">
                                             {errors.desc}
@@ -305,7 +370,6 @@ export default function CreateDefis(props) {
                                 </div>
 
                                 <div className="row">
-                                    {/* Clé/Flag */}
                                     <div className="col-md-8 mb-4">
                                         <label 
                                             className="form-label fw-bold"
@@ -332,7 +396,6 @@ export default function CreateDefis(props) {
                                         )}
                                     </div>
 
-                                    {/* Score */}
                                     <div className="col-md-4 mb-4">
                                         <label 
                                             className="form-label fw-bold"
@@ -361,7 +424,6 @@ export default function CreateDefis(props) {
                                     </div>
                                 </div>
 
-                                {/* Boutons */}
                                 <div className="d-flex justify-content-center gap-3 mt-4">
                                     <CustomButton 
                                         type="button"
