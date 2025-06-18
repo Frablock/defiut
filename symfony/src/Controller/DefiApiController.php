@@ -20,7 +20,6 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 
-#[Route('/api/defis', name: 'api_defi_')]
 class DefiApiController extends AbstractController
 {
     public function __construct(
@@ -30,7 +29,7 @@ class DefiApiController extends AbstractController
     ) {}
 
 
-    #[Route('', name: 'list', methods: ['GET'])]
+    #[Route('/api/defis', name: 'list', methods: ['GET'])]
     #[OA\Get(
         path: '/api/defis',
         tags: ['Defi'],
@@ -92,7 +91,7 @@ class DefiApiController extends AbstractController
         return new JsonResponse(['error' => false, 'error_message' => '', 'data' => $data], JsonResponse::HTTP_OK);
     }
 
-    #[Route('', name: 'list_by_params', methods: ['POST'])]
+    #[Route('/api/defis', name: 'list_by_params', methods: ['POST'])]
     #[OA\Post(
         path: '/api/defis',
         tags: ['Defi'],
@@ -205,9 +204,9 @@ class DefiApiController extends AbstractController
 
 
 
-    #[Route('/try_key', name: 'try_key', methods: ['POST'])]
+    #[Route('/api/defis/try_key', name: 'try_key', methods: ['POST'])]
     #[OA\Post(
-        path: 'api/defis/try_key',
+        path: '/api/defis/try_key',
         tags: ['Defi'],
         summary: 'Try a key for a challenge',
         description: 'Allows a user to attempt to validate a challenge by providing its key',
@@ -375,9 +374,9 @@ class DefiApiController extends AbstractController
     }
 
 
-    #[Route('/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
+    #[Route('/api/defis/get_left_menu_categories', name: 'get_left_menu_categories', methods: ['GET'])]
     #[OA\Get(
-        path: 'api/defis/get_left_menu_categories',
+        path: '/api/defis/get_left_menu_categories',
         tags: ['UI', 'Defi'],
         summary: 'Get left menu categories',
         description: 'Returns a list of categories for the left sidebar menu',
@@ -444,9 +443,9 @@ class DefiApiController extends AbstractController
         }
     }
 
-    #[Route('/filter', name: 'filter', methods: ['POST'])]
+    #[Route('/api/defis/filter', name: 'filter', methods: ['POST'])]
     #[OA\Post(
-        path: 'api/defis/filter',
+        path: '/api/defis/filter',
         tags: ['Defi'],
         summary: 'Filter challenges by category and tags',
         description: 'Returns a filtered list of challenges based on specified category and tags',
@@ -531,9 +530,9 @@ class DefiApiController extends AbstractController
 
 
     //Il faut placer cette fonction a la toute fin de cette classe, sinon les requêtes vont croire que les routes appelées sont des ID et vont venir ici
-    #[Route('/{id}', name: 'get_single_defi', methods: ['GET'])]
+    #[Route('/api/defis/{id}', name: 'get_single_defi', methods: ['GET'])]
     #[OA\Get(
-        path: 'api/defis/{id}',
+        path: '/api/defis/{id}',
         tags: ['Defi'],
         summary: 'Get a single challenge by ID',
         description: 'Returns details for a specific challenge. If authenticated, adds the challenge to the user\'s recent challenges list.',
