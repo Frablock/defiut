@@ -6,7 +6,8 @@ INSERT INTO Utilisateur (
         mot_de_passe,
         is_verified,
         roles,
-        score_total
+        score_total,
+        defi_valid_utilisateur_id 
     )
 VALUES (
         1,
@@ -15,7 +16,8 @@ VALUES (
         'password1',
         0,
         '[]',
-        4120
+        4120,
+        NULL
     ),
     (
         2,
@@ -24,7 +26,8 @@ VALUES (
         'password2',
         0,
         '[]',
-        1610
+        1610,
+        NULL
     ),
     (
         3,
@@ -33,7 +36,8 @@ VALUES (
         '$argon2id$v=19$m=16,t=2,p=1$NEt1YXRjSTA4ZFJsaTRxcg$1PWBiMiPnhieLJs/yjfo0A',
         0,
         '["editor"]',
-        4980
+        4980,
+        NULL
     ),
     (
         4,
@@ -42,7 +46,8 @@ VALUES (
         'password3',
         0,
         '[]',
-        760
+        760,
+        NULL
     ),
     (
         5,
@@ -51,7 +56,8 @@ VALUES (
         'password3',
         0,
         '[]',
-        2120
+        2120,
+        NULL
     ),
     (
         6,
@@ -60,7 +66,8 @@ VALUES (
         'password3',
         0,
         '[]',
-        2490
+        2490,
+        NULL
     ),
     (
         7,
@@ -69,7 +76,8 @@ VALUES (
         'password3',
         0,
         '[]',
-        3340
+        3340,
+        NULL
     ),
     (
         8,
@@ -78,7 +86,8 @@ VALUES (
         'password3',
         0,
         '[]',
-        2900
+        2900,
+        NULL
     ),
     (
         9,
@@ -87,7 +96,8 @@ VALUES (
         'password3',
         0,
         '[]',
-        2830
+        2830,
+        NULL
     );
 
 -- Ajout users pour tester le leaderboard
@@ -100,28 +110,29 @@ INSERT INTO Utilisateur (
     last_co, 
     is_verified, 
     roles,
-    last_try_date
+    last_try_date,
+    defi_valid_utilisateur_id 
 ) VALUES 
 -- Utilisateurs avec scores élevés (devraient être dans le top 10)
-('flag_master', 'user15@ctf.com', '$2y$13$password_hash', 4200, '2024-01-15 10:00:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('exploit_king', 'user14@ctf.com', '$2y$13$password_hash', 3800, '2024-01-14 09:30:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('crypto_wizard', 'user13@ctf.com', '$2y$13$password_hash', 3600, '2024-01-13 11:15:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('reverse_engineer', 'user12@ctf.com', '$2y$13$password_hash', 3500, '2024-01-12 14:20:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('web_hacker', 'user11@ctf.com', '$2y$13$password_hash', 3200, '2024-01-11 16:45:00', NOW(), 1, '["ROLE_USER"]', NULL),
+('flag_master', 'user15@ctf.com', '$2y$13$password_hash', 4200, '2024-01-15 10:00:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('exploit_king', 'user14@ctf.com', '$2y$13$password_hash', 3800, '2024-01-14 09:30:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('crypto_wizard', 'user13@ctf.com', '$2y$13$password_hash', 3600, '2024-01-13 11:15:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('reverse_engineer', 'user12@ctf.com', '$2y$13$password_hash', 3500, '2024-01-12 14:20:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('web_hacker', 'user11@ctf.com', '$2y$13$password_hash', 3200, '2024-01-11 16:45:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
 
 -- Utilisateurs avec scores moyens (certains dans le top 10)
-('binary_ninja', 'user8@ctf.com', '$2y$13$password_hash', 2800, '2024-01-08 08:30:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('forensics_expert', 'user9@ctf.com', '$2y$13$password_hash', 2500, '2024-01-09 12:00:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('hacker_pro', 'alice@ctf.com', '$2y$13$password_hash', 2500, '2024-01-01 07:00:00', NOW(), 1, '["ROLE_USER"]', NULL), -- Même score mais plus ancien
-('pwn_master', 'user10@ctf.com', '$2y$13$password_hash', 2200, '2024-01-10 15:30:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('cyber_ninja', 'bob@ctf.com', '$2y$13$password_hash', 2200, '2024-01-02 09:15:00', NOW(), 1, '["ROLE_USER"]', NULL), -- Même score mais plus ancien
+('binary_ninja', 'user8@ctf.com', '$2y$13$password_hash', 2800, '2024-01-08 08:30:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('forensics_expert', 'user9@ctf.com', '$2y$13$password_hash', 2500, '2024-01-09 12:00:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('hacker_pro', 'alice@ctf.com', '$2y$13$password_hash', 2500, '2024-01-01 07:00:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL), -- Même score mais plus ancien
+('pwn_master', 'user10@ctf.com', '$2y$13$password_hash', 2200, '2024-01-10 15:30:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('cyber_ninja', 'bob@ctf.com', '$2y$13$password_hash', 2200, '2024-01-02 09:15:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL), -- Même score mais plus ancien
 
 -- Utilisateurs avec scores plus faibles (ne devraient PAS être dans le top 10)
-('code_breaker', 'charlie@ctf.com', '$2y$13$password_hash', 1800, '2024-01-07 13:45:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('security_expert', 'diana@ctf.com', '$2y$13$password_hash', 1650, '2024-01-06 11:20:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('flag_hunter', 'eve@ctf.com', '$2y$13$password_hash', 1400, '2024-01-05 10:10:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('script_kiddie', 'user4@ctf.com', '$2y$13$password_hash', 1100, '2024-01-04 14:30:00', NOW(), 1, '["ROLE_USER"]', NULL),
-('newbie', 'user1@ctf.com', '$2y$13$password_hash', 500, '2024-01-03 16:00:00', NOW(), 1, '["ROLE_USER"]', NULL);
+('code_breaker', 'charlie@ctf.com', '$2y$13$password_hash', 1800, '2024-01-07 13:45:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('security_expert', 'diana@ctf.com', '$2y$13$password_hash', 1650, '2024-01-06 11:20:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('flag_hunter', 'eve@ctf.com', '$2y$13$password_hash', 1400, '2024-01-05 10:10:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('script_kiddie', 'user4@ctf.com', '$2y$13$password_hash', 1100, '2024-01-04 14:30:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL),
+('newbie', 'user1@ctf.com', '$2y$13$password_hash', 500, '2024-01-03 16:00:00', NOW(), 1, '["ROLE_USER"]', NULL, NULL);
 
 -- Requête de vérification : Top 10 trié par score décroissant
 SELECT 

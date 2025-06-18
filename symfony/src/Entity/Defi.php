@@ -65,7 +65,7 @@ class Defi
     private Collection $recentDefis;
 
     #[ORM\ManyToOne(inversedBy: 'defiId')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?DefiValidUtilisateur $defiValidUtilisateur = null;
 
     public function __construct()

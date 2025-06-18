@@ -63,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $recentDefis;
 
     #[ORM\ManyToOne(inversedBy: 'userId')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?DefiValidUtilisateur $defiValidUtilisateur = null;
 
     public function __construct()
