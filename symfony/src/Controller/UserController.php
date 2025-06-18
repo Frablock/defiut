@@ -14,8 +14,6 @@ use DateTime;
 use App\Repository\UserRepository;
 use App\Entity\User;
 use Exception;
-use Nelmio\ApiDocBundle\Attribute\Model;
-use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 
 final class UserController extends AbstractController
