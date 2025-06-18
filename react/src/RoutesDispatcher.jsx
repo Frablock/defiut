@@ -7,6 +7,11 @@ import Register from './register/Register';
 import Lobby from './lobby/Lobby';
 import Profil from './profil/Profil'
 import Defis from './defis/Defis';
+import CreateDefis from './createDefis/CreateDefis';
+import LegalNotices from './legal/LegalNotices';
+import FAQ from './faq/Faq';
+import CGU from './cgu/Cgu';
+import LobbyCategory from './lobby/LobbyCategory';
 
 function RoutesDispatcher(props) {
   return (
@@ -24,7 +29,7 @@ function RoutesDispatcher(props) {
         />
         <Route 
           path="/lobby/:category"
-          element={<Lobby {...props}/>}
+          element={<LobbyCategory {...props}/>}
         />
         <Route 
           path="/login"
@@ -41,6 +46,10 @@ function RoutesDispatcher(props) {
         <Route
           path="/defis/:id"
           element={<Defis {...props}/>}
+        />
+        <Route
+          path="/create_defis"
+          element={<CreateDefis {...props}/>}
         />
         <Route
           path="/legal-notices"

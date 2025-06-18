@@ -54,8 +54,8 @@ class CategorieController extends AbstractController
                 $recentDefis = $user->getRecentDefis();
                 foreach ($recentDefis as $recentDefi) {
                     $recentDefisArray[] = [
-                        'title' => $recentDefi->getNom(),
-                        'id'=> $recentDefi->getId()
+                        'title' => $recentDefi->getDefi()->getNom(),
+                        'id'=> $recentDefi->getDefi()->getId()
                     ];
                 }
             }

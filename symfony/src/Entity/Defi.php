@@ -121,9 +121,9 @@ class Defi
         $this->difficulte = $diff;
     }
 
-    public function getUser(): ?string
+    public function getUser(): ?User
     {
-        return $this->user->getUsername();
+        return $this->user;
     }
 
     public function setUser(User $user): self
@@ -242,6 +242,7 @@ class Defi
         $this->pointsRecompense = $score;
     }
 
+<<<<<<< HEAD
     public function getDefiValidUtilisateur(): ?DefiValidUtilisateur
     {
         return $this->defiValidUtilisateur;
@@ -252,5 +253,15 @@ class Defi
         $this->defiValidUtilisateur = $defiValidUtilisateur;
 
         return $this;
+=======
+    public function getCategorie(): string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(string $categorie)
+    {
+        $this->categorie = $categorie;
+>>>>>>> 67dd69df1d4c42ed3b8ce97693e2b41fc886b29f
     }
 }

@@ -6,6 +6,8 @@ import AppFooter from './utils/AppFooter';
 import LeftNavigation from './utils/LeftNavigation';
 import Leaderboard from './utils/Leaderboard';
 import { Fade } from 'reactstrap';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App(props) {
     const location = useLocation();
@@ -35,14 +37,23 @@ export default function App(props) {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     };
 
+    React.useEffect(() => {
+        console.log("unmount / mounot")
+        console.log(unmount)
+    },[unmount])
+
     const navigateTo = (url) => {
         if(location.pathname != url){
             setUnmount(true)
-            setCategory(null)
             setTimeout(() => {
+                if(url == "/lobby"){
+                    console.log("ici")
+                    setCategory(null)
+                }
                 navigate(url)
                 setUnmount(false)
             }, 150);
+            
         }
     }
 
@@ -51,6 +62,18 @@ export default function App(props) {
         setAuthToken('');
         setLogedIn(false);
         navigateTo('/login');
+    };
+
+    // Function to show error notification
+    const showErrorNotification = (message) => {
+        toast.error(message, {
+            position: "top-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
     };
 
     const sendData = async ({route = "/", data = {}, method="GET", isFileDownload = false}) => {
@@ -74,8 +97,6 @@ export default function App(props) {
             options.body = JSON.stringify(data);
         }
         
-        console.log(data)
-        
         try {
             const response = await fetch("/api"+route, options);
             
@@ -87,7 +108,9 @@ export default function App(props) {
             // Handle file download
             if (isFileDownload) {
                 if (!response.ok) {
-                    return { error: true, error_message: `Download failed: ${response.statusText}` };
+                    const errorResult = { error: true, error_message: `Download failed: ${response.statusText}` };
+                    showErrorNotification(errorResult.error_message);
+                    return errorResult;
                 }
                 
                 // Get filename from Content-Disposition header
@@ -121,16 +144,22 @@ export default function App(props) {
             }
             
             // Handle regular JSON response
-            return response.json();
+            const result = await response.json();
+            
+            // Check if the response has an error and show notification
+            if (result.error === true && result.error_message) {
+                showErrorNotification(result.error_message);
+            }
+            
+            return result;
             
         } catch (error) {
             console.error('Request failed:', error);
-            return { error: true, error_message: "Network error" };
+            const errorResult = { error: true, error_message: "Network error" };
+            showErrorNotification(errorResult.error_message);
+            return errorResult;
         }
     }
-
-
-
 
     return (
         <Fade className='d-flex flex-column h-100' 
@@ -163,6 +192,20 @@ export default function App(props) {
                 <Leaderboard {...{sendData,showLeaderboard, setShowLeaderboard, isDarkMode, navigateTo, sendData}}/>
             </div>
             <AppFooter {...{sendData,isDarkMode, navigateTo, footerRef}} />
+            
+            {/* Toast Container for notifications */}
+            <ToastContainer
+                position="top-left"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={isDarkMode ? "dark" : "light"}
+            />
         </Fade>
     );
 }

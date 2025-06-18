@@ -17,6 +17,7 @@ class DefiIndice
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Defi $defi;
 
+    #[ORM\Id]
     #[Groups(['defi-read'])]
     #[ORM\ManyToOne(targetEntity: Indice::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]

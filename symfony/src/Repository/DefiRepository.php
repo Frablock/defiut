@@ -16,16 +16,65 @@ class DefiRepository extends ServiceEntityRepository
         parent::__construct($registry, Defi::class);
     }
 
-    public function findNextDefis(int $startId, int $limit): array
+    public function findNextDefis(int $startId, int $limit, ?string $category = null, ?array $tags = null, ?array $filter = null): array
     {
-        return $this->createQueryBuilder('d')
-        ->andWhere('d.id >= :id')
-        ->setParameter('id', $startId)
-        ->orderBy('d.id', 'ASC')
-        ->setMaxResults($limit)
-        ->getQuery()
-        ->getResult();
+        $qb = $this->createQueryBuilder('d')
+            ->andWhere('d.id >= :id')
+            ->setParameter('id', $startId)
+            ->setMaxResults($limit);
+
+        // Filter by category if provided
+        if ($category !== null && $category !== '') {
+            $qb->andWhere('d.categorie = :category')
+            ->setParameter('category', $category);
+        }
+
+        // Filter by tags if provided
+        if ($tags !== null && !empty($tags)) {
+            $qb->leftJoin('d.tags', 't')
+            ->andWhere('t.nom IN (:tagNames)')
+            ->setParameter('tagNames', $tags)
+            ->groupBy('d.id')
+            ->having('COUNT(DISTINCT t.id) = :tagCount')
+            ->setParameter('tagCount', count($tags));
+        }
+
+        // Handle sorting filter
+        if ($filter !== null && isset($filter['attribute']) && isset($filter['action'])) {
+            $attribute = $filter['attribute'];
+            $action = strtoupper($filter['action']);
+            
+            // Validate action
+            if (!in_array($action, ['ASC', 'DESC'])) {
+                $action = 'ASC'; // Default fallback
+            }
+            
+            // Map frontend attribute names to entity properties
+            $allowedAttributes = [
+                'nom' => 'd.nom',
+                'points_recompense' => 'd.pointsRecompense',
+                'difficulte' => 'd.difficulte',
+                'categorie' => 'd.categorie',
+                'id' => 'd.id'
+            ];
+            
+            if (array_key_exists($attribute, $allowedAttributes)) {
+                // Clear any existing orderBy and set new one
+                $qb->orderBy($allowedAttributes[$attribute], $action);
+            } else {
+                // Default sorting if invalid attribute
+                $qb->orderBy('d.id', 'ASC');
+            }
+        } else {
+            // Default sorting when no filter provided
+            $qb->orderBy('d.id', 'ASC');
+        }
+
+        return $qb->getQuery()->getResult();
     }
+
+
+
 
     public function findAll(): array
     {

@@ -260,7 +260,7 @@ VALUES (
         'L''Agence a intercepté cette image qui semble provenir d''un groupe suspicieux. Nos analystes pensent qu''elle contient un message caché, mais leurs méthodes d''analyse habituelles n''ont rien révélé. Ta mission est de: 1. Examiner l''image fournie en utilisant des techniques d''analyse avancées 2. Trouver et extraire le message caché 3. Nous communiquer le flag qu''elle contient Cette mission est prioritaire.',
         'DEF_IUT{ST3G0_1S_FUN}',
         250,
-        'Stégonographie',
+        'Stéganographie',
         2,
         6
     );
