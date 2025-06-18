@@ -23,7 +23,7 @@ final class DefiAddController extends AbstractController
     ) {}
 
 
-    #[Route('/api/defi_add', name: 'app_defi_add')]
+    #[Route('/api/defi_add', name: 'app_defi_add', methods: ['POST'])]
     #[OA\Post(
         path: '/api/defi_add',
         tags: ['Defi'],
