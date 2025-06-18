@@ -49,8 +49,8 @@ export default function Profil(props) {
           const formatted = {
             pseudo:         d.pseudo,
             email:          d.email,
-            creationCompte: new Date(d.creationCompte).toLocaleDateString(),
-            lastConnection: new Date(d.lastConnection).toLocaleDateString(),
+            creationCompte: new Date(d.creationCompte.date).toLocaleDateString(),
+            lastConnection: new Date(d.lastConnection.date).toLocaleDateString(),
             defisValides:   d.defis_valide
           };
           setUserInfo(formatted);
