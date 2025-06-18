@@ -13,7 +13,7 @@ use DateTime;
 
 use App\Repository\UserRepository;
 use App\Entity\User;
-
+use Exception;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -150,18 +150,22 @@ final class UserController extends AbstractController
     #[Route('/api/token_validity_test', name: 'token_validity_test', methods: ['POST'])]
     public function token_validity_test(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        // Extract token from Authorization header
-        $token = $request->headers->get('Authorization');
-        if (!$token) {
-            return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
-        }
+        try{
+            // Extract token from Authorization header
+            $token = $request->headers->get('Authorization');
+            if (!$token) {
+                return new JsonResponse(['error' => true, 'error_message' => 'Missing token'], JsonResponse::HTTP_UNAUTHORIZED);
+            }
 
-        $user = $this->userRepository->findOneByToken($token);
+            $user = $this->userRepository->findOneByToken($token);
 
-        if (!$user instanceof User) {
-            throw new AuthenticationException('Invalid credentials');
+            if (!$user instanceof User) {
+                throw new AuthenticationException('Invalid credentials');
+            }
+            return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => $user]], JsonResponse::HTTP_OK);
+        }catch(Exception $e){
+            return new JsonResponse(['error' => true, 'error_message' => "Votre connexion à expiré"], JsonResponse::HTTP_OK);
         }
-        return new JsonResponse(['error' => false, 'error_message' => '', 'data' => ['message' => $user]], JsonResponse::HTTP_OK);
     }
 
     /**

@@ -32,6 +32,17 @@ export default function App(props) {
     const footerRef = React.useRef(null);
     const [defis, setDefis] = React.useState({})
 
+    //to see if the user is connected
+    React.useEffect(() => {
+        if(authToken){
+            sendData({route:"/token_validity_test", method:"POST"}).then((data) => {
+                if(data.error){
+                    logout()
+                }
+            })
+        }
+    },[])
+
     // Function to delete cookie
     const deleteCookie = (name) => {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
