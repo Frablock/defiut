@@ -48,6 +48,9 @@ export default function AppFooter(props) {
         >
           CGU
         </div>
+        <div style={{color:"white"}}>
+          © Def'IUT — Tous droits réservés. 2025-2026
+        </div>
       </div>
     </>
   );

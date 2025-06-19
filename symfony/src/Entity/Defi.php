@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -42,7 +43,6 @@ class Defi
     #[Assert\Range(min: 1, max: 5)]
     private ?int $difficulte = null;
 
-    #[Groups(['defi-read'])]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'defis')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private User $user;
@@ -119,6 +119,18 @@ class Defi
     public function setDifficulte(int $diff)
     {
         $this->difficulte = $diff;
+    }
+    #[Groups(['defi-read'])]
+    #[SerializedName('user')]
+    public function getUserName(): string
+    {
+        return $this->user->getUsername();
+    }
+
+    public function setUserName(string $username): self
+    {
+        $this->user->setUsername($username);
+        return $this;
     }
 
     public function getUser(): ?User
